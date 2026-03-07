@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>STARCOM T&E Guide – Due Outs & Timelines</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.7rem;
+      color: #0d1b4b;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 28px;
+    }
+    .legend {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: #444;
+    }
+    .legend-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .phase-section {
+      margin-bottom: 32px;
+    }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 8px 8px 0 0;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+    }
+    .phase-header .phase-icon {
+      font-size: 1.2rem;
+    }
+    .phase-pre    { background: #1a3a6c; color: #fff; }
+    .phase-during { background: #7b2d00; color: #fff; }
+    .phase-post   { background: #14532d; color: #fff; }
+    .phase-ongoing{ background: #4a1a7a; color: #fff; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    thead tr {
+      background: #e8ecf2;
+    }
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #334;
+      border-bottom: 2px solid #c8d0dc;
+    }
+    td {
+      padding: 11px 14px;
+      font-size: 0.86rem;
+      border-bottom: 1px solid #eef0f4;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f5f7fb; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 12px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .tag-mandatory  { background: #fee2e2; color: #991b1b; }
+    .tag-recommended{ background: #fef9c3; color: #854d0e; }
+    .tag-conditional{ background: #dbeafe; color: #1e40af; }
+    .tag-oversight  { background: #f3e8ff; color: #6b21a8; }
+
+    .timeline-badge {
+      display: inline-block;
+      padding: 3px 11px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-pre-180 { background: #fde8d8; color: #9a3412; }
+    .badge-pre-30  { background: #fef3c7; color: #78350f; }
+    .badge-pre-15  { background: #fef9c3; color: #854d0e; }
+    .badge-pre-trr { background: #dbeafe; color: #1e40af; }
+    .badge-pre-exec{ background: #e0f2fe; color: #0c4a6e; }
+    .badge-pre-other{ background: #ede9fe; color: #4c1d95; }
+    .badge-during  { background: #fee2e2; color: #7f1d1d; }
+    .badge-post-24h{ background: #d1fae5; color: #064e3b; }
+    .badge-post-30d{ background: #d1fae5; color: #065f46; }
+    .badge-ongoing { background: #f3e8ff; color: #581c87; }
+
+    .owner {
+      font-size: 0.78rem;
+      color: #555;
+      font-style: italic;
+    }
+    .ref {
+      font-size: 0.72rem;
+      color: #888;
+    }
+    .note {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .col-timing { width: 16%; }
+    .col-item   { width: 32%; }
+    .col-owner  { width: 16%; }
+    .col-type   { width: 12%; }
+    .col-ref    { width: 10%; }
+    .col-notes  { width: 14%; }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📋 STARCOM T&amp;E Guide v2.0 — Due Outs &amp; Timelines</h1>
+<p class="subtitle">All required and recommended actions organized by phase, relative to the desired test start date.<br>Source: STARCOM Test and Evaluation (T&amp;E) Guide, 2nd Edition (US Space Force Operational Test Agency)</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#991b1b"></div> Mandatory Requirement</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#854d0e"></div> Recommended / Best Practice</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1e40af"></div> Conditional (program-dependent)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6b21a8"></div> DOT&amp;E Oversight Programs Only</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PHASE 1: PRE-TEST -->
+<!-- ============================================================ -->
+<div class="phase-section">
+  <div class="phase-header phase-pre">
+    <span class="phase-icon">🔵</span>
+    PHASE 1 — PRE-TEST (Before Test Execution Begins)
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="col-timing">Timeline</th>
+        <th class="col-item">Due Out / Action</th>
+        <th class="col-owner">Owner / Responsible Party</th>
+        <th class="col-type">Type</th>
+        <th class="col-ref">Guide Ref</th>
+        <th class="col-notes">Notes / Caveats</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">~18 months before test</span></td>
+        <td>
+          <strong>STARCOM Awareness &amp; Involvement Determination</strong>
+          <div class="note">STARCOM must be aware of the new program and make an involvement determination. Failure to do so within 18 months of planned test start triggers an exception to standard funding through program elements.</div>
+        </td>
+        <td><span class="owner">STARCOM S3C</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 62</span></td>
+        <td class="note">Funding PE exceptions apply if awareness occurs within 18 months of test start.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-180">≥ 180 days before first OT activity</span></td>
+        <td>
+          <strong>Test Concept Brief</strong>
+          <div class="note">Summarizes the campaign plan to STARCOM, DEL 12, and TES leadership. Must be completed NLT 180 days before the start of the first operational test activity for programs on the DOT&amp;E oversight list.</div>
+        </td>
+        <td><span class="owner">ITF / Test Director (TD)</span></td>
+        <td><span class="tag tag-oversight">DOT&amp;E Oversight</span></td>
+        <td><span class="ref">Pg. 123</span></td>
+        <td class="note">Approval level based on risk, cost (ACAT), and special interest of the program.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Throughout Early Involvement / Campaign Planning</span></td>
+        <td>
+          <strong>Funding Agreement with Program Office</strong>
+          <div class="note">A funding agreement between STARCOM and the program office must be reached before test planning efforts beyond Early Involvement can commence.</div>
+        </td>
+        <td><span class="owner">STARCOM FM / SPO</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 62</span></td>
+        <td class="note">Per U.S. Code Title 10 and DoDI 5000.98, program office funds 100% of program-specific test costs.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Early Involvement / Campaign Planning Phase</span></td>
+        <td>
+          <strong>ITT Charter (Integrated Test Team)</strong>
+          <div class="note">Formal, signed charter describing team membership, responsibilities, resources, and products. Includes event-driven deliverables table, conflict resolution chart, and DRB/TDSB/JRMET charters.</div>
+        </td>
+        <td><span class="owner">Program Office (owns); TES (supports)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 64</span></td>
+        <td class="note">Required per DoDI 5000.98. Reviewed every 12 months or after each major decision review.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Early Involvement Phase</span></td>
+        <td>
+          <strong>TEMP / T&amp;E Strategy (Initial / Updates)</strong>
+          <div class="note">Overarching living document detailing test conduct for the lifecycle of the program. Inputs from LDTO and OTA required. Must be updated at each Milestone for MDAP programs.</div>
+        </td>
+        <td><span class="owner">SPO (develops); STARCOM ITF (inputs)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 64–65</span></td>
+        <td class="note">DOT&amp;E provides inputs for oversight programs. Contains required IDSK section.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Early Involvement Phase</span></td>
+        <td>
+          <strong>Integrated Decision Support Key (IDSK)</strong>
+          <div class="note">Required part of TEMP/T&amp;E Strategy for all DoD programs. Maps operational capabilities and technical capabilities to decisions and data sources. Initial ICT meeting typically in Early Involvement phase.</div>
+        </td>
+        <td><span class="owner">IDSK Core Team (ICT): PM, Ops Decision-makers, LDTO, OTA</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 65–67</span></td>
+        <td class="note">Required for all DoD programs per DoDM 5000.100.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Campaign Planning Phase</span></td>
+        <td>
+          <strong>Test Campaign Plan (TCP)</strong>
+          <div class="note">Documents TEMP/T&amp;E Strategy updates, test schedule, data sources, test events, M&amp;S needs, T&amp;E risk, and resources (personnel, assets, facilities, ranges, threats, etc.).</div>
+        </td>
+        <td><span class="owner">ITF / Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 120</span></td>
+        <td class="note">Updates TEMP/T&amp;E Strategy significantly during Campaign Planning phase.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">4–6 weeks before Test Design Workshop (TDW) I</span></td>
+        <td>
+          <strong>Battlespace Development (Four Tasks)</strong>
+          <div class="note">Complete four tasks: (1) Mission Analysis, (2) Develop COIs, (3) Assign Combat Operations to each COI, (4) Decompose each Combat Operation into Combat Operational Threads (COTs).</div>
+        </td>
+        <td><span class="owner">Test Team</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 76</span></td>
+        <td class="note">Must be completed before TDW I can start.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Campaign / Test Planning Phase</span></td>
+        <td>
+          <strong>M&amp;S Accreditation Plan</strong>
+          <div class="note">Establishes benchmark for all V&amp;V activities. Must identify timeline of VV&amp;A activities relative to TRR and test start/end. Submitted to S3C Technical Advisor (TA) for approval.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); S3C TA (approves)</span></td>
+        <td><span class="tag tag-conditional">If M&amp;S Used</span></td>
+        <td><span class="ref">Pg. 133</span></td>
+        <td class="note">Required per DoDI 5000.61 when M&amp;S is used to support test decisions.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-trr">Prior to TRR (Goal: before TRR)</span></td>
+        <td>
+          <strong>M&amp;S Accreditation Report</strong>
+          <div class="note">Ensures STARCOM and DOT&amp;E leadership are aware of all risks associated with using M&amp;S. If not complete by TRR, TD must brief M&amp;S risks and expected publication date at TRR.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-recommended">Recommended</span></td>
+        <td><span class="ref">Pg. 157</span></td>
+        <td class="note">Per MIL-STD-3022 and DoDI 5000.61. Risk brief required at TRR if not complete.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Test Planning Phase</span></td>
+        <td>
+          <strong>Test Plan (and supporting documentation)</strong>
+          <div class="note">Reviewed by Technical Review Board (TRB) chaired by Technical Review Authority (TRA). Assesses test requirements, techniques, approaches, and objectives per DAFI 99-103.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); TRB (reviews)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 147</span></td>
+        <td class="note">Required per DAFI 99-103 for all tests.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Test Planning Phase</span></td>
+        <td>
+          <strong>Test Safety Plan</strong>
+          <div class="note">Documents hazards, safety risks, and mitigations. Includes Baseline Safety Report (BSR), Test Hazard Assessments (THAs), required waivers/deviations, and mishap reporting responsibilities.</div>
+        </td>
+        <td><span class="owner">Test Team / TES Safety Office</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 147</span></td>
+        <td class="note">Reviewed by Safety Review Board (SRB). Required for all tests. Details in DEL12I 91-220.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Per DEL12I 91-220 (risk-based schedule)</span></td>
+        <td>
+          <strong>Technical Review Board (TRB)</strong>
+          <div class="note">Independent technical review of the Test Plan. Chaired by Technical Review Authority (TRA). Minimum required per DAFI 99-103 for all tests.</div>
+        </td>
+        <td><span class="owner">TRA (chairs); Test Team (briefs)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 147</span></td>
+        <td class="note">Scheduling per DEL12I 91-220 based on technical complexity and risk.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-other">Per DEL12I 91-220 (minimum days based on risk level)</span></td>
+        <td>
+          <strong>Safety Review Board (SRB)</strong>
+          <div class="note">Required for tests with Low, Medium, or High safety risk level. NRR (Negligible Risk Review) used for Negligible safety risk tests. Scheduling timeline based on risk level per DEL12I 91-220.</div>
+        </td>
+        <td><span class="owner">SRB Chair; Test Team; DEL12/SE</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 149</span></td>
+        <td class="note">Output: Safety Review Board Summary Memorandum. Specific day requirements in DEL12I 91-220.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-trr">Prior to TEA Approval (before TRR)</span></td>
+        <td>
+          <strong>Test Execution Authority (TEA) Approval of Test Package</strong>
+          <div class="note">TEA (DEL12/CC or ITF Director) accepts the technical and safety risk. TEA approval of the test package is required before going to TRR. If SUT is owned/operated by another org, their commander must concur first.</div>
+        </td>
+        <td><span class="owner">TEA (DEL12/CC or ITF Director)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 150</span></td>
+        <td class="note">TEA may request Test Approval Briefing (TAB) before final approval. Required before any dry runs that direct action on SUT.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-trr">Recommended: Prior to TRR</span></td>
+        <td>
+          <strong>Dry Runs (Test Procedures &amp; Data Tools)</strong>
+          <div class="note">Dry runs of test procedures should occur prior to TRR. Data management and analysis tools must be dry-run before test starts. Results discussed at TRR.</div>
+        </td>
+        <td><span class="owner">Test Team</span></td>
+        <td><span class="tag tag-recommended">Recommended</span></td>
+        <td><span class="ref">Pg. 150–152</span></td>
+        <td class="note">TEA must approve test team before dry runs that direct actions on SUT. Issues documented; procedures updated before execution.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-15">≥ 15 days before OT&amp;E start</span></td>
+        <td>
+          <strong>PEO Certification Memo (MOTRC)</strong>
+          <div class="note">Program Executive Officer (PEO) or delegated official certifies the system ready to enter dedicated OT&amp;E and sends certification memo to STARCOM. IAW DAFMAN 63-119.</div>
+        </td>
+        <td><span class="owner">PEO / Program Office</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 152</span></td>
+        <td class="note">Not required for OA or EOA. Test team and S3C prepare acknowledgement memo in response. Both memos must define SUT scope and responsibilities.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-trr">Prior to TRR</span></td>
+        <td>
+          <strong>Certification Acknowledgement Memo (MOTRC)</strong>
+          <div class="note">Prepared by test team and S3C in response to the PEO Certification Memo. Sent to: PEO, DAF/TE, S3C, and DOT&amp;E (oversight programs only). Addresses readiness, SUT scope, and responsibilities.</div>
+        </td>
+        <td><span class="owner">Test Team &amp; S3C</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 152, 155</span></td>
+        <td class="note">IOT&amp;E programs also produce a "Readiness for Operational Test Certification Acknowledgement Memo" at TRR.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-trr">Prior to test execution</span></td>
+        <td>
+          <strong>Test Readiness Review (TRR)</strong>
+          <div class="note">Formal briefing by TD to TRR Chair and key stakeholders. Conducted prior to test team deployment. Must address: purpose of test, test overview, SUT description, test limitations, readiness recommendations from test team/SPO/operational units.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); TRR Chair (per DEL12I 99-112)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 155</span></td>
+        <td class="note">Chair determined by DEL12I 99-112 based on risk, oversight status, and ACAT level. External stakeholders invited only with TRR Chair approval.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-30">≥ 30 days before test</span></td>
+        <td>
+          <strong>Risk Management Readiness Review (RMRR)</strong>
+          <div class="note">CFC/S4S process to manage risk when using an operationally accepted weapon system for non-operational purposes (including testing). Due to S4S/S33 NLT 30 days prior to test.</div>
+        </td>
+        <td><span class="owner">Test Team (inputs); CFC counterparts (develop/staff)</span></td>
+        <td><span class="tag tag-conditional">If Operational Asset Used</span></td>
+        <td><span class="ref">Pg. 157</span></td>
+        <td class="note">Required any time an assigned weapon system is used for testing, demos, experiments, studies, or advanced training. No official format — typically a white paper or PPT.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-exec">Prior to test execution</span></td>
+        <td>
+          <strong>Authority to Connect (ATC)</strong>
+          <div class="note">Required when connecting two systems with different Authorizing Officials (e.g., cyber test toolkit and ground system). Signed by the AO of the system under test. Test team is responsible for securing ATC.</div>
+        </td>
+        <td><span class="owner">Test Team; Authorizing Official (AO) of SUT</span></td>
+        <td><span class="tag tag-conditional">If Connecting Different-AO Systems</span></td>
+        <td><span class="ref">Pg. 158</span></td>
+        <td class="note">Not required if both systems are authorized by the same AO and have an ISA in eMASS records.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-exec">Prior to test execution (track throughout)</span></td>
+        <td>
+          <strong>Authority to Operate (ATO) / Interim Authority to Test (IATT)</strong>
+          <div class="note">RMF process and artifacts managed by Program Office; approved by Space AO (CFC S-Staff). TD should track ATO/IATT status proactively — delays have caused test execution delays.</div>
+        </td>
+        <td><span class="owner">Program Office (manages); TD (tracks)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 158</span></td>
+        <td class="note">Test team supports ATO/RMF process through cybersecurity tests but responsibility rests with Program Office.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-exec">Before first test point</span></td>
+        <td>
+          <strong>Program Office Safety Release Letter</strong>
+          <div class="note">PM provides a safety release for the system prior to each developmental and operational test involving personnel. Identifies known ESOH hazards and their risk acceptance.</div>
+        </td>
+        <td><span class="owner">Program Manager (PM)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 150</span></td>
+        <td class="note">Required for tests involving personnel.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-pre-exec">Before first test point (prior to TRR is recommended)</span></td>
+        <td>
+          <strong>Test Start Memo</strong>
+          <div class="note">Notifies T&amp;E stakeholders that test execution has been approved via TRR and that ITF has committed resources per the approved test plan. Sent prior to execution of first test point.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 168</span></td>
+        <td class="note">Distribution list agreed to at TRR per DEL12I 99-112.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PHASE 2: DURING TEST -->
+<!-- ============================================================ -->
+<div class="phase-section">
+  <div class="phase-header phase-during">
+    <span class="phase-icon">🔴</span>
+    PHASE 2 — DURING TEST EXECUTION
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="col-timing">Timeline</th>
+        <th class="col-item">Due Out / Action</th>
+        <th class="col-owner">Owner / Responsible Party</th>
+        <th class="col-type">Type</th>
+        <th class="col-ref">Guide Ref</th>
+        <th class="col-notes">Notes / Caveats</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><span class="timeline-badge badge-during">Within 24 hours of discovery</span></td>
+        <td>
+          <strong>CAT I Deficiency Report (DR) Notification</strong>
+          <div class="note">All suspected CAT I DRs must be reported to the Test Director and Program Office within 24 hours of discovery. CAT I Safety DRs also require immediate notification to DEL12 Safety Office (SE) and often result in test pause/stop.</div>
+        </td>
+        <td><span class="owner">Test Team; Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 178</span></td>
+        <td class="note">Per T.O. 00-35D-54. CAT I Safety DRs may trigger a pause/stop test action.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-during">Within 72 hours of discovery</span></td>
+        <td>
+          <strong>CAT II Deficiency Report (DR) Notification</strong>
+          <div class="note">CAT II DRs require notification to the appropriate authority within 72 hours of discovery. Documented IAW T.O. 00-35D-54 and ITF guidance.</div>
+        </td>
+        <td><span class="owner">Test Team; Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 178</span></td>
+        <td class="note">DRB charter designates who reviews, validates, prioritizes, and submits identified deficiencies.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-during">Ongoing during test</span></td>
+        <td>
+          <strong>Test Execution and Status Reports (TEASRs)</strong>
+          <div class="note">Periodic status reports distributed to all stakeholders per the data distribution plan. ITF Director approves all TEASRs prior to external release.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); ITF Director (approves)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 174</span></td>
+        <td class="note">Must not violate OPSEC/classification guidance. Frequency per program data distribution plan.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-during">As required (per test plan)</span></td>
+        <td>
+          <strong>Test Pause Memo</strong>
+          <div class="note">Sent when test execution is paused. Establishes re-entry criteria. Triggers TRAC review and may require re-certification depending on scope of changes.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-conditional">As Required</span></td>
+        <td><span class="ref">Pg. 168–172</span></td>
+        <td class="note">TRR not required to restart after pause unless directed by ITF Director, DEL12/CC, or STARCOM/CC.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-during">As required (per test plan)</span></td>
+        <td>
+          <strong>Test Stop &amp; Decertification Memo</strong>
+          <div class="note">Sent when test is stopped and system decertified (e.g., critical safety or security issue). TRR is required before test can restart after a stop.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-conditional">As Required</span></td>
+        <td><span class="ref">Pg. 170–172</span></td>
+        <td class="note">TRR required to restart after a stop test.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PHASE 3: POST-TEST -->
+<!-- ============================================================ -->
+<div class="phase-section">
+  <div class="phase-header phase-post">
+    <span class="phase-icon">🟢</span>
+    PHASE 3 — POST-TEST (After Test Execution Ends)
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="col-timing">Timeline</th>
+        <th class="col-item">Due Out / Action</th>
+        <th class="col-owner">Owner / Responsible Party</th>
+        <th class="col-type">Type</th>
+        <th class="col-ref">Guide Ref</th>
+        <th class="col-notes">Notes / Caveats</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-24h">NLT 24 hours after test complete</span></td>
+        <td>
+          <strong>Test Complete Memo</strong>
+          <div class="note">Sent when all planned test points are complete and active testing has ceased. Informs operational community that personnel may resume normal operations. Summarizes test execution start/end, units involved, test points, and estimated LTE date.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 172–173</span></td>
+        <td class="note">Must NOT include T&amp;E results, analysis, conclusions, or recommendations. If LTE occurs before test complete, memos are combined.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-24h">NLT 24 hours after Last Test Event (LTE)</span></td>
+        <td>
+          <strong>End of Test / LTE Memo</strong>
+          <div class="note">Sent when: all test objectives assessed, data validated by TDSB, data available to all government organizations, last JRMET/TDSB event complete, and data validated for analysis. Triggers the final report coordination timeline clock.</div>
+        </td>
+        <td><span class="owner">Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 173</span></td>
+        <td class="note">LTE starts the clock for test reporting and releases test resources (people, ops floors, systems) back to owners.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-24h">After LTE — per agreed timeline</span></td>
+        <td>
+          <strong>Final Test Report (OT&amp;E / Assessment Report)</strong>
+          <div class="note">Full report with Executive Summary, Test Description, Test Design and Results, Test Resources Used, and Recommendations. Must follow DEL 12 Style Guide and templates. Date communicated in LTE memo.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); ITF Director (signs)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 195, 214</span></td>
+        <td class="note">Draft reports not circulated outside STARCOM. ITF Director may verbally share observations before signing. Specific timeline per program/DEL12 guidance.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-24h">After LTE — per agreed timeline</span></td>
+        <td>
+          <strong>Final Results Briefing</strong>
+          <div class="note">Briefing of final report findings to leadership and stakeholders. Date estimated and communicated in both Test Complete Memo and LTE Memo.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); ITF Director</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 173, 216</span></td>
+        <td class="note">Coordinate with DOT&amp;E action officer for oversight programs. Key guidance: "No surprises." Pre-coordinate responses to anticipated questions.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-30d">Within 30 days after final report approval or closeout decision</span></td>
+        <td>
+          <strong>Test Program Closeout Checklist &amp; MFR</strong>
+          <div class="note">TES reviews closeout checklist, identifies applicable items, works POC actions, and prepares MFR. Staffed for HQ coordination (S1, S3C, S4/6, S5/8/9, HO). Sent to S3C to close program on SharePoint.</div>
+        </td>
+        <td><span class="owner">TES / Test Director (TD)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 219</span></td>
+        <td class="note">Directed in program's Mission Tasking Order (MTO). Templates on DEL 12 SharePoint.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-30d">Within 30 days after closeout decision</span></td>
+        <td>
+          <strong>Funds Closeout Actions</strong>
+          <div class="note">Cancel due-outs (if no longer required), terminate contracts/task orders, reconcile MIPRs/Project Orders, submit receiving reports, coordinate with STARCOM/FM on redistribution.</div>
+        </td>
+        <td><span class="owner">TD / OL Chief / TES/CC; Resource Manager (POC)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 220</span></td>
+        <td class="note">Includes AF Forms 616, contracts, supply/equipment accounts, and MIPRs.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-post-30d">After final report approval</span></td>
+        <td>
+          <strong>Lessons Learned Capture</strong>
+          <div class="note">TD must work with STARCOM S9 to ensure applicable lessons learned are captured by the DEL 10 Lessons Learned team.</div>
+        </td>
+        <td><span class="owner">Test Director (TD); STARCOM S9; DEL 10</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 219</span></td>
+        <td class="note">Part of test closeout phase. DEL 10 Lessons Learned team manages the database.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PHASE 4: ONGOING / PERIODIC -->
+<!-- ============================================================ -->
+<div class="phase-section">
+  <div class="phase-header phase-ongoing">
+    <span class="phase-icon">🟣</span>
+    ONGOING / PERIODIC REQUIREMENTS (Throughout the Test Lifecycle)
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="col-timing">Frequency / Trigger</th>
+        <th class="col-item">Due Out / Action</th>
+        <th class="col-owner">Owner / Responsible Party</th>
+        <th class="col-type">Type</th>
+        <th class="col-ref">Guide Ref</th>
+        <th class="col-notes">Notes / Caveats</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><span class="timeline-badge badge-ongoing">Every 12 months or after each major decision review</span></td>
+        <td>
+          <strong>ITT Charter Review &amp; Update</strong>
+          <div class="note">ITT leadership reviews and updates charter to ensure testing is integrated and membership reflects skills needed for current phase of the program.</div>
+        </td>
+        <td><span class="owner">Program Office; ITT Leadership</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 64</span></td>
+        <td class="note">Required per DoDI 5000.98.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-ongoing">At each Milestone (MDAP); as needed (other programs)</span></td>
+        <td>
+          <strong>TEMP / T&amp;E Strategy Update</strong>
+          <div class="note">Must be updated at each subsequent acquisition or program decision, or following major program changes (funding, acquisition, capability updates, milestone decisions).</div>
+        </td>
+        <td><span class="owner">SPO (develops); STARCOM ITF / DOT&amp;E (inputs)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 65, 120</span></td>
+        <td class="note">Mandatory updates at each Milestone for MDAP per DODM 5000.100.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-ongoing">Throughout all phases</span></td>
+        <td>
+          <strong>Deficiency Report (DR) Management</strong>
+          <div class="note">Active DRs from previous tests or integrated tests should be reviewed and if appropriate converted to DRs prior to the start of OT&amp;E. DR status reviewed at working-level prior to formal DRB meetings.</div>
+        </td>
+        <td><span class="owner">Test Team; DRB; Action Point (designated by PM)</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 175–180</span></td>
+        <td class="note">IAW T.O. 00-35D-54. DRB charter defines review, validation, prioritization, and submission responsibilities.</td>
+      </tr>
+
+      <tr>
+        <td><span class="timeline-badge badge-ongoing">Prior to each test phase / program increment</span></td>
+        <td>
+          <strong>Test Resource Plan (TRP) Updates</strong>
+          <div class="note">Documents test resource requirements and should be updated throughout the program lifecycle. Used to inform POM submissions for both STARCOM and the program office.</div>
+        </td>
+        <td><span class="owner">Test Team; STARCOM FM</span></td>
+        <td><span class="tag tag-mandatory">Mandatory</span></td>
+        <td><span class="ref">Pg. 62, 67</span></td>
+        <td class="note">Documented in TEMP/T&amp;E Strategy. Enables early identification of long-lead test resources.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  Source: STARCOM T&amp;E Guide, 2nd Edition (US Space Force Operational Test Agency) &mdash; DISTRIBUTION STATEMENT A. Approved for public release.<br>
+  Summary prepared for planning purposes. Always verify specific timelines with DEL12 Instructions, DAFI 99-103, DAFMAN 63-119, DEL12I 91-220, and DEL12I 99-112.
+</footer>
+
+</body>
+</html>
