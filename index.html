@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STARCOM T&E Program Tracker</title>
+<style>
+:root {
+  --navy:#0a1628; --navy-mid:#14274e; --navy-light:#1e3a6e;
+  --gold:#f0a500; --gold-light:#fbbf24;
+  --g50:#f8fafc; --g100:#f1f5f9; --g200:#e2e8f0; --g300:#cbd5e1;
+  --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b;
+  --s-none-bg:#f1f5f9;    --s-none-t:#475569;  --s-none-b:#cbd5e1;
+  --s-prog-bg:#dbeafe;    --s-prog-t:#1d4ed8;  --s-prog-b:#93c5fd;
+  --s-done-bg:#dcfce7;    --s-done-t:#15803d;  --s-done-b:#86efac;
+  --s-risk-bg:#fff7ed;    --s-risk-t:#c2410c;  --s-risk-b:#fdba74;
+  --row-done:#f0fdf4; --row-overdue:#fff1f2; --row-risk:#fff7ed;
+  --row-prog:#f0f7ff; --row-atrisk:#fffbeb;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--g800);font-size:14px;}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:14px 24px;
+  display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--gold);
+  position:sticky;top:0;z-index:300;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.hdr-icon{font-size:1.9rem;}
+.hdr-text h1{font-size:1.1rem;font-weight:700;letter-spacing:.4px;}
+.hdr-text p{font-size:.68rem;color:#93b4d8;margin-top:1px;}
+.hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.hdr-saved{font-size:.65rem;color:#93b4d8;}
+.hbtn{padding:5px 13px;border-radius:6px;font-size:.74rem;font-weight:600;cursor:pointer;
+  border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;transition:all .2s;}
+.hbtn:hover{background:rgba(255,255,255,.22);}
+.hbtn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.hbtn.gold:hover{background:var(--gold-light);}
+.hbtn.teal{background:#0e7490;border-color:#0e7490;}
+.hbtn.teal:hover{background:#0891b2;}
+
+/* ── CONFIG ── */
+.cfg{background:#fff;border-bottom:1px solid var(--g200);padding:14px 24px;
+  display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;}
+.cfg-g{display:flex;flex-direction:column;gap:3px;}
+.cfg-g label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g500);}
+.cfg-g input{padding:6px 10px;border:1px solid var(--g300);border-radius:6px;
+  font-size:.83rem;color:var(--g800);background:var(--g50);transition:border-color .2s;min-width:148px;}
+.cfg-g input:focus{outline:none;border-color:#3b82f6;background:#fff;}
+.cfg-hint{font-size:.62rem;color:var(--g400);margin-top:1px;}
+.req::after{content:' *';color:#dc2626;}
+.btn-apply{padding:6px 18px;background:var(--navy-light);color:#fff;border:none;border-radius:6px;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s;height:32px;}
+.btn-apply:hover{background:var(--navy);}
+
+/* ── PROGRAM HIGHLIGHTS PANEL ── */
+.hl-panel{background:#fff;border-bottom:2px solid var(--gold);overflow:hidden;}
+.hl-header{display:flex;align-items:center;gap:10px;padding:10px 24px;cursor:pointer;
+  background:linear-gradient(90deg,#fefce8,#fff);user-select:none;transition:background .15s;}
+.hl-header:hover{background:linear-gradient(90deg,#fef9c3,#fffbeb);}
+.hl-title{font-size:.85rem;font-weight:700;color:#854d0e;letter-spacing:.2px;}
+.hl-sub{font-size:.68rem;color:#a16207;margin-left:4px;}
+.hl-toggle{margin-left:auto;color:#a16207;transition:transform .25s;font-size:.9rem;}
+.hl-toggle.open{transform:rotate(90deg);}
+.hl-body{padding:0 24px 16px;display:none;}
+.hl-body.open{display:block;}
+.hl-textarea{width:100%;min-height:90px;border:1.5px solid #fde68a;border-radius:8px;
+  padding:10px 14px;font-size:.84rem;font-family:inherit;resize:vertical;
+  background:#fffbeb;color:var(--g800);line-height:1.55;}
+.hl-textarea:focus{outline:none;border-color:var(--gold);background:#fff;}
+.hl-meta{font-size:.65rem;color:var(--g400);margin-top:5px;text-align:right;}
+.hl-preview{font-size:.82rem;color:var(--g600);line-height:1.5;white-space:pre-wrap;
+  background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:8px 12px;
+  min-height:36px;cursor:pointer;}
+.hl-preview.empty{color:var(--g400);font-style:italic;}
+
+/* ── DASHBOARD ── */
+.dash{padding:12px 24px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  background:var(--g50);border-bottom:1px solid var(--g200);}
+.stat{background:#fff;border-radius:10px;padding:9px 16px;display:flex;flex-direction:column;
+  align-items:center;min-width:82px;box-shadow:0 1px 4px rgba(0,0,0,.07);
+  border:1px solid var(--g200);}
+.stat-n{font-size:1.55rem;font-weight:800;line-height:1.1;}
+.stat-l{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--g500);margin-top:2px;}
+.stat.c .stat-n{color:#15803d;} .stat.p .stat-n{color:#1d4ed8;}
+.stat.ns .stat-n{color:var(--g500);} .stat.r .stat-n{color:#c2410c;}
+.stat.ov .stat-n{color:#dc2626;} .stat.ar .stat-n{color:#d97706;}
+.prog-wrap{flex:1;min-width:180px;display:flex;flex-direction:column;gap:4px;}
+.prog-lbl{font-size:.68rem;font-weight:600;color:var(--g600);display:flex;justify-content:space-between;}
+.prog-out{height:13px;background:var(--g200);border-radius:7px;overflow:hidden;}
+.prog-in{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:7px;transition:width .5s ease;}
+
+/* ── FILTERS ── */
+.filters{padding:9px 24px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;
+  background:#fff;border-bottom:1px solid var(--g200);}
+.fl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);margin-right:3px;}
+.fbtn{padding:3px 11px;border-radius:14px;font-size:.73rem;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--g300);background:#fff;color:var(--g600);transition:all .15s;}
+.fbtn:hover{border-color:var(--navy-light);color:var(--navy-light);}
+.fbtn.act{background:var(--navy-light);color:#fff;border-color:var(--navy-light);}
+.fbtn.ov-btn.act{background:#dc2626;border-color:#dc2626;color:#fff;}
+.fbtn.ar-btn.act{background:#d97706;border-color:#d97706;color:#fff;}
+.fbtn.rk-btn.act{background:#c2410c;border-color:#c2410c;color:#fff;}
+.fsep{color:var(--g300);}
+
+/* ── MAIN ── */
+.main{padding:18px 24px;}
+
+/* ── PHASE SECTION ── */
+.ps{margin-bottom:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.ph-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;cursor:pointer;user-select:none;transition:filter .15s;}
+.ph-row:hover{filter:brightness(.95);}
+.ph-left{display:flex;align-items:center;gap:9px;}
+.ph-icon{font-size:1rem;}
+.ph-title{font-size:.88rem;font-weight:700;color:#fff;letter-spacing:.3px;}
+.ph-count{font-size:.72rem;color:rgba(255,255,255,.75);}
+.ph-chev{color:rgba(255,255,255,.8);transition:transform .2s;font-size:.9rem;}
+.ph-chev.collapsed{transform:rotate(-90deg);}
+.phase-pre .ph-row{background:linear-gradient(90deg,#1e3a6e,#2a4d8f);}
+.phase-during .ph-row{background:linear-gradient(90deg,#7f1d1d,#9b2222);}
+.phase-post .ph-row{background:linear-gradient(90deg,#14532d,#166534);}
+.phase-ongoing .ph-row{background:linear-gradient(90deg,#4c1d95,#5b21b6);}
+.ph-body{background:#fff;}
+
+/* ── TABLE ── */
+.tt{width:100%;border-collapse:collapse;}
+.tt thead{background:var(--g100);}
+.tt th{padding:7px 11px;text-align:left;font-size:.65rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;color:var(--g500);
+  border-bottom:1px solid var(--g200);white-space:nowrap;}
+.tt td{padding:8px 11px;border-bottom:1px solid var(--g100);vertical-align:middle;font-size:.81rem;}
+.tt tr:last-child td{border-bottom:none;}
+.tr.row-done{background:var(--row-done);}
+.tr.row-overdue{background:var(--row-overdue);}
+.tr.row-risk{background:var(--row-risk);}
+.tr.row-atrisk{background:var(--row-atrisk);}
+.tr.row-prog{background:var(--row-prog);}
+.tr.row-normal{background:#fff;}
+.tr:hover td{filter:brightness(.975);}
+.tr.hidden{display:none;}
+
+/* ── RISK BADGE (auto) ── */
+.rbadge{display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:9px;font-size:.65rem;font-weight:700;white-space:nowrap;}
+.rb-ov{background:#dc2626;color:#fff;}
+.rb-ar{background:#f59e0b;color:#fff;}
+.rb-none{color:transparent;font-size:.4rem;}
+
+/* ── DATE CELL ── */
+.dc{white-space:nowrap;}
+.dd{font-size:.78rem;font-weight:600;color:var(--g700);cursor:pointer;padding:2px 4px;
+  border-radius:4px;border:1px solid transparent;transition:all .15s;display:inline-block;}
+.dd:hover{border-color:var(--g300);background:var(--g50);}
+.dd.ov-d{color:#dc2626;} .dd.ar-d{color:#d97706;} .dd.no-d{color:var(--g400);font-style:italic;cursor:default;}
+.dsub{font-size:.6rem;color:var(--g400);margin-top:1px;line-height:1.3;}
+.d-edit{padding:3px 6px;border:1.5px solid #3b82f6;border-radius:4px;font-size:.78rem;width:130px;}
+
+/* ── TASK NAME ── */
+.tnc{min-width:190px;}
+.tname{font-weight:600;color:var(--g800);}
+.tdesc{font-size:.71rem;color:var(--g500);margin-top:3px;
+  max-height:0;overflow:hidden;transition:max-height .3s ease;line-height:1.45;}
+.tr.expanded .tdesc{max-height:130px;}
+.exbtn{background:none;border:none;cursor:pointer;padding:0;
+  color:var(--g400);font-size:.72rem;margin-left:4px;transition:color .15s;}
+.exbtn:hover{color:var(--navy-light);}
+.exarrow{display:inline-block;transition:transform .2s;}
+.tr.expanded .exarrow{transform:rotate(90deg);}
+
+/* ── TYPE TAG ── */
+.ttag{display:inline-block;padding:2px 7px;border-radius:9px;font-size:.63rem;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
+.tm{background:#fee2e2;color:#991b1b;} .tr2{background:#fef9c3;color:#854d0e;}
+.tc{background:#dbeafe;color:#1e40af;} .to{background:#f3e8ff;color:#6b21a8;}
+
+/* ── STATUS BADGE ── */
+.sbadge{display:inline-flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:18px;font-size:.74rem;font-weight:700;
+  cursor:pointer;user-select:none;white-space:nowrap;border:1.5px solid transparent;
+  transition:all .15s;min-width:115px;justify-content:center;}
+.sbadge:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.14);}
+.sbadge:active{transform:translateY(0);}
+.sn{background:var(--s-none-bg);color:var(--s-none-t);border-color:var(--s-none-b);}
+.sp{background:var(--s-prog-bg);color:var(--s-prog-t);border-color:var(--s-prog-b);}
+.sd{background:var(--s-done-bg);color:var(--s-done-t);border-color:var(--s-done-b);}
+.sr{background:var(--s-risk-bg);color:var(--s-risk-t);border-color:var(--s-risk-b);}
+
+/* ── STATUS DROPDOWN (fixed position, body-level) ── */
+#statusDropdown{
+  position:fixed;z-index:9999;background:#fff;
+  border:1px solid var(--g200);border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);overflow:hidden;
+  min-width:170px;display:none;}
+.sopt{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;
+  font-size:.79rem;font-weight:600;border-bottom:1px solid var(--g100);transition:background .1s;}
+.sopt:last-child{border-bottom:none;}
+.sopt:hover{background:var(--g50);}
+.sdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-n{background:var(--g400);} .dot-p{background:#3b82f6;}
+.dot-d{background:#22c55e;} .dot-r{background:#f59e0b;}
+
+/* ── NOTES ── */
+.nc{max-width:150px;}
+.nt{font-size:.7rem;color:var(--g500);font-style:italic;cursor:pointer;
+  padding:2px 4px;border-radius:4px;border:1px solid transparent;
+  min-height:20px;transition:all .15s;line-height:1.4;}
+.nt:hover{border-color:var(--g300);background:var(--g50);}
+.nt.emp{color:var(--g300);}
+.n-edit{font-size:.7rem;padding:3px 6px;border:1.5px solid #3b82f6;border-radius:4px;
+  width:100%;resize:none;font-family:inherit;color:var(--g700);}
+
+/* ── MISC ── */
+.reft{font-size:.67rem;color:var(--g400);white-space:nowrap;}
+.own{font-size:.72rem;color:var(--g600);}
+.col-rk{width:88px;} .col-due{width:112px;} .col-task{min-width:190px;}
+.col-own{width:125px;} .col-type{width:105px;} .col-stat{width:130px;}
+.col-nt{width:145px;} .col-ref{width:52px;}
+.no-dt-banner{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;
+  padding:9px 15px;margin-bottom:14px;display:flex;align-items:center;gap:9px;
+  color:#92400e;font-size:.78rem;}
+.no-dt-banner.hidden{display:none;}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:12px;padding:22px 26px;max-width:400px;width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(8px);transition:transform .2s;}
+.overlay.show .modal{transform:translateY(0);}
+.modal h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:12px;}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+.mbtn{padding:6px 16px;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--g300);background:#fff;}
+.mbtn.danger{background:#dc2626;color:#fff;border-color:#dc2626;}
+.mbtn.primary{background:var(--navy-light);color:#fff;border-color:var(--navy-light);}
+
+/* ─────────────────────────────────────────────
+   DASHBOARD SLIDE OVERLAY
+───────────────────────────────────────────── */
+#slideOverlay{position:fixed;inset:0;background:rgba(5,15,40,.92);z-index:600;
+  display:none;align-items:center;justify-content:center;padding:20px;}
+#slideOverlay.show{display:flex;}
+.slide-close{position:absolute;top:14px;right:20px;color:rgba(255,255,255,.7);
+  font-size:1.5rem;cursor:pointer;line-height:1;background:none;border:none;z-index:601;}
+.slide-close:hover{color:#fff;}
+.slide-wrap{position:relative;width:100%;max-width:1100px;}
+.slide{background:#fff;border-radius:12px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  aspect-ratio:16/9;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;}
+
+/* slide header */
+.sl-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  padding:14px 22px 12px;border-bottom:3px solid var(--gold);
+  display:flex;align-items:flex-start;justify-content:space-between;}
+.sl-prog-name{color:#fff;font-size:1.2rem;font-weight:800;letter-spacing:.3px;}
+.sl-prog-sub{color:#93b4d8;font-size:.65rem;margin-top:2px;}
+.sl-hdr-right{text-align:right;}
+.sl-asof{color:var(--gold-light);font-size:.65rem;font-weight:600;}
+.sl-dates{color:#93b4d8;font-size:.6rem;margin-top:2px;line-height:1.55;}
+
+/* slide body */
+.sl-body{flex:1;display:flex;flex-direction:column;padding:10px 18px 10px;gap:9px;overflow:hidden;}
+
+/* stat row */
+.sl-stats{display:flex;gap:8px;}
+.sl-stat{flex:1;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+  padding:7px 10px;display:flex;flex-direction:column;align-items:center;}
+.sl-sn{font-size:1.5rem;font-weight:800;line-height:1.1;}
+.sl-sl{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--g500);}
+.sl-sc .sl-sn{color:#15803d;} .sl-sp .sl-sn{color:#1d4ed8;}
+.sl-sr .sl-sn{color:#c2410c;} .sl-sns .sl-sn{color:var(--g500);}
+.sl-sov .sl-sn{color:#dc2626;} .sl-sar .sl-sn{color:#d97706;}
+
+/* progress */
+.sl-prow{display:flex;align-items:center;gap:10px;}
+.sl-plbl{font-size:.62rem;font-weight:700;color:var(--g600);white-space:nowrap;}
+.sl-pout{flex:1;height:11px;background:var(--g200);border-radius:6px;overflow:hidden;}
+.sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:6px;transition:width .5s;}
+.sl-ppct{font-size:.62rem;font-weight:700;color:#15803d;white-space:nowrap;}
+
+/* two columns */
+.sl-cols{flex:1;display:flex;gap:10px;overflow:hidden;}
+.sl-col{flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
+.sl-col-hdr{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:2px solid var(--g200);}
+.sl-col-hdr.upcoming{color:#1d4ed8;border-color:#bfdbfe;}
+.sl-col-hdr.risks{color:#c2410c;border-color:#fecaca;}
+.sl-col-hdr.hilight{color:#854d0e;border-color:#fde68a;}
+.sl-items{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px;}
+.sl-item{font-size:.62rem;color:var(--g700);display:flex;align-items:flex-start;gap:5px;line-height:1.35;}
+.sl-item .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.sl-item .dot.blue{background:#3b82f6;} .sl-item .dot.red{background:#ef4444;}
+.sl-item .dot.orange{background:#f59e0b;}
+.sl-none{font-size:.6rem;color:var(--g400);font-style:italic;padding:4px 0;}
+.sl-hl-text{font-size:.63rem;color:var(--g700);line-height:1.5;white-space:pre-wrap;
+  overflow:hidden;flex:1;}
+
+/* slide footer */
+.sl-foot{background:var(--g50);border-top:1px solid var(--g200);
+  padding:5px 18px;display:flex;align-items:center;justify-content:space-between;}
+.sl-foot-l{font-size:.56rem;color:var(--g400);}
+.sl-foot-r{font-size:.56rem;color:var(--g400);}
+.sl-print{padding:4px 12px;background:var(--navy);color:#fff;border:none;border-radius:5px;
+  font-size:.65rem;font-weight:600;cursor:pointer;}
+.sl-print:hover{background:var(--navy-light);}
+
+@media print{.hdr .hbtn,.filters,.cfg .btn-apply{display:none;}body{background:#fff;}
+  .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-icon">🛰️</div>
+  <div class="hdr-text">
+    <h1>STARCOM T&amp;E Program Tracker</h1>
+    <p id="hdrSub">US Space Force Operational Test Agency · T&amp;E Guide v2.0</p>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-saved" id="lastSaved"></span>
+    <button class="hbtn teal" onclick="showSlide()">📊 Dashboard Slide</button>
+    <button class="hbtn" onclick="showResetModal()">🗑 Reset</button>
+    <button class="hbtn" onclick="window.print()">🖨 Print</button>
+    <button class="hbtn gold" onclick="exportCSV()">⬇ CSV</button>
+  </div>
+</div>
+
+<!-- ── CONFIG ── -->
+<div class="cfg">
+  <div class="cfg-g">
+    <label class="req">Program Name</label>
+    <input type="text" id="cfgName" placeholder="e.g., ATLAS IOT&E" style="min-width:195px">
+  </div>
+  <div class="cfg-g">
+    <label class="req">Desired Test Start Date</label>
+    <input type="date" id="cfgStart">
+    <div class="cfg-hint">All pre-test due dates auto-calculate from this</div>
+  </div>
+  <div class="cfg-g">
+    <label>TRR Date <span style="font-weight:400;color:var(--g400)">(optional)</span></label>
+    <input type="date" id="cfgTRR">
+    <div class="cfg-hint">Defaults to 14 days before test start</div>
+  </div>
+  <div class="cfg-g">
+    <label>Est. LTE Date <span style="font-weight:400;color:var(--g400)">(optional)</span></label>
+    <input type="date" id="cfgLTE">
+    <div class="cfg-hint">Last Test Event — drives post-test dates</div>
+  </div>
+  <button class="btn-apply" onclick="applyDates()">▶ Apply Dates</button>
+</div>
+
+<!-- ── PROGRAM HIGHLIGHTS ── -->
+<div class="hl-panel">
+  <div class="hl-header" onclick="toggleHL()">
+    <span style="font-size:1rem">📢</span>
+    <span class="hl-title">Program Highlights</span>
+    <span class="hl-sub">— leadership update / key notes</span>
+    <span class="hl-toggle" id="hlToggle">▶</span>
+  </div>
+  <div class="hl-body" id="hlBody">
+    <div id="hlPreview" class="hl-preview empty" onclick="editHL()">Click to add program highlights for leadership...</div>
+    <textarea class="hl-textarea" id="hlEdit" style="display:none"
+      placeholder="Enter program highlights, key decisions, risks, and updates for leadership...&#10;&#10;Example:&#10;• Test window confirmed for Q2 FY26&#10;• PEO certification memo received 15 Mar&#10;• RMRR staffing in progress — expected submission 20 Mar&#10;• CAT I DR #247 resolved; system re-certified"
+      oninput="autoSaveHL()" onblur="commitHL()"></textarea>
+    <div class="hl-meta" id="hlMeta"></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dash">
+  <div class="stat c"><div class="stat-n" id="sC">0</div><div class="stat-l">✅ Complete</div></div>
+  <div class="stat p"><div class="stat-n" id="sP">0</div><div class="stat-l">🔵 In Progress</div></div>
+  <div class="stat r"><div class="stat-n" id="sR">0</div><div class="stat-l">⚠ Risk</div></div>
+  <div class="stat ns"><div class="stat-n" id="sN">0</div><div class="stat-l">⚪ Not Started</div></div>
+  <div class="stat ov"><div class="stat-n" id="sOV">0</div><div class="stat-l">🔴 Overdue</div></div>
+  <div class="stat ar"><div class="stat-n" id="sAR">0</div><div class="stat-l">⚡ Due Soon</div></div>
+  <div class="prog-wrap">
+    <div class="prog-lbl"><span id="progLbl">Overall Completion</span><span id="progPct">0%</span></div>
+    <div class="prog-out"><div class="prog-in" id="progBar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="filters">
+  <span class="fl">Filter:</span>
+  <button class="fbtn act" onclick="setFilter('all',this)">All</button>
+  <button class="fbtn" onclick="setFilter('none',this)">⚪ Not Started</button>
+  <button class="fbtn" onclick="setFilter('progress',this)">🔵 In Progress</button>
+  <button class="fbtn" onclick="setFilter('complete',this)">✅ Complete</button>
+  <button class="fbtn rk-btn" onclick="setFilter('risk',this)">⚠ Risk</button>
+  <span class="fsep">|</span>
+  <button class="fbtn ov-btn" onclick="setFilter('overdue',this)">🔴 Overdue</button>
+  <button class="fbtn ar-btn" onclick="setFilter('atrisk',this)">⚡ Due Soon (&lt;14d)</button>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main" id="mainContent">
+  <div class="no-dt-banner" id="noBanner">
+    ⚠️ <strong>Enter your Test Start Date above</strong> and click <strong>Apply Dates</strong> to auto-calculate all due dates and activate risk tracking.
+  </div>
+</div>
+
+<!-- ── STATUS DROPDOWN (body-level, fixed position) ── -->
+<div id="statusDropdown">
+  <div class="sopt" onclick="pickStatus('none',event)"><span class="sdot dot-n"></span>⚪ Not Yet Started</div>
+  <div class="sopt" onclick="pickStatus('progress',event)"><span class="sdot dot-p"></span>🔵 In Progress</div>
+  <div class="sopt" onclick="pickStatus('complete',event)"><span class="sdot dot-d"></span>✅ Complete</div>
+  <div class="sopt" onclick="pickStatus('risk',event)"><span class="sdot dot-r"></span>⚠️ Risk</div>
+</div>
+
+<!-- ── DASHBOARD SLIDE OVERLAY ── -->
+<div id="slideOverlay">
+  <button class="slide-close" onclick="hideSlide()">✕</button>
+  <div class="slide-wrap">
+    <div class="slide" id="theSlide">
+
+      <!-- slide header -->
+      <div class="sl-hdr">
+        <div>
+          <div class="sl-prog-name" id="sl-pname">Program Name</div>
+          <div class="sl-prog-sub">T&amp;E Campaign Status · STARCOM / US Space Force OTA</div>
+        </div>
+        <div class="sl-hdr-right">
+          <div class="sl-asof" id="sl-asof"></div>
+          <div class="sl-dates" id="sl-dates"></div>
+        </div>
+      </div>
+
+      <!-- slide body -->
+      <div class="sl-body">
+
+        <!-- stat row -->
+        <div class="sl-stats">
+          <div class="sl-stat sl-sc"><div class="sl-sn" id="sl-c">0</div><div class="sl-sl">✅ Complete</div></div>
+          <div class="sl-stat sl-sp"><div class="sl-sn" id="sl-p">0</div><div class="sl-sl">🔵 In Progress</div></div>
+          <div class="sl-stat sl-sr"><div class="sl-sn" id="sl-r">0</div><div class="sl-sl">⚠ Risk</div></div>
+          <div class="sl-stat sl-sns"><div class="sl-sn" id="sl-ns">0</div><div class="sl-sl">⚪ Not Started</div></div>
+          <div class="sl-stat sl-sov"><div class="sl-sn" id="sl-ov">0</div><div class="sl-sl">🔴 Overdue</div></div>
+          <div class="sl-stat sl-sar"><div class="sl-sn" id="sl-ar">0</div><div class="sl-sl">⚡ Due Soon</div></div>
+        </div>
+
+        <!-- progress -->
+        <div class="sl-prow">
+          <span class="sl-plbl" id="sl-plbl">Completion</span>
+          <div class="sl-pout"><div class="sl-pin" id="sl-pbar" style="width:0%"></div></div>
+          <span class="sl-ppct" id="sl-ppct">0%</span>
+        </div>
+
+        <!-- two columns -->
+        <div class="sl-cols">
+          <!-- upcoming -->
+          <div class="sl-col">
+            <div class="sl-col-hdr upcoming">⚡ Upcoming (Next 30 Days)</div>
+            <div class="sl-items" id="sl-upcoming"></div>
+          </div>
+          <!-- risks / overdue -->
+          <div class="sl-col">
+            <div class="sl-col-hdr risks">🔴 Risks &amp; Issues</div>
+            <div class="sl-items" id="sl-risks"></div>
+          </div>
+          <!-- highlights -->
+          <div class="sl-col" style="flex:1.2">
+            <div class="sl-col-hdr hilight">📢 Program Highlights</div>
+            <div class="sl-hl-text" id="sl-hl"></div>
+          </div>
+        </div>
+
+      </div><!-- /sl-body -->
+
+      <!-- slide footer -->
+      <div class="sl-foot">
+        <span class="sl-foot-l">STARCOM T&amp;E Guide v2.0 · DISTRIBUTION STATEMENT A</span>
+        <button class="sl-print" onclick="printSlide()">🖨 Print Slide</button>
+        <span class="sl-foot-r" id="sl-foot-date"></span>
+      </div>
+
+    </div><!-- /slide -->
+  </div>
+</div>
+
+<!-- ── RESET MODAL ── -->
+<div class="overlay" id="resetOverlay">
+  <div class="modal">
+    <h3>🗑 Reset All Data?</h3>
+    <p style="font-size:.83rem;color:var(--g600);line-height:1.5">This clears all statuses, notes, and custom dates. Your date configuration and program highlights will be preserved. Cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="hideModal()">Cancel</button>
+      <button class="mbtn danger" onclick="resetAll()">Reset Task Data</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  TASKS
+// ═══════════════════════════════════════════════════
+const TASKS=[
+  {id:'t01',phase:'pre',cat:'Long-Lead Planning',
+   name:'STARCOM Awareness & Involvement Determination',
+   desc:'STARCOM must be aware of the program and make an involvement determination. Failure to do so within 18 months of planned test start triggers PE funding exceptions.',
+   getDue:(d)=>add(d.start,-548),lbl:'~18 months before test start',
+   owner:'STARCOM S3C',type:'Mandatory',ref:'Pg. 62',
+   note:'Funding PE exceptions apply if awareness occurs within 18 months of test start.'},
+  {id:'t02',phase:'pre',cat:'Long-Lead Planning',
+   name:'Funding Agreement with Program Office',
+   desc:'A funding agreement must be in place before test planning beyond Early Involvement can begin. Program office funds 100% of program-specific test costs per U.S. Code Title 10 and DoDI 5000.98.',
+   getDue:(d)=>add(d.start,-365),lbl:'~12 months before test start',
+   owner:'STARCOM FM / SPO',type:'Mandatory',ref:'Pg. 62',
+   note:'Program office is responsible for 100% of program-specific test costs.'},
+  {id:'t03',phase:'pre',cat:'Long-Lead Planning',
+   name:'ITT Charter (Integrated Test Team)',
+   desc:'Formal signed charter: team membership, responsibilities, resources, and products. Must include an event-driven deliverables table, conflict resolution chart, and DRB/TDSB/JRMET sub-charters. Required per DoDI 5000.98.',
+   getDue:(d)=>add(d.start,-365),lbl:'Early Involvement Phase (~12 months)',
+   owner:'Program Office (owns); TES (supports)',type:'Mandatory',ref:'Pg. 64',
+   note:'Reviewed every 12 months or after each major decision review.'},
+  {id:'t04',phase:'pre',cat:'Long-Lead Planning',
+   name:'TEMP / T&E Strategy (Initial)',
+   desc:'Overarching living document detailing test conduct for the lifecycle of the program. Developed by SPO with LDTO and OTA inputs. Must include the IDSK. Updated at each Milestone for MDAP programs.',
+   getDue:(d)=>add(d.start,-365),lbl:'Early Involvement Phase (~12 months)',
+   owner:'SPO (develops); STARCOM ITF (inputs)',type:'Mandatory',ref:'Pg. 64–65',
+   note:'DOT&E provides inputs for oversight programs. Contains required IDSK per DoDM 5000.100.'},
+  {id:'t05',phase:'pre',cat:'Long-Lead Planning',
+   name:'IDSK — Initial ICT Meeting',
+   desc:'Integrated Decision Support Key maps operational/technical capabilities to decisions and data sources. Initial ICT meeting typically in Early Involvement phase. Required for ALL DoD programs per DoDM 5000.100.',
+   getDue:(d)=>add(d.start,-365),lbl:'Early Involvement Phase (~12 months)',
+   owner:'IDSK Core Team (ICT): PM, OTA, LDTO, Ops',type:'Mandatory',ref:'Pg. 65–67',
+   note:'Facilitates early identification of long-lead test resources and informs POM submissions.'},
+  {id:'t06',phase:'pre',cat:'Campaign Planning',
+   name:'Test Campaign Plan (TCP)',
+   desc:'Updates the TEMP/T&E Strategy with test schedule, data sources, test events, M&S needs, T&E risk, and detailed resources including personnel, assets, facilities, ranges, and threats.',
+   getDue:(d)=>add(d.start,-270),lbl:'Campaign Planning Phase (~9 months)',
+   owner:'ITF / Test Director (TD)',type:'Mandatory',ref:'Pg. 120',
+   note:'Sub-ITT groups provide inputs. Must include IDSK update, schedule, and program risk sections.'},
+  {id:'t07',phase:'pre',cat:'Campaign Planning',
+   name:'Battlespace Development (4 Tasks)',
+   desc:'Complete all four tasks: (1) Mission Analysis, (2) Develop COIs, (3) Assign Combat Operations to each COI, (4) Decompose each Combat Operation into Combat Operational Threads (COTs). Must begin 4–6 weeks before TDW I.',
+   getDue:(d)=>add(d.start,-222),lbl:'6 weeks before TDW I (~7 months)',
+   owner:'Test Team (core)',type:'Mandatory',ref:'Pg. 76',
+   note:'Must be fully complete before Test Design Workshop (TDW) I can begin. Foundational to the entire test design.'},
+  {id:'t08',phase:'pre',cat:'Campaign Planning',
+   name:'Test Concept Brief',
+   desc:'Summarizes the campaign plan to STARCOM, DEL 12, and TES leadership. Covers mission statement, COIs, test strategy, resources, test design, and limitations. NLT 180 days before first OT activity for DOT&E oversight programs.',
+   getDue:(d)=>add(d.start,-180),lbl:'NLT 180 days before test start (DOT&E oversight)',
+   owner:'ITF / Test Director (TD)',type:'DOT&E Oversight',ref:'Pg. 123',
+   note:'Approval level based on risk, ACAT, and program special interest.'},
+  {id:'t09',phase:'pre',cat:'Test Planning',
+   name:'M&S Accreditation Plan',
+   desc:'Establishes the benchmark for all V&V activities. Must identify the timeline of VV&A activities relative to TRR and test start/end. Submitted to the S3C Technical Advisor (TA) for approval.',
+   getDue:(d)=>add(d.start,-150),lbl:'Test Planning Phase (~5 months)',
+   owner:'Test Director (TD); S3C TA (approves)',type:'Conditional',ref:'Pg. 133',
+   note:'Required only if M&S is used. Per DoDI 5000.61.'},
+  {id:'t10',phase:'pre',cat:'Test Planning',
+   name:'Test Plan (Draft & Final)',
+   desc:'Documents test objectives, design, methods, resources, scenarios, measures, and limitations. Reviewed by TRB chaired by TRA per DAFI 99-103.',
+   getDue:(d)=>add(d.start,-90),lbl:'~3 months before test start (before TRB)',
+   owner:'Test Director (TD)',type:'Mandatory',ref:'Pg. 147',
+   note:'Must be submitted to TRB with sufficient time for review and revision before TEA approval.'},
+  {id:'t11',phase:'pre',cat:'Test Planning',
+   name:'Test Safety Plan',
+   desc:'Documents hazards, safety risks, and mitigations. Includes BSR, Test Hazard Assessments (THAs), required waivers/deviations, and mishap reporting responsibilities. Reviewed by SRB.',
+   getDue:(d)=>add(d.start,-75),lbl:'~2.5 months before test start (before SRB)',
+   owner:'Test Team / TES Safety Office',type:'Mandatory',ref:'Pg. 147',
+   note:'Required for all tests. Negligible risk uses DEL 12 Form 203 (NRR). Low–High risk require full SRB. Details in DEL12I 91-220.'},
+  {id:'t12',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Technical Review Board (TRB)',
+   desc:'Independent technical review of the Test Plan and supporting documentation. Chaired by Technical Review Authority (TRA). Assesses test requirements, techniques, approaches, and objectives per DAFI 99-103.',
+   getDue:(d)=>add(d.start,-60),lbl:'~60 days before test start (before TEA)',
+   owner:'TRA (chairs); Test Team (briefs)',type:'Mandatory',ref:'Pg. 147',
+   note:'Scheduling timeline per DEL12I 91-220 based on technical complexity and risk.'},
+  {id:'t13',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Safety Review Board (SRB)',
+   desc:'Required for Low, Medium, or High safety risk. Assesses overall safety risk and sufficiency of the Test Safety Plan. Output: Safety Review Board Summary Memorandum (included in Test Package).',
+   getDue:(d)=>add(d.start,-45),lbl:'Per DEL12I 91-220 (risk-based, ~45 days)',
+   owner:'SRB Chair; Test Team; DEL12/SE',type:'Mandatory',ref:'Pg. 149',
+   note:'Specific day requirements in DEL12I 91-220. NRR (Form 203) used for Negligible risk. Combined TRB/SRB allowed with TRA/Safety approval.'},
+  {id:'t14',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'M&S Accreditation Report',
+   desc:'Ensures STARCOM and DOT&E leadership are aware of M&S risks before M&S is used in test. Goal: publish before TRR. If not complete at TRR, TD must brief M&S risks and expected completion date.',
+   getDue:(d)=>d.trr||add(d.start,-14),lbl:'Goal: before TRR',
+   owner:'Test Director (TD)',type:'Conditional',ref:'Pg. 157',
+   note:'Per MIL-STD-3022 and DoDI 5000.61. Required only if M&S is used. If late, include risk brief at TRR.'},
+  {id:'t15',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'TEA Approval of Test Package',
+   desc:'Test Execution Authority (TEA) — DEL12/CC or ITF Director — formally accepts technical and safety risk. Required BEFORE TRR. If SUT is owned/operated by another org, their commander must concur first.',
+   getDue:(d)=>add(d.trr||add(d.start,-14),-3),lbl:'3+ days before TRR',
+   owner:'TEA (DEL12/CC or ITF Director)',type:'Mandatory',ref:'Pg. 150',
+   note:'TEA may request a Test Approval Briefing (TAB) before final approval. Also required before dry runs that direct actions on SUT.'},
+  {id:'t16',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Dry Runs (Procedures & Data Tools)',
+   desc:'Dry run of all test procedures AND data management/analysis tools. Results discussed at TRR. All issues documented and procedures updated. Highly recommended before TRR.',
+   getDue:(d)=>d.trr||add(d.start,-14),lbl:'Recommended: before TRR',
+   owner:'Test Team',type:'Recommended',ref:'Pg. 150–152',
+   note:'TEA must approve team before dry runs that direct actions on SUT. Data tool dry-run is mandatory to meet reporting timelines.'},
+  {id:'t17',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Test Readiness Review (TRR)',
+   desc:'Formal briefing by TD to TRR Chair and key stakeholders. Conducted before test team deployment. Covers: test purpose, overview, SUT description, test limitations, and readiness recommendations from all parties.',
+   getDue:(d)=>d.trr||add(d.start,-14),lbl:'Before test deployment (set TRR Date above)',
+   owner:'Test Director (TD); TRR Chair (DEL12I 99-112)',type:'Mandatory',ref:'Pg. 155',
+   note:'TRR chair per DEL12I 99-112 based on risk, oversight, and ACAT. External stakeholders need TRR Chair approval.'},
+  {id:'t18',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Risk Management Readiness Review (RMRR)',
+   desc:'CFC/S4S process to manage risk when using an operationally accepted weapon system for non-operational purposes (testing, demos, experiments, etc.). Due to S4S/S33 NLT 30 days before test.',
+   getDue:(d)=>add(d.start,-30),lbl:'NLT 30 days before test',
+   owner:'Test Team (inputs); CFC counterparts (develop)',type:'Conditional',ref:'Pg. 157',
+   note:'Required any time an assigned weapon system is used for non-operational activities. Coordinate EARLY with CFC. No official format — typically white paper or PPT.'},
+  {id:'t19',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'PEO Certification Memo (MOTRC)',
+   desc:'PEO certifies the system ready to enter dedicated OT&E and sends certification memo to STARCOM IAW DAFMAN 63-119. Must arrive minimum 15 days before OT&E start.',
+   getDue:(d)=>add(d.start,-15),lbl:'NLT 15 days before OT&E start',
+   owner:'PEO / Program Office',type:'Mandatory',ref:'Pg. 152',
+   note:'NOT required for OA or EOA. Test team and S3C prepare the Certification Acknowledgement Memo in response.'},
+  {id:'t20',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Certification Acknowledgement Memo (MOTRC)',
+   desc:'Prepared by test team and S3C in response to PEO Certification Memo. Addresses readiness, SUT scope, and divided responsibilities. For IOT&E: also produces Readiness for OT Certification Acknowledgement Memo at TRR.',
+   getDue:(d)=>add(d.start,-10),lbl:'~10 days before test start',
+   owner:'Test Team & S3C',type:'Mandatory',ref:'Pg. 152, 155',
+   note:'Sent to: PEO, DAF/TE, S3C, and DOT&E (oversight programs only).'},
+  {id:'t21',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'ATO / IATT Status Verified',
+   desc:'TD must proactively track the ATO (Authority to Operate) and IATT (Interim Authority to Test) status. Delays in these approvals have repeatedly caused test execution delays.',
+   getDue:(d)=>add(d.start,-14),lbl:'Verify by ~14 days before test start',
+   owner:'TD (tracks); Program Office (responsible)',type:'Mandatory',ref:'Pg. 158',
+   note:'RMF managed by Program Office; approved by Space AO (CFC S-Staff). Test team supports via cybersecurity tests.'},
+  {id:'t22',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Authority to Connect (ATC)',
+   desc:'Required when connecting two systems with different Authorizing Officials (e.g., cyber test toolkit and ground system). Signed by AO of the system under test. Test team is responsible for securing ATC.',
+   getDue:(d)=>add(d.start,-7),lbl:'Before test execution',
+   owner:'Test Team; AO of SUT',type:'Conditional',ref:'Pg. 158',
+   note:'Not required if both systems are under the same AO and have an ISA in eMASS records.'},
+  {id:'t23',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Program Office Safety Release Letter',
+   desc:'PM provides a safety release for the system prior to each test involving personnel. Identifies all known ESOH hazards and associated risk acceptance.',
+   getDue:(d)=>add(d.start,-3),lbl:'Before test execution (involving personnel)',
+   owner:'Program Manager (PM)',type:'Mandatory',ref:'Pg. 150',
+   note:'Required for tests involving personnel. SRB also reviews this information.'},
+  {id:'t24',phase:'pre',cat:'Final Pre-Test Reviews',
+   name:'Test Start Memo',
+   desc:'Notifies T&E stakeholders that test execution has been approved via TRR and that the ITF has committed resources. Sent BEFORE the first test point is executed.',
+   getDue:(d)=>d.start,lbl:'Day of test start (before first test point)',
+   owner:'Test Director (TD)',type:'Mandatory',ref:'Pg. 168',
+   note:'Distribution list agreed to at TRR per DEL12I 99-112.'},
+  // ── DURING ──
+  {id:'t25',phase:'during',cat:'Deficiency Reporting',
+   name:'CAT I DR Notification',
+   desc:'All suspected Category I DRs must be reported to the Test Director and Program Office within 24 hours of discovery. CAT I Safety DRs also require immediate notification to DEL12 Safety Office. May result in test pause/stop.',
+   getDue:()=>null,lbl:'Within 24 hours of discovery',
+   owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 178',
+   note:'Per T.O. 00-35D-54. CAT I Safety DRs often trigger a pause/stop test action.'},
+  {id:'t26',phase:'during',cat:'Deficiency Reporting',
+   name:'CAT II DR Notification',
+   desc:'Category II DRs require notification to appropriate authority within 72 hours of discovery. Documented IAW T.O. 00-35D-54 and ITF guidance.',
+   getDue:()=>null,lbl:'Within 72 hours of discovery',
+   owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 178',
+   note:'CAT II = adversely affects essential capability but workaround exists. DRB charter defines review/submission process.'},
+  {id:'t27',phase:'during',cat:'Communication',
+   name:'Test Execution & Status Reports (TEASRs)',
+   desc:'Periodic status reports distributed to all T&E stakeholders per the data distribution plan. ITF Director must approve all TEASRs before external release.',
+   getDue:()=>null,lbl:'Ongoing (per data distribution plan)',
+   owner:'TD (prepares); ITF Director (approves)',type:'Mandatory',ref:'Pg. 174',
+   note:'Must not violate OPSEC/classification guidance. Use appropriate networks for classified TEASRs.'},
+  {id:'t28',phase:'during',cat:'Communication',
+   name:'Test Pause Memo (if applicable)',
+   desc:'Sent when test execution is paused. Establishes re-entry criteria in coordination with TRAC. TRR not required to restart after pause unless directed by ITF Director, DEL12/CC, or STARCOM/CC.',
+   getDue:()=>null,lbl:'As required (event-driven)',
+   owner:'Test Director (TD)',type:'Conditional',ref:'Pg. 168–172',
+   note:'TD consults TRA (technical risk) and SRB Chair (safety risk) to determine if test package requires re-review before restart.'},
+  {id:'t29',phase:'during',cat:'Communication',
+   name:'Test Stop & Decertification Memo (if applicable)',
+   desc:'Sent when test is stopped and system decertified due to critical safety or security issue. A full TRR is REQUIRED before test can be restarted after a Stop Test.',
+   getDue:()=>null,lbl:'As required (event-driven)',
+   owner:'Test Director (TD)',type:'Conditional',ref:'Pg. 170–172',
+   note:'Stop Test is more severe than Pause. A new TRR with possible SRB is required to re-certify before restart.'},
+  // ── POST ──
+  {id:'t30',phase:'post',cat:'Test Completion Reporting',
+   name:'Test Complete Memo',
+   desc:'Sent when all planned test points are done and active testing has ceased. Informs operational community that personnel may resume normal operations. Must NOT include T&E results, analysis, or conclusions.',
+   getDue:(d)=>d.lte?add(d.lte,1):null,lbl:'NLT 24 hours after test is complete',
+   owner:'Test Director (TD)',type:'Mandatory',ref:'Pg. 172–173',
+   note:'If LTE occurs simultaneously, combine with the LTE Memo.'},
+  {id:'t31',phase:'post',cat:'Test Completion Reporting',
+   name:'End of Test / LTE Memo',
+   desc:'LTE declared when: all objectives assessed, data validated by TDSB, data available to all government orgs, and final JRMET/TDSB event complete. Starts the clock for final report coordination.',
+   getDue:(d)=>d.lte?add(d.lte,1):null,lbl:'NLT 24 hours after LTE',
+   owner:'Test Director (TD)',type:'Mandatory',ref:'Pg. 173',
+   note:'LTE releases test resources back to owners and triggers the final report timeline.'},
+  {id:'t32',phase:'post',cat:'Analysis & Reporting',
+   name:'Final Test Report',
+   desc:'Full report with Executive Summary, Test Description, Test Design & Results, Test Resources Used, and Recommendations. Must follow DEL 12 Style Guide and templates.',
+   getDue:(d)=>d.lte?add(d.lte,90):null,lbl:'Per agreed timeline after LTE (~90 days typical)',
+   owner:'TD (prepares); ITF Director (signs)',type:'Mandatory',ref:'Pg. 195, 214',
+   note:'Draft reports NOT circulated outside STARCOM. Exact timeline per DEL12 guidance.'},
+  {id:'t33',phase:'post',cat:'Analysis & Reporting',
+   name:'Final Results Briefing',
+   desc:'Formal briefing of final report findings to leadership and stakeholders. Coordinate closely with DOT&E action officer for oversight programs. Date communicated in LTE Memo.',
+   getDue:(d)=>d.lte?add(d.lte,100):null,lbl:'Per agreed timeline after LTE (~100 days typical)',
+   owner:'TD / ITF Director',type:'Mandatory',ref:'Pg. 173, 216',
+   note:'"No surprises" policy. Pre-coordinate responses to anticipated questions. Coordinate at GO level well in advance.'},
+  {id:'t34',phase:'post',cat:'Closeout',
+   name:'Test Program Closeout Checklist & MFR',
+   desc:'TES reviews closeout checklist, identifies applicable items, works POC actions, and prepares MFR. Staffed for HQ coordination (S1, S3C, S4/6, S5/8/9, HO). Sent to S3C to close on SharePoint.',
+   getDue:(d)=>d.lte?add(d.lte,120):null,lbl:'Within 30 days of final report approval',
+   owner:'TES / Test Director (TD)',type:'Mandatory',ref:'Pg. 219',
+   note:'Directed in the program MTO. Templates on DEL 12 SharePoint.'},
+  {id:'t35',phase:'post',cat:'Closeout',
+   name:'Funds Closeout Actions',
+   desc:'Cancel due-outs, terminate contracts/task orders, reconcile MIPRs/Project Orders, submit receiving reports, coordinate with STARCOM/FM on redistribution of unused funds.',
+   getDue:(d)=>d.lte?add(d.lte,120):null,lbl:'Within 30 days of closeout decision',
+   owner:'TD / OL Chief / TES/CC; Resource Manager',type:'Mandatory',ref:'Pg. 220',
+   note:'Includes: AF Forms 616, contract termination, supply/equipment accounts, MIPRs.'},
+  {id:'t36',phase:'post',cat:'Closeout',
+   name:'Lessons Learned Capture',
+   desc:'TD coordinates with STARCOM S9 to ensure applicable lessons learned are captured by the DEL 10 Lessons Learned team for the benefit of future test programs.',
+   getDue:(d)=>d.lte?add(d.lte,120):null,lbl:'Within 30 days of final report approval',
+   owner:'TD; STARCOM S9; DEL 10',type:'Mandatory',ref:'Pg. 219',
+   note:'Part of formal test closeout. DEL 10 manages the lessons learned repository.'},
+  // ── ONGOING ──
+  {id:'t37',phase:'ongoing',cat:'Periodic',
+   name:'ITT Charter Review & Update',
+   desc:'ITT leadership reviews and updates the charter to ensure testing remains integrated and membership reflects skills needed for the current acquisition phase.',
+   getDue:()=>null,lbl:'Every 12 months or after each major decision',
+   owner:'Program Office; ITT Leadership',type:'Mandatory',ref:'Pg. 64',
+   note:'Required per DoDI 5000.98.'},
+  {id:'t38',phase:'ongoing',cat:'Periodic',
+   name:'TEMP / T&E Strategy Updates',
+   desc:'Must be updated at each acquisition decision, program decision, or following major program changes (funding, acquisition, capability, milestone decisions).',
+   getDue:()=>null,lbl:'At each Milestone (MDAP); as needed (others)',
+   owner:'SPO; STARCOM ITF; DOT&E (oversight)',type:'Mandatory',ref:'Pg. 65, 120',
+   note:'Mandatory at each Milestone for MDAP programs per DODM 5000.100.'},
+  {id:'t39',phase:'ongoing',cat:'Periodic',
+   name:'Deficiency Report (DR) Management',
+   desc:'Active DRs must be continuously tracked and managed. All pre-existing DRs from prior tests should be reviewed and converted before OT&E starts. Working-level reviews occur before formal DRB meetings.',
+   getDue:()=>null,lbl:'Continuous throughout all test phases',
+   owner:'Test Team; DRB; Action Point (PM-designated)',type:'Mandatory',ref:'Pg. 175–180',
+   note:'IAW T.O. 00-35D-54. All DRs from integrated tests should be reviewed before dedicated OT&E starts.'},
+  {id:'t40',phase:'ongoing',cat:'Periodic',
+   name:'Test Resource Plan (TRP) Updates',
+   desc:'Documents test resource requirements throughout the program lifecycle. Enables early identification of long-lead test resources. Informs POM submissions for STARCOM and the program office.',
+   getDue:()=>null,lbl:'Per phase / program increment',
+   owner:'Test Team; STARCOM FM',type:'Mandatory',ref:'Pg. 62, 67',
+   note:'Submit rationale for current year issues to STARCOM S3C; future year issues to STARCOM FM.'}
+];
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+const SK='starcom_te_v2';
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{}};
+
+function loadS(){
+  try{
+    const raw=localStorage.getItem(SK);
+    if(raw){
+      const p=JSON.parse(raw);
+      S={...S,...p};
+      S.testStart=p.testStart?new Date(p.testStart):null;
+      S.trrDate=p.trrDate?new Date(p.trrDate):null;
+      S.lteDate=p.lteDate?new Date(p.lteDate):null;
+    }
+  }catch(e){}
+}
+function saveS(){
+  try{
+    const ts={...S,
+      testStart:S.testStart?S.testStart.toISOString():null,
+      trrDate:S.trrDate?S.trrDate.toISOString():null,
+      lteDate:S.lteDate?S.lteDate.toISOString():null};
+    localStorage.setItem(SK,JSON.stringify(ts));
+    const n=new Date();
+    document.getElementById('lastSaved').textContent=
+      'Saved '+n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }catch(e){}
+}
+function getT(id){return S.tasks[id]||{status:'none',notes:'',customDate:null};}
+function setT(id,u){S.tasks[id]={...getT(id),...u};saveS();}
+
+// ═══════════════════════════════════════════════════
+//  DATE UTILS
+// ═══════════════════════════════════════════════════
+function add(d,n){if(!d)return null;const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function tod(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function diff(a,b){if(!a||!b)return null;return Math.round((b-a)/86400000);}
+function fmt(d){if(!d)return null;return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function fmtI(d){if(!d)return '';const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dy}`;}
+function parseD(s){if(!s)return null;const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function getDates(){return{start:S.testStart,trr:S.trrDate,lte:S.lteDate};}
+function getEffDue(task){
+  const ts=getT(task.id);
+  if(ts.customDate)return new Date(ts.customDate);
+  const d=getDates();
+  if(!d.start&&task.phase!=='during'&&task.phase!=='ongoing')return null;
+  try{return task.getDue(d);}catch(e){return null;}
+}
+
+// ═══════════════════════════════════════════════════
+//  RISK
+// ═══════════════════════════════════════════════════
+function getRisk(task){
+  const ts=getT(task.id);
+  if(ts.status==='complete')return'none';
+  const due=getEffDue(task);
+  if(!due)return'none';
+  const t=tod();
+  const d=diff(t,due);
+  if(d<0)return'overdue';
+  if(d<=14&&ts.status==='none')return'atrisk';
+  return'none';
+}
+function getRowCls(task){
+  const ts=getT(task.id);
+  const rk=getRisk(task);
+  if(ts.status==='complete')return'row-done';
+  if(rk==='overdue')return'row-overdue';
+  if(ts.status==='risk')return'row-risk';
+  if(rk==='atrisk')return'row-atrisk';
+  if(ts.status==='progress')return'row-prog';
+  return'row-normal';
+}
+
+// ═══════════════════════════════════════════════════
+//  APPLY DATES
+// ═══════════════════════════════════════════════════
+function applyDates(){
+  S.testStart=parseD(document.getElementById('cfgStart').value);
+  S.trrDate=parseD(document.getElementById('cfgTRR').value);
+  S.lteDate=parseD(document.getElementById('cfgLTE').value);
+  S.programName=document.getElementById('cfgName').value.trim();
+  document.getElementById('noBanner').classList.toggle('hidden',!!S.testStart);
+  saveS();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════
+//  FILTER
+// ═══════════════════════════════════════════════════
+let curFilter='all';
+function setFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  updateVis();
+}
+function matches(task){
+  const ts=getT(task.id);const rk=getRisk(task);
+  if(curFilter==='all')return true;
+  if(curFilter==='overdue')return rk==='overdue';
+  if(curFilter==='atrisk')return rk==='atrisk';
+  if(curFilter==='risk')return ts.status==='risk';
+  return ts.status===curFilter;
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════
+const PHASES=[
+  {id:'pre',lbl:'Pre-Test Phase',icon:'🔵',cls:'phase-pre'},
+  {id:'during',lbl:'During Test Phase',icon:'🔴',cls:'phase-during'},
+  {id:'post',lbl:'Post-Test Phase',icon:'🟢',cls:'phase-post'},
+  {id:'ongoing',lbl:'Ongoing / Periodic Requirements',icon:'🟣',cls:'phase-ongoing'},
+];
+const SI={
+  none:{lbl:'Not Yet Started',cls:'sn',icon:'⚪'},
+  progress:{lbl:'In Progress',cls:'sp',icon:'🔵'},
+  complete:{lbl:'Complete',cls:'sd',icon:'✅'},
+  risk:{lbl:'Risk',cls:'sr',icon:'⚠️'},
+};
+const TC={'Mandatory':'tm','Recommended':'tr2','Conditional':'tc','DOT&E Oversight':'to'};
+
+function renderAll(){
+  renderPhases();
+  renderHL();
+  updateDash();
+  updateVis();
+  updateHdrSub();
+}
+function updateHdrSub(){
+  document.getElementById('hdrSub').textContent=
+    (S.programName?S.programName+' · ':'')+
+    'US Space Force Operational Test Agency · T&E Guide v2.0';
+}
+
+function renderPhases(){
+  const mc=document.getElementById('mainContent');
+  // preserve banner
+  const banner=document.getElementById('noBanner');
+  mc.innerHTML='';
+  mc.appendChild(banner);
+
+  PHASES.forEach(ph=>{
+    const pts=TASKS.filter(t=>t.phase===ph.id);
+    const nc=pts.filter(t=>getT(t.id).status==='complete').length;
+    const sec=document.createElement('div');
+    sec.className=`ps ${ph.cls}`;sec.id=`phase-${ph.id}`;
+    sec.innerHTML=`
+      <div class="ph-row" onclick="togglePhase('${ph.id}')">
+        <div class="ph-left">
+          <span class="ph-icon">${ph.icon}</span>
+          <span class="ph-title">${ph.lbl}</span>
+          <span class="ph-count" id="phcnt-${ph.id}">(${nc}/${pts.length} complete)</span>
+        </div>
+        <span class="ph-chev" id="phchev-${ph.id}">▾</span>
+      </div>
+      <div class="ph-body" id="phbody-${ph.id}">
+        <table class="tt">
+          <thead><tr>
+            <th class="col-rk">Risk</th>
+            <th class="col-due">Due Date</th>
+            <th class="col-task">Task / Due Out</th>
+            <th class="col-own">Owner</th>
+            <th class="col-type">Type</th>
+            <th class="col-stat">Status</th>
+            <th class="col-nt">Notes</th>
+            <th class="col-ref">Ref</th>
+          </tr></thead>
+          <tbody id="tbody-${ph.id}"></tbody>
+        </table>
+      </div>`;
+    mc.appendChild(sec);
+    const tbody=sec.querySelector(`#tbody-${ph.id}`);
+    pts.forEach(task=>tbody.appendChild(mkRow(task)));
+  });
+}
+
+function mkRow(task){
+  const ts=getT(task.id);
+  const rk=getRisk(task);
+  const due=getEffDue(task);
+  const si=SI[ts.status]||SI.none;
+
+  const tr=document.createElement('tr');
+  tr.className=`tr ${getRowCls(task)}`;
+  tr.id=`row-${task.id}`;
+  tr.setAttribute('data-id',task.id);
+
+  // risk badge
+  let rkHtml='<span class="rb-none">·</span>';
+  if(rk==='overdue'){
+    const d=due?Math.abs(diff(tod(),due)):0;
+    rkHtml=`<span class="rbadge rb-ov">⚠ ${d}d over</span>`;
+  } else if(rk==='atrisk'){
+    const d=due?diff(tod(),due):0;
+    rkHtml=`<span class="rbadge rb-ar">⚡ ${d}d left</span>`;
+  }
+
+  // due date
+  let dateHtml='';
+  if(due){
+    const dcls=rk==='overdue'?'ov-d':rk==='atrisk'?'ar-d':'';
+    dateHtml=`<div class="dd ${dcls}" onclick="editDate('${task.id}',this)" title="Click to override date">${fmt(due)}</div>
+              <div class="dsub">${task.lbl}</div>`;
+  } else {
+    dateHtml=`<div class="dd no-d">—</div><div class="dsub">${task.lbl}</div>`;
+  }
+
+  // notes
+  const nv=ts.notes||'';
+  const nd=nv||'Add notes...';
+
+  tr.innerHTML=`
+    <td class="col-rk">${rkHtml}</td>
+    <td class="col-due dc">${dateHtml}</td>
+    <td class="col-task tnc">
+      <span class="tname">${task.name}</span>
+      <button class="exbtn" onclick="toggleExp('${task.id}')" title="Show/hide details"><span class="exarrow">▶</span></button>
+      <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>📌 Note:</strong> ${task.note}</span>`:''}</div>
+    </td>
+    <td class="col-own"><span class="own">${task.owner}</span></td>
+    <td class="col-type"><span class="ttag ${TC[task.type]||'tm'}">${task.type}</span></td>
+    <td class="col-stat">
+      <div class="sbadge ${si.cls}" id="sbadge-${task.id}"
+           onclick="openDD('${task.id}',event)"
+           title="Click to change status">
+        ${si.icon} ${si.lbl}
+      </div>
+    </td>
+    <td class="col-nt nc">
+      <div class="nt${nv?'':' emp'}" onclick="editNotes('${task.id}',this)">${nd}</div>
+    </td>
+    <td class="col-ref"><span class="reft">${task.ref}</span></td>`;
+  return tr;
+}
+
+function refreshRow(id){
+  const task=TASKS.find(t=>t.id===id);
+  if(!task)return;
+  const old=document.getElementById(`row-${id}`);
+  if(!old)return;
+  const nr=mkRow(task);
+  old.parentNode.replaceChild(nr,old);
+  updateVis();
+}
+function togglePhase(id){
+  const b=document.getElementById(`phbody-${id}`);
+  const c=document.getElementById(`phchev-${id}`);
+  const hidden=b.style.display==='none';
+  b.style.display=hidden?'':'none';
+  c.classList.toggle('collapsed',!hidden);
+}
+function toggleExp(id){
+  const r=document.getElementById(`row-${id}`);
+  if(r)r.classList.toggle('expanded');
+}
+function updateVis(){
+  TASKS.forEach(t=>{
+    const r=document.getElementById(`row-${t.id}`);
+    if(r)r.classList.toggle('hidden',!matches(t));
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  STATUS DROPDOWN — fixed position, no DOM moving
+// ═══════════════════════════════════════════════════
+let openDDid=null;
+function openDD(id,e){
+  e.stopPropagation();
+  const dd=document.getElementById('statusDropdown');
+
+  // if same badge clicked while open → close
+  if(openDDid===id&&dd.style.display==='block'){
+    dd.style.display='none';openDDid=null;return;
+  }
+
+  openDDid=id;
+  const badge=document.getElementById(`sbadge-${id}`);
+  const rect=badge.getBoundingClientRect();
+
+  dd.style.display='block';
+  // vertical: open below unless too close to bottom
+  const spaceBelow=window.innerHeight-rect.bottom;
+  const ddH=dd.offsetHeight||160;
+  if(spaceBelow<ddH+8){
+    dd.style.top=(rect.top-ddH-4)+'px';
+  } else {
+    dd.style.top=(rect.bottom+4)+'px';
+  }
+  // horizontal: align left, clamp to viewport
+  let left=rect.left;
+  const ddW=dd.offsetWidth||170;
+  if(left+ddW>window.innerWidth-8)left=window.innerWidth-ddW-8;
+  dd.style.left=left+'px';
+}
+function pickStatus(st,e){
+  e.stopPropagation();
+  if(!openDDid)return;
+  setT(openDDid,{status:st});
+  const id=openDDid;
+  document.getElementById('statusDropdown').style.display='none';
+  openDDid=null;
+  refreshRow(id);
+  updateDash();
+  const task=TASKS.find(t=>t.id===id);
+  if(task)updPhCnt(task.phase);
+}
+document.addEventListener('click',()=>{
+  if(openDDid){document.getElementById('statusDropdown').style.display='none';openDDid=null;}
+});
+document.addEventListener('scroll',()=>{
+  if(openDDid){document.getElementById('statusDropdown').style.display='none';openDDid=null;}
+},true);
+
+// ═══════════════════════════════════════════════════
+//  INLINE DATE EDIT
+// ═══════════════════════════════════════════════════
+function editDate(id,el){
+  const task=TASKS.find(t=>t.id===id);if(!task)return;
+  const cur=getEffDue(task);
+  const inp=document.createElement('input');
+  inp.type='date';inp.className='d-edit';inp.value=cur?fmtI(cur):'';
+  el.style.display='none';
+  el.parentNode.insertBefore(inp,el);inp.focus();
+  function commit(){
+    const nd=parseD(inp.value);
+    setT(id,{customDate:nd?nd.toISOString():null});
+    inp.remove();refreshRow(id);updateDash();
+  }
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter')commit();
+    if(e.key==='Escape'){inp.remove();el.style.display='';}
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  INLINE NOTES EDIT
+// ═══════════════════════════════════════════════════
+function editNotes(id,el){
+  const ts=getT(id);
+  const ta=document.createElement('textarea');
+  ta.className='n-edit';ta.value=ts.notes||'';ta.rows=3;ta.placeholder='Add notes...';
+  el.style.display='none';
+  el.parentNode.insertBefore(ta,el);ta.focus();
+  function commit(){
+    setT(id,{notes:ta.value.trim()});
+    ta.remove();el.style.display='';
+    const v=getT(id).notes;
+    el.textContent=v||'Add notes...';
+    el.classList.toggle('emp',!v);
+  }
+  ta.addEventListener('blur',commit);
+  ta.addEventListener('keydown',e=>{if(e.key==='Escape'){ta.remove();el.style.display='';}});
+}
+
+// ═══════════════════════════════════════════════════
+//  PROGRAM HIGHLIGHTS
+// ═══════════════════════════════════════════════════
+let hlOpen=false;
+let hlTimer=null;
+function toggleHL(){
+  hlOpen=!hlOpen;
+  document.getElementById('hlBody').classList.toggle('open',hlOpen);
+  document.getElementById('hlToggle').classList.toggle('open',hlOpen);
+}
+function renderHL(){
+  const v=S.highlights||'';
+  const prev=document.getElementById('hlPreview');
+  prev.textContent=v||'Click to add program highlights for leadership...';
+  prev.classList.toggle('empty',!v);
+  if(S.hlUpdated){
+    document.getElementById('hlMeta').textContent='Last updated: '+S.hlUpdated;
+  }
+}
+function editHL(){
+  const ta=document.getElementById('hlEdit');
+  const prev=document.getElementById('hlPreview');
+  ta.value=S.highlights||'';
+  prev.style.display='none';ta.style.display='block';ta.focus();
+}
+function autoSaveHL(){
+  clearTimeout(hlTimer);
+  hlTimer=setTimeout(commitHL,800);
+}
+function commitHL(){
+  const ta=document.getElementById('hlEdit');
+  if(ta.style.display==='none')return;
+  S.highlights=ta.value.trim();
+  S.hlUpdated=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  saveS();
+  renderHL();
+  ta.style.display='none';
+  document.getElementById('hlPreview').style.display='';
+}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════
+function updateDash(){
+  let c=0,p=0,r=0,n=0,ov=0,ar=0;
+  TASKS.forEach(t=>{
+    const ts=getT(t.id);const rk=getRisk(t);
+    if(ts.status==='complete')c++;
+    else if(ts.status==='progress')p++;
+    else if(ts.status==='risk')r++;
+    else n++;
+    if(rk==='overdue')ov++;
+    if(rk==='atrisk')ar++;
+  });
+  const tot=TASKS.length;const pct=Math.round(c/tot*100);
+  document.getElementById('sC').textContent=c;
+  document.getElementById('sP').textContent=p;
+  document.getElementById('sR').textContent=r;
+  document.getElementById('sN').textContent=n;
+  document.getElementById('sOV').textContent=ov;
+  document.getElementById('sAR').textContent=ar;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progBar').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=(S.programName||'Program')+' Overall Completion';
+}
+function updPhCnt(phId){
+  const pts=TASKS.filter(t=>t.phase===phId);
+  const nc=pts.filter(t=>getT(t.id).status==='complete').length;
+  const el=document.getElementById(`phcnt-${phId}`);
+  if(el)el.textContent=`(${nc}/${pts.length} complete)`;
+}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD SLIDE
+// ═══════════════════════════════════════════════════
+function showSlide(){
+  buildSlide();
+  document.getElementById('slideOverlay').classList.add('show');
+}
+function hideSlide(){
+  document.getElementById('slideOverlay').classList.remove('show');
+}
+function buildSlide(){
+  // header
+  document.getElementById('sl-pname').textContent=S.programName||'Program Name';
+  const now=new Date();
+  document.getElementById('sl-asof').textContent='As of: '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('sl-foot-date').textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  const dlines=[];
+  if(S.testStart)dlines.push('Test Start: '+fmt(S.testStart));
+  if(S.trrDate)dlines.push('TRR: '+fmt(S.trrDate));
+  if(S.lteDate)dlines.push('LTE: '+fmt(S.lteDate));
+  document.getElementById('sl-dates').innerHTML=dlines.join('<br>');
+
+  // stats
+  let c=0,p=0,r=0,n=0,ov=0,ar=0;
+  TASKS.forEach(t=>{
+    const ts=getT(t.id);const rk=getRisk(t);
+    if(ts.status==='complete')c++;
+    else if(ts.status==='progress')p++;
+    else if(ts.status==='risk')r++;
+    else n++;
+    if(rk==='overdue')ov++;
+    if(rk==='atrisk')ar++;
+  });
+  const tot=TASKS.length;const pct=Math.round(c/tot*100);
+  document.getElementById('sl-c').textContent=c;
+  document.getElementById('sl-p').textContent=p;
+  document.getElementById('sl-r').textContent=r;
+  document.getElementById('sl-ns').textContent=n;
+  document.getElementById('sl-ov').textContent=ov;
+  document.getElementById('sl-ar').textContent=ar;
+  document.getElementById('sl-pbar').style.width=pct+'%';
+  document.getElementById('sl-ppct').textContent=pct+'% Complete';
+  document.getElementById('sl-plbl').textContent=(S.programName||'Program')+' Completion';
+
+  // upcoming (next 30 days)
+  const t30=add(tod(),30);
+  const upList=TASKS.filter(t=>{
+    const ts=getT(t.id);if(ts.status==='complete')return false;
+    const due=getEffDue(t);if(!due)return false;
+    const d=diff(tod(),due);
+    return d>=0&&d<=30;
+  }).sort((a,b)=>{
+    const da=getEffDue(a),db=getEffDue(b);
+    return da-db;
+  }).slice(0,7);
+
+  const upEl=document.getElementById('sl-upcoming');
+  if(upList.length===0){
+    upEl.innerHTML='<div class="sl-none">No items due in next 30 days</div>';
+  } else {
+    upEl.innerHTML=upList.map(t=>{
+      const due=getEffDue(t);const d=diff(tod(),due);
+      const dotcls=d<=7?'orange':'blue';
+      return `<div class="sl-item"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
+    }).join('');
+  }
+
+  // risks (risk status + overdue)
+  const rkItems=TASKS.filter(t=>{
+    const ts=getT(t.id);const rk=getRisk(t);
+    return(ts.status==='risk'||rk==='overdue')&&ts.status!=='complete';
+  });
+  const rkEl=document.getElementById('sl-risks');
+  if(rkItems.length===0){
+    rkEl.innerHTML='<div class="sl-none">No risk items identified</div>';
+  } else {
+    rkEl.innerHTML=rkItems.slice(0,8).map(t=>{
+      const ts=getT(t.id);const rk=getRisk(t);
+      const due=getEffDue(t);
+      const isOv=rk==='overdue';
+      const tag=isOv?`<strong>${Math.abs(diff(tod(),due))}d overdue</strong>`:'⚠ Flagged Risk';
+      return `<div class="sl-item"><span class="dot red"></span><span>${t.name} <span style="color:#dc2626;font-size:.58rem">[${tag}]</span></span></div>`;
+    }).join('');
+  }
+
+  // highlights
+  const hlEl=document.getElementById('sl-hl');
+  if(S.highlights){
+    hlEl.textContent=S.highlights;
+  } else {
+    hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.62rem">No highlights added. Click "Program Highlights" above the tracker to add updates for leadership.</span>';
+  }
+}
+function printSlide(){
+  const s=document.getElementById('theSlide');
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>T&E Dashboard</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box;}body{width:1100px;height:619px;overflow:hidden;}</style>
+  </head><body>${s.outerHTML}</body></html>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),500);
+}
+
+// ═══════════════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════════════
+function showResetModal(){document.getElementById('resetOverlay').classList.add('show');}
+function hideModal(){document.getElementById('resetOverlay').classList.remove('show');}
+function resetAll(){S.tasks={};saveS();hideModal();renderAll();}
+
+// ═══════════════════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════════════════
+function exportCSV(){
+  const rows=[['Phase','Category','Task','Owner','Type','Due Date','Status','Risk','Notes','Ref']];
+  TASKS.forEach(t=>{
+    const ts=getT(t.id);const rk=getRisk(t);const due=getEffDue(t);
+    rows.push([t.phase,t.cat,`"${t.name.replace(/"/g,'""')}"`,`"${t.owner.replace(/"/g,'""')}"`,
+      t.type,due?fmt(due):t.lbl,SI[ts.status]?.lbl||ts.status,
+      rk==='overdue'?'OVERDUE':rk==='atrisk'?'AT RISK':'',
+      `"${(ts.notes||'').replace(/"/g,'""')}"`,t.ref]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`STARCOM_TE_${(S.programName||'Tracker').replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  loadS();
+  if(S.testStart)document.getElementById('cfgStart').value=fmtI(S.testStart);
+  if(S.trrDate)document.getElementById('cfgTRR').value=fmtI(S.trrDate);
+  if(S.lteDate)document.getElementById('cfgLTE').value=fmtI(S.lteDate);
+  if(S.programName)document.getElementById('cfgName').value=S.programName;
+  document.getElementById('noBanner').classList.toggle('hidden',!!S.testStart);
+  renderAll();
+  // restore highlights panel state
+  renderHL();
+});
+// close slide on backdrop click
+document.getElementById('slideOverlay').addEventListener('click',function(e){
+  if(e.target===this)hideSlide();
+});
+</script>
+</body>
+</html>
