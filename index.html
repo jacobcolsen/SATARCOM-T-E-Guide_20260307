@@ -259,7 +259,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-dates{color:#93b4d8;font-size:.6rem;margin-top:2px;line-height:1.55;}
 
 /* slide body */
-.sl-body{flex:1;display:flex;flex-direction:column;padding:8px 18px 6px;gap:6px;overflow:hidden;}
+.sl-body{flex:1;display:flex;flex-direction:column;padding:8px 18px 6px;gap:8px;overflow:hidden;}
 
 /* stat row */
 .sl-stats{display:flex;gap:8px;}
@@ -278,21 +278,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:6px;transition:width .5s;}
 .sl-ppct{font-size:.62rem;font-weight:700;color:#15803d;white-space:nowrap;}
 
-/* two columns */
-.sl-cols{flex:1;display:flex;gap:10px;overflow:hidden;}
-.sl-col{flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
-.sl-col-hdr{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
-  display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:2px solid var(--g200);}
+/* bottom columns — fill all remaining height */
+.sl-cols{flex:1;display:flex;gap:8px;min-height:0;}
+.sl-col{flex:1;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--g50);border-radius:8px;border:1px solid var(--g200);padding:8px 10px;}
+.sl-col-hdr{font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  display:flex;align-items:center;gap:5px;padding-bottom:5px;margin-bottom:4px;
+  border-bottom:2px solid var(--g200);flex-shrink:0;}
 .sl-col-hdr.upcoming{color:#1d4ed8;border-color:#bfdbfe;}
 .sl-col-hdr.risks{color:#c2410c;border-color:#fecaca;}
 .sl-col-hdr.hilight{color:#854d0e;border-color:#fde68a;}
-.sl-items{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px;}
-.sl-item{font-size:.62rem;color:var(--g700);display:flex;align-items:flex-start;gap:5px;line-height:1.35;}
-.sl-item .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.sl-items{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:4px;}
+.sl-item{font-size:.66rem;color:var(--g700);display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
+.sl-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
 .sl-item .dot.blue{background:#3b82f6;} .sl-item .dot.red{background:#ef4444;}
 .sl-item .dot.orange{background:#f59e0b;}
-.sl-none{font-size:.6rem;color:var(--g400);font-style:italic;padding:4px 0;}
-.sl-hl-text{font-size:.63rem;color:var(--g700);line-height:1.5;white-space:pre-wrap;
+.sl-none{font-size:.63rem;color:var(--g400);font-style:italic;padding:4px 0;}
+.sl-hl-text{font-size:.7rem;color:var(--g700);line-height:1.65;white-space:pre-wrap;
   overflow:hidden;flex:1;}
 
 /* slide footer */
@@ -310,20 +312,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* ── SLIDE REDESIGN: TOP ROW ── */
 .sl-toprow{display:flex;align-items:center;gap:14px;flex-shrink:0;padding:2px 0;}
 /* Completion ring */
-.sl-ring-wrap{width:80px;height:80px;border-radius:50%;flex-shrink:0;position:relative;
+.sl-ring-wrap{width:88px;height:88px;border-radius:50%;flex-shrink:0;position:relative;
   display:flex;align-items:center;justify-content:center;}
 .sl-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;border-radius:50%;
-  background:#fff;margin:10px;}
-.sl-rpct{font-size:1.05rem;font-weight:800;line-height:1;}
-.sl-rsub{font-size:.38rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  background:#fff;margin:11px;}
+.sl-rpct{font-size:1.15rem;font-weight:800;line-height:1;}
+.sl-rsub{font-size:.39rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
   color:var(--g500);margin-top:2px;}
 /* Stat bubbles */
-.sl-bubbles{display:flex;gap:7px;flex:1;}
+.sl-bubbles{display:flex;gap:8px;flex:1;}
 .sl-bubble{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:50%;border:2.5px solid;width:60px;height:60px;flex-shrink:0;}
-.sl-bubble .sl-sn{font-size:1.1rem;font-weight:800;line-height:1;}
-.sl-bubble .sl-sl{font-size:.36rem;font-weight:700;text-transform:uppercase;
+  border-radius:50%;border:2.5px solid;width:70px;height:70px;flex-shrink:0;}
+.sl-bubble .sl-sn{font-size:1.25rem;font-weight:800;line-height:1;}
+.sl-bubble .sl-sl{font-size:.38rem;font-weight:700;text-transform:uppercase;
   letter-spacing:.3px;text-align:center;line-height:1.3;margin-top:2px;}
 .sl-b-c{background:#dcfce7;border-color:#16a34a;} .sl-b-c .sl-sn{color:#15803d;}
 .sl-b-p{background:#dbeafe;border-color:#2563eb;} .sl-b-p .sl-sn{color:#1d4ed8;}
@@ -339,18 +341,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-prog-block .sl-pout{flex:1;height:8px;background:var(--g200);border-radius:4px;overflow:hidden;}
 .sl-prog-block .sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
   border-radius:4px;transition:width .5s;}
-/* Pipeline section in slide */
+/* Pipeline: 2-row phase layout */
 .sl-pipeline-section{flex-shrink:0;}
 .sl-pipe-hdr{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
-  color:var(--g400);margin-bottom:5px;}
-.sl-pipeline{display:flex;align-items:center;gap:0;}
-.sl-pipe-node{border:2px solid;border-radius:8px;padding:5px 4px;text-align:center;
-  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  color:var(--g400);margin-bottom:4px;}
+.sl-pipeline{display:flex;flex-direction:column;gap:4px;}
+.sl-pipe-row{display:flex;align-items:stretch;gap:0;}
+.sl-pipe-phase-lbl{font-size:.37rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+  color:#fff;background:var(--navy-light);writing-mode:vertical-lr;transform:rotate(180deg);
+  min-width:14px;text-align:center;flex-shrink:0;padding:2px 1px;border-radius:3px;margin-right:4px;}
+.sl-pipe-nodes{display:flex;align-items:center;flex:1;gap:0;}
+.sl-pipe-node{border:2px solid;border-radius:7px;padding:5px 3px;text-align:center;
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
 .sl-pipe-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.sl-pipe-name{font-size:.51rem;font-weight:700;color:var(--g800);line-height:1.2;}
-.sl-pipe-date{font-size:.45rem;font-weight:600;line-height:1.2;}
-.sl-pipe-status{font-size:.43rem;font-weight:700;text-transform:uppercase;letter-spacing:.2px;}
-.sl-pipe-arrow{font-size:.75rem;color:var(--g300);padding:0 2px;flex-shrink:0;}
+.sl-pipe-name{font-size:.54rem;font-weight:700;color:var(--g800);line-height:1.2;}
+.sl-pipe-date{font-size:.46rem;font-weight:600;line-height:1.2;}
+.sl-pipe-status{font-size:.44rem;font-weight:700;text-transform:uppercase;letter-spacing:.2px;}
+.sl-pipe-arrow{font-size:.7rem;color:var(--g300);padding:0 1px;flex-shrink:0;}
 
 /* ── CHILD TASK ROWS (Test Plan sub-items) ── */
 .tr-child td{background:rgba(30,58,138,.028);border-bottom-color:var(--g100);}
@@ -1412,20 +1419,30 @@ function buildSlide(){
   const rpct=document.getElementById('sl-rpct');
   rpct.textContent=pct+'%';rpct.style.color=ringTextColor;
 
-  // ── Milestone pipeline ──
+  // ── Milestone pipeline (2 phase rows of 5) ──
   const pipe=document.getElementById('sl-pipeline');
-  pipe.innerHTML=FC_MILESTONES.map((m,i)=>{
-    const clr=FC_COLORS[getFlowColor(m.taskId)];
-    const task=TASKS.find(t=>t.id===m.taskId);
-    const due=task?getEffDue(task):null;
-    const dueTxt=due?fmt(due):'';
-    const arrow=i<FC_MILESTONES.length-1?'<div class="sl-pipe-arrow">&#8594;</div>':'';
-    return`<div class="sl-pipe-node" style="background:${clr.bg};border-color:${clr.border}">
-      <div class="sl-pipe-dot" style="background:${clr.dot}"></div>
-      <div class="sl-pipe-name">${m.label}</div>
-      <div class="sl-pipe-date" style="color:${clr.text}">${dueTxt}</div>
-      <div class="sl-pipe-status" style="color:${clr.text}">${clr.lbl}</div>
-    </div>${arrow}`;
+  const pipeRows=[
+    {label:'PRE-TEST',  items:FC_MILESTONES.slice(0,5)},
+    {label:'EXEC/POST', items:FC_MILESTONES.slice(5,10)},
+  ];
+  pipe.innerHTML=pipeRows.map(row=>{
+    const nodes=row.items.map((m,i)=>{
+      const clr=FC_COLORS[getFlowColor(m.taskId)];
+      const task=TASKS.find(t=>t.id===m.taskId);
+      const due=task?getEffDue(task):null;
+      const dueTxt=due?fmt(due):'';
+      const arrow=i<row.items.length-1?'<div class="sl-pipe-arrow">&#8594;</div>':'';
+      return`<div class="sl-pipe-node" style="background:${clr.bg};border-color:${clr.border}">
+        <div class="sl-pipe-dot" style="background:${clr.dot}"></div>
+        <div class="sl-pipe-name">${m.label}</div>
+        <div class="sl-pipe-date" style="color:${clr.text}">${dueTxt}</div>
+        <div class="sl-pipe-status" style="color:${clr.text}">${clr.lbl}</div>
+      </div>${arrow}`;
+    }).join('');
+    return`<div class="sl-pipe-row">
+      <div class="sl-pipe-phase-lbl">${row.label}</div>
+      <div class="sl-pipe-nodes">${nodes}</div>
+    </div>`;
   }).join('');
 
   // ── Upcoming (next 30 days) ──
@@ -1434,7 +1451,7 @@ function buildSlide(){
     const ts=getT(t.id);if(ts.status==='complete')return false;
     const due=getEffDue(t);if(!due)return false;
     const d=diff(tod(),due);return d>=0&&d<=30;
-  }).sort((a,b)=>getEffDue(a)-getEffDue(b)).slice(0,6);
+  }).sort((a,b)=>getEffDue(a)-getEffDue(b)).slice(0,10);
   const upEl=document.getElementById('sl-upcoming');
   upEl.innerHTML=upList.length===0
     ?'<div class="sl-none">No items due in next 30 days</div>'
@@ -1453,7 +1470,7 @@ function buildSlide(){
   const rkEl=document.getElementById('sl-risks');
   rkEl.innerHTML=rkItems.length===0
     ?'<div class="sl-none">No risk items identified</div>'
-    :rkItems.slice(0,7).map(t=>{
+    :rkItems.slice(0,12).map(t=>{
       const rk=getRisk(t);const due=getEffDue(t);
       const isOv=rk==='overdue';
       const tag=isOv?`<strong>${Math.abs(diff(tod(),due))}d overdue</strong>`:'&#9888; Flagged Risk';
