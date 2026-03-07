@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STARCOM T&E — Executive View</title>
+<style>
+:root {
+  --navy:#0a1628; --navy-mid:#14274e; --navy-light:#1e3a6e;
+  --gold:#f0a500; --gold-light:#fbbf24;
+  --g50:#f8fafc; --g100:#f1f5f9; --g200:#e2e8f0; --g300:#cbd5e1;
+  --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--g800);font-size:14px;}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;
+  padding:14px 24px;display:flex;align-items:center;gap:14px;
+  border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.hdr-icon{font-size:1.9rem;}
+.hdr-text h1{font-size:1.1rem;font-weight:700;letter-spacing:.4px;}
+.hdr-text p{font-size:.68rem;color:#93b4d8;margin-top:1px;}
+.hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.hbtn{padding:5px 13px;border-radius:6px;font-size:.74rem;font-weight:600;cursor:pointer;
+  border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;
+  transition:all .2s;text-decoration:none;display:inline-block;}
+.hbtn:hover{background:rgba(255,255,255,.22);}
+.hbtn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.hbtn.gold:hover{background:var(--gold-light);}
+
+/* ── META BAR ── */
+.meta-bar{background:#fff;border-bottom:1px solid var(--g200);
+  padding:8px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.meta-lbl{font-size:.7rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--g600);}
+.legend-sw{width:22px;height:14px;border-radius:3px;border:1.5px solid;flex-shrink:0;}
+.asof{margin-left:auto;font-size:.68rem;color:var(--g400);}
+
+/* ── MATRIX PAGE ── */
+.page{padding:20px 24px 40px;}
+
+.matrix-wrap{overflow-x:auto;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
+.matrix{border-collapse:collapse;width:100%;min-width:1000px;}
+
+/* Phase header */
+.ph-cell{padding:7px 12px;font-size:.68rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.5px;color:#fff;text-align:center;border:1px solid rgba(255,255,255,.18);}
+.ph-prog{background:var(--navy-mid);}
+.ph-pre{background:#1e3a6e;}
+.ph-exec{background:#7f1d1d;}
+.ph-post{background:#14532d;}
+
+/* Milestone header */
+.mh-cell{padding:8px 10px;font-size:.64rem;font-weight:700;background:var(--navy);
+  color:rgba(255,255,255,.85);text-align:center;border:1px solid rgba(255,255,255,.1);
+  white-space:nowrap;vertical-align:middle;}
+.mh-prog{background:var(--navy-mid);text-align:left;padding-left:16px;
+  font-size:.66rem;min-width:190px;}
+
+/* Program cell */
+td.prog-cell{padding:10px 14px;background:#fff;border:1px solid var(--g200);
+  border-right:3px solid var(--g300);vertical-align:top;min-width:190px;}
+.prog-name{font-size:.88rem;font-weight:800;color:var(--navy);line-height:1.2;}
+.prog-meta{font-size:.62rem;color:var(--g400);margin-top:5px;line-height:1.7;}
+.prog-meta span{display:block;}
+
+/* Status cell */
+td.sc{padding:0;border:2px solid;text-align:center;vertical-align:middle;
+  min-width:90px;transition:filter .12s,box-shadow .12s;cursor:default;}
+td.sc:hover{filter:brightness(.91);}
+td.sc.sc-link{cursor:pointer;}
+td.sc.sc-link:hover{filter:brightness(.88);box-shadow:inset 0 0 0 2px rgba(0,0,0,.18);}
+.sc-inner{padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sc-lbl{font-size:.67rem;font-weight:800;letter-spacing:.2px;line-height:1;}
+.sc-date{font-size:.58rem;font-weight:600;opacity:.85;line-height:1;}
+
+/* Summary row */
+tr.sum-row td{border:1px solid rgba(255,255,255,.12);padding:6px 8px;
+  background:var(--g800);text-align:center;vertical-align:middle;}
+td.sum-prog-cell{background:var(--navy);padding:8px 14px;text-align:left;
+  font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px;}
+.sum-pills{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:8px;
+  font-size:.62rem;font-weight:800;}
+
+/* No programs */
+.no-progs{text-align:center;padding:80px 24px;background:#fff;border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.no-progs h2{font-size:1.3rem;color:var(--g600);margin-bottom:10px;}
+.no-progs p{font-size:.88rem;color:var(--g500);line-height:1.7;}
+.no-progs a{color:var(--navy-light);font-weight:600;}
+
+/* Print */
+@media print{
+  .hdr .hbtn{display:none;}
+  body{background:#fff;}
+  .page{padding:10px;}
+  .hdr{position:static;box-shadow:none;}
+  .matrix-wrap{box-shadow:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-icon">&#128752;</div>
+  <div class="hdr-text">
+    <h1>STARCOM T&amp;E — Executive Program View</h1>
+    <p>Cross-program milestone health at a glance · US Space Force Operational Test Agency</p>
+  </div>
+  <div class="hdr-right">
+    <button class="hbtn" onclick="buildMatrix()">&#8635; Refresh</button>
+    <button class="hbtn" onclick="window.print()">&#128424; Print</button>
+    <a class="hbtn gold" href="index.html">&#8592; Back to Tracker</a>
+  </div>
+</div>
+
+<div class="meta-bar">
+  <span class="meta-lbl">Status:</span>
+  <div class="legend-item"><div class="legend-sw" style="background:#dcfce7;border-color:#16a34a"></div>Complete</div>
+  <div class="legend-item"><div class="legend-sw" style="background:#dbeafe;border-color:#2563eb"></div>In Progress</div>
+  <div class="legend-item"><div class="legend-sw" style="background:#fef9c3;border-color:#d97706"></div>At Risk</div>
+  <div class="legend-item"><div class="legend-sw" style="background:#fee2e2;border-color:#dc2626"></div>Overdue</div>
+  <div class="legend-item"><div class="legend-sw" style="background:#f1f5f9;border-color:#94a3b8"></div>Not Started</div>
+  <span class="asof" id="asof"></span>
+</div>
+
+<div class="page">
+  <div class="matrix-wrap" id="matrixWrap">
+    <div class="no-progs" id="noProgs">
+      <h2>No Programs Found</h2>
+      <p>Open the <a href="index.html">T&amp;E Program Tracker</a>, enter your program data,<br>
+      and click <strong>&#128190; Save Program</strong> in the program bar.<br><br>
+      Then return here to see your cross-program executive view.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROG_LIST_KEY = 'starcom_te_programs_v1';
+
+const MILESTONES = [
+  { key:'t03', label:'ITT Charter',        phase:'pre',  getDue: d => d.start ? addD(d.start,-365) : null },
+  { key:'t06', label:'Test Campaign Plan', phase:'pre',  getDue: d => d.start ? addD(d.start,-270) : null },
+  { key:'t10', label:'Test Plan',          phase:'pre',  getDue: d => d.start ? addD(d.start,-90)  : null },
+  { key:'t12', label:'TRB',               phase:'pre',  getDue: d => d.start ? addD(d.start,-60)  : null },
+  { key:'t13', label:'SRB',               phase:'pre',  getDue: d => d.start ? addD(d.start,-45)  : null },
+  { key:'t17', label:'TRR',               phase:'pre',  getDue: d => d.trr || (d.start ? addD(d.start,-14) : null) },
+  { key:'t24', label:'Test Start',        phase:'exec', getDue: d => d.start },
+  { key:'t31', label:'LTE',               phase:'post', getDue: d => d.lte ? addD(d.lte,1)   : null },
+  { key:'t32', label:'Final Report',      phase:'post', getDue: d => d.lte ? addD(d.lte,90)  : null },
+  { key:'t34', label:'Closeout',          phase:'post', getDue: d => d.lte ? addD(d.lte,120) : null },
+];
+
+const CS = {
+  green:  { bg:'#dcfce7', border:'#16a34a', text:'#15803d', lbl:'Complete' },
+  blue:   { bg:'#dbeafe', border:'#2563eb', text:'#1d4ed8', lbl:'In Progress' },
+  yellow: { bg:'#fef9c3', border:'#d97706', text:'#92400e', lbl:'At Risk' },
+  red:    { bg:'#fee2e2', border:'#dc2626', text:'#dc2626', lbl:'Overdue' },
+  gray:   { bg:'#f1f5f9', border:'#cbd5e1', text:'#64748b', lbl:'Not Started' },
+};
+
+function addD(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function fmtD(d){
+  if(!d) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
+}
+function getProgramList(){ try{return JSON.parse(localStorage.getItem(PROG_LIST_KEY))||[];}catch(e){return[];} }
+function getProgramData(id){ try{return JSON.parse(localStorage.getItem('starcom_te_prog_'+id));}catch(e){return null;} }
+
+function getColor(mKey, ts, dates){
+  if(ts.status==='complete') return 'green';
+  let due = ts.customDate ? new Date(ts.customDate) : null;
+  if(!due){
+    const m=MILESTONES.find(x=>x.key===mKey);
+    if(m){ try{due=m.getDue(dates);}catch(e){} }
+  }
+  if(ts.status==='risk') return 'yellow';
+  if(due){
+    const today=new Date(); today.setHours(0,0,0,0);
+    const diff=Math.round((due-today)/86400000);
+    if(diff<0) return 'red';
+    if(diff<=14 && ts.status==='none') return 'yellow';
+  }
+  if(ts.status==='progress') return 'blue';
+  return 'gray';
+}
+
+function buildMatrix(){
+  document.getElementById('asof').textContent =
+    'As of: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  const list = getProgramList();
+  const wrap = document.getElementById('matrixWrap');
+  const noEl = document.getElementById('noProgs');
+
+  if(!list.length){ noEl.style.display=''; return; }
+  noEl.style.display='none';
+
+  // ── Header rows ──
+  const phRow = `<tr>
+    <th class="ph-cell ph-prog mh-prog" rowspan="2">Program</th>
+    <th class="ph-cell ph-pre" colspan="6">Pre-Test Phase</th>
+    <th class="ph-cell ph-exec" colspan="1">Execution</th>
+    <th class="ph-cell ph-post" colspan="3">Post-Test Phase</th>
+  </tr>
+  <tr>${MILESTONES.map(m=>`<th class="mh-cell">${m.label}</th>`).join('')}</tr>`;
+
+  // ── Program rows ──
+  const progRows = list.map(prog => {
+    const data = getProgramData(prog.id) || {};
+    const dates = {
+      start: data.testStart ? new Date(data.testStart) : null,
+      trr:   data.trrDate   ? new Date(data.trrDate)   : null,
+      lte:   data.lteDate   ? new Date(data.lteDate)   : null,
+    };
+    const tasks = data.tasks || {};
+
+    const cells = MILESTONES.map(m => {
+      const ts = tasks[m.key] || {status:'none'};
+      const color = getColor(m.key, ts, dates);
+      const c = CS[color];
+      let due = ts.customDate ? new Date(ts.customDate) : null;
+      if(!due){ try{ due = m.getDue(dates); }catch(e){} }
+      return `<td class="sc sc-link" style="background:${c.bg};border-color:${c.border}" onclick="navToTracker('${prog.id}','${m.key}')" title="Open ${m.label} in ${prog.name}">
+        <div class="sc-inner">
+          <span class="sc-lbl" style="color:${c.text}">${c.lbl}</span>
+          <span class="sc-date" style="color:${c.text}">${fmtD(due)}</span>
+        </div>
+      </td>`;
+    }).join('');
+
+    const metaLines = [
+      dates.start ? `<span>&#128197; Test Start: ${fmtD(dates.start)}</span>` : '',
+      dates.trr   ? `<span>&#128203; TRR: ${fmtD(dates.trr)}</span>` : '',
+      dates.lte   ? `<span>&#9873; LTE: ${fmtD(dates.lte)}</span>` : '',
+    ].filter(Boolean).join('');
+
+    return `<tr>
+      <td class="prog-cell">
+        <div class="prog-name">${prog.name}</div>
+        <div class="prog-meta">${metaLines || '<span style="color:var(--g300);font-style:italic">No dates set</span>'}</div>
+      </td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  // ── Summary row ──
+  const sumCells = MILESTONES.map(m => {
+    const counts = {green:0,blue:0,yellow:0,red:0,gray:0};
+    list.forEach(prog => {
+      const data = getProgramData(prog.id) || {};
+      const dates = {
+        start: data.testStart ? new Date(data.testStart) : null,
+        trr:   data.trrDate   ? new Date(data.trrDate)   : null,
+        lte:   data.lteDate   ? new Date(data.lteDate)   : null,
+      };
+      const ts = (data.tasks||{})[m.key]||{status:'none'};
+      counts[getColor(m.key,ts,dates)]++;
+    });
+
+    // Dominant color for background
+    const dom = counts.red ? 'red' : counts.yellow ? 'yellow' :
+                (counts.green===list.length) ? 'green' : counts.blue ? 'blue' : 'gray';
+    const dc = CS[dom];
+
+    const pills = [
+      counts.red    ? `<span class="pill" style="background:#fee2e2;color:#dc2626">${counts.red} OVR</span>` : '',
+      counts.yellow ? `<span class="pill" style="background:#fef9c3;color:#92400e">${counts.yellow} RISK</span>` : '',
+      counts.blue   ? `<span class="pill" style="background:#dbeafe;color:#1d4ed8">${counts.blue} WIP</span>` : '',
+      counts.green  ? `<span class="pill" style="background:#dcfce7;color:#15803d">${counts.green} DONE</span>` : '',
+    ].filter(Boolean).join('');
+
+    return `<td style="background:${dc.bg};border:2px solid ${dc.border};padding:6px;text-align:center;vertical-align:middle">
+      <div class="sum-pills">${pills}</div>
+    </td>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="matrix">
+    <thead>${phRow}</thead>
+    <tbody>
+      ${progRows}
+      <tr class="sum-row">
+        <td class="sum-prog-cell">Overall Health</td>
+        ${sumCells}
+      </tr>
+    </tbody>
+  </table>`;
+}
+
+function navToTracker(progId, taskId){
+  localStorage.setItem('starcom_te_exec_nav', JSON.stringify({progId, taskId}));
+  window.location.href = 'index.html';
+}
+
+window.addEventListener('DOMContentLoaded', buildMatrix);
+</script>
+</body>
+</html>

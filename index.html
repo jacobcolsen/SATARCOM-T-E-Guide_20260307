@@ -236,16 +236,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* ─────────────────────────────────────────────
    DASHBOARD SLIDE OVERLAY
 ───────────────────────────────────────────── */
-#slideOverlay{position:fixed;inset:0;background:rgba(5,15,40,.92);z-index:600;
-  display:none;align-items:center;justify-content:center;padding:20px;}
+#slideOverlay{position:fixed;inset:0;background:#060e1f;z-index:600;
+  display:none;align-items:center;justify-content:center;padding:0;}
 #slideOverlay.show{display:flex;}
-.slide-close{position:absolute;top:14px;right:20px;color:rgba(255,255,255,.7);
+.slide-close{position:fixed;top:12px;right:16px;color:rgba(255,255,255,.6);
   font-size:1.5rem;cursor:pointer;line-height:1;background:none;border:none;z-index:601;}
 .slide-close:hover{color:#fff;}
-.slide-wrap{position:relative;width:100%;max-width:1100px;}
-.slide{background:#fff;border-radius:12px;overflow:hidden;
-  box-shadow:0 30px 80px rgba(0,0,0,.5);
-  aspect-ratio:16/9;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;}
+.slide-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.slide{background:#fff;border-radius:0;overflow:hidden;box-shadow:none;
+  width:min(100vw, calc(100vh * 4/3));
+  height:min(100vh, calc(100vw * 3/4));
+  display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;}
 
 /* slide header */
 .sl-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));
@@ -258,7 +259,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-dates{color:#93b4d8;font-size:.6rem;margin-top:2px;line-height:1.55;}
 
 /* slide body */
-.sl-body{flex:1;display:flex;flex-direction:column;padding:10px 18px 10px;gap:9px;overflow:hidden;}
+.sl-body{flex:1;display:flex;flex-direction:column;padding:8px 18px 6px;gap:6px;overflow:hidden;}
 
 /* stat row */
 .sl-stats{display:flex;gap:8px;}
@@ -305,6 +306,65 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 
 @media print{.hdr .hbtn,.filters,.cfg .btn-apply{display:none;}body{background:#fff;}
   .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
+
+/* ── SLIDE REDESIGN: TOP ROW ── */
+.sl-toprow{display:flex;align-items:center;gap:14px;flex-shrink:0;padding:2px 0;}
+/* Completion ring */
+.sl-ring-wrap{width:80px;height:80px;border-radius:50%;flex-shrink:0;position:relative;
+  display:flex;align-items:center;justify-content:center;}
+.sl-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;border-radius:50%;
+  background:#fff;margin:10px;}
+.sl-rpct{font-size:1.05rem;font-weight:800;line-height:1;}
+.sl-rsub{font-size:.38rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--g500);margin-top:2px;}
+/* Stat bubbles */
+.sl-bubbles{display:flex;gap:7px;flex:1;}
+.sl-bubble{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:50%;border:2.5px solid;width:60px;height:60px;flex-shrink:0;}
+.sl-bubble .sl-sn{font-size:1.1rem;font-weight:800;line-height:1;}
+.sl-bubble .sl-sl{font-size:.36rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.3px;text-align:center;line-height:1.3;margin-top:2px;}
+.sl-b-c{background:#dcfce7;border-color:#16a34a;} .sl-b-c .sl-sn{color:#15803d;}
+.sl-b-p{background:#dbeafe;border-color:#2563eb;} .sl-b-p .sl-sn{color:#1d4ed8;}
+.sl-b-r{background:#fff7ed;border-color:#d97706;} .sl-b-r .sl-sn{color:#c2410c;}
+.sl-b-ns{background:#f1f5f9;border-color:#94a3b8;} .sl-b-ns .sl-sn{color:var(--g500);}
+.sl-b-ov{background:#fee2e2;border-color:#dc2626;} .sl-b-ov .sl-sn{color:#dc2626;}
+.sl-b-ar{background:#fef9c3;border-color:#d97706;} .sl-b-ar .sl-sn{color:#d97706;}
+/* Prog block */
+.sl-prog-block{flex-shrink:0;min-width:130px;}
+.sl-prog-block .sl-plbl{font-size:.56rem;font-weight:700;color:var(--g500);margin-bottom:2px;}
+.sl-prog-block .sl-ppct{font-size:1.1rem;font-weight:800;color:#15803d;line-height:1.1;}
+.sl-prog-block .sl-prow{margin-top:6px;display:flex;align-items:center;}
+.sl-prog-block .sl-pout{flex:1;height:8px;background:var(--g200);border-radius:4px;overflow:hidden;}
+.sl-prog-block .sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
+  border-radius:4px;transition:width .5s;}
+/* Pipeline section in slide */
+.sl-pipeline-section{flex-shrink:0;}
+.sl-pipe-hdr{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--g400);margin-bottom:5px;}
+.sl-pipeline{display:flex;align-items:center;gap:0;}
+.sl-pipe-node{border:2px solid;border-radius:8px;padding:5px 4px;text-align:center;
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sl-pipe-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sl-pipe-name{font-size:.51rem;font-weight:700;color:var(--g800);line-height:1.2;}
+.sl-pipe-date{font-size:.45rem;font-weight:600;line-height:1.2;}
+.sl-pipe-status{font-size:.43rem;font-weight:700;text-transform:uppercase;letter-spacing:.2px;}
+.sl-pipe-arrow{font-size:.75rem;color:var(--g300);padding:0 2px;flex-shrink:0;}
+
+/* ── CHILD TASK ROWS (Test Plan sub-items) ── */
+.tr-child td{background:rgba(30,58,138,.028);border-bottom-color:var(--g100);}
+.tr-child.row-done td{background:rgba(21,128,61,.04);}
+.tr-child.row-overdue td{background:rgba(220,38,38,.04);}
+.tr-child.row-risk td{background:rgba(194,65,12,.04);}
+.tr-child.row-atrisk td{background:rgba(217,119,6,.04);}
+.tr-child.row-prog td{background:rgba(29,78,216,.04);}
+.tr-child .tname{font-size:.77rem;}
+.child-indent{color:var(--g300);margin-right:5px;font-size:.9rem;user-select:none;}
+.child-toggle{margin-left:6px;padding:2px 7px;border-radius:4px;
+  background:var(--navy-light);color:#fff;border:none;cursor:pointer;
+  font-size:.6rem;font-weight:700;vertical-align:middle;transition:background .15s;}
+.child-toggle:hover{background:var(--navy);}
 
 /* ── PROGRAM BAR ── */
 .prog-bar{background:var(--navy-mid);padding:8px 24px;display:flex;align-items:center;
@@ -368,6 +428,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   <div class="hdr-right">
     <span class="hdr-saved" id="lastSaved"></span>
     <button class="hbtn teal" onclick="showSlide()">📊 Dashboard Slide</button>
+    <a class="hbtn teal" href="executive_view.html" target="_blank">&#128202; Executive View</a>
     <button class="hbtn" onclick="showResetModal()">🗑 Reset</button>
     <button class="hbtn" onclick="window.print()">🖨 Print</button>
     <button class="hbtn gold" onclick="exportCSV()">⬇ CSV</button>
@@ -386,7 +447,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <button class="hbtn" onclick="createNewProgram()">➕ New Program</button>
     <button class="hbtn gold" onclick="saveCurrentAsProgram()">💾 Save Program</button>
     <button class="hbtn" onclick="openProgramList()">📋 Programs</button>
-    <button class="hbtn teal" onclick="openExecView()">📊 Executive View</button>
   </div>
 </div>
 
@@ -512,38 +572,52 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
       <!-- slide body -->
       <div class="sl-body">
 
-        <!-- stat row -->
-        <div class="sl-stats">
-          <div class="sl-stat sl-sc"><div class="sl-sn" id="sl-c">0</div><div class="sl-sl">✅ Complete</div></div>
-          <div class="sl-stat sl-sp"><div class="sl-sn" id="sl-p">0</div><div class="sl-sl">🔵 In Progress</div></div>
-          <div class="sl-stat sl-sr"><div class="sl-sn" id="sl-r">0</div><div class="sl-sl">⚠ Risk</div></div>
-          <div class="sl-stat sl-sns"><div class="sl-sn" id="sl-ns">0</div><div class="sl-sl">⚪ Not Started</div></div>
-          <div class="sl-stat sl-sov"><div class="sl-sn" id="sl-ov">0</div><div class="sl-sl">🔴 Overdue</div></div>
-          <div class="sl-stat sl-sar"><div class="sl-sn" id="sl-ar">0</div><div class="sl-sl">⚡ Due Soon</div></div>
+        <!-- ROW 1: Completion ring + stat bubbles + progress -->
+        <div class="sl-toprow">
+          <!-- completion ring (conic-gradient donut) -->
+          <div class="sl-ring-wrap" id="sl-ring-wrap" style="background:conic-gradient(#22c55e 0%,#e2e8f0 0%)">
+            <div class="sl-ring-inner">
+              <div class="sl-rpct" id="sl-rpct" style="color:#15803d">0%</div>
+              <div class="sl-rsub">Complete</div>
+            </div>
+          </div>
+          <!-- stat bubbles -->
+          <div class="sl-bubbles">
+            <div class="sl-bubble sl-b-c"><div class="sl-sn" id="sl-c">0</div><div class="sl-sl">&#10003; Complete</div></div>
+            <div class="sl-bubble sl-b-p"><div class="sl-sn" id="sl-p">0</div><div class="sl-sl">In Progress</div></div>
+            <div class="sl-bubble sl-b-r"><div class="sl-sn" id="sl-r">0</div><div class="sl-sl">At Risk</div></div>
+            <div class="sl-bubble sl-b-ns"><div class="sl-sn" id="sl-ns">0</div><div class="sl-sl">Not Started</div></div>
+            <div class="sl-bubble sl-b-ov"><div class="sl-sn" id="sl-ov">0</div><div class="sl-sl">Overdue</div></div>
+            <div class="sl-bubble sl-b-ar"><div class="sl-sn" id="sl-ar">0</div><div class="sl-sl">Due Soon</div></div>
+          </div>
+          <!-- prog info + bar -->
+          <div class="sl-prog-block">
+            <div class="sl-plbl" id="sl-plbl">Program Completion</div>
+            <div class="sl-ppct" id="sl-ppct">0%</div>
+            <div class="sl-prow">
+              <div class="sl-pout"><div class="sl-pin" id="sl-pbar" style="width:0%"></div></div>
+            </div>
+          </div>
         </div>
 
-        <!-- progress -->
-        <div class="sl-prow">
-          <span class="sl-plbl" id="sl-plbl">Completion</span>
-          <div class="sl-pout"><div class="sl-pin" id="sl-pbar" style="width:0%"></div></div>
-          <span class="sl-ppct" id="sl-ppct">0%</span>
+        <!-- ROW 2: Milestone pipeline -->
+        <div class="sl-pipeline-section">
+          <div class="sl-pipe-hdr">&#128204; Milestone Pipeline</div>
+          <div class="sl-pipeline" id="sl-pipeline"></div>
         </div>
 
-        <!-- two columns -->
+        <!-- ROW 3: Upcoming + Risks + Highlights -->
         <div class="sl-cols">
-          <!-- upcoming -->
           <div class="sl-col">
-            <div class="sl-col-hdr upcoming">⚡ Upcoming (Next 30 Days)</div>
+            <div class="sl-col-hdr upcoming">&#9889; Upcoming (Next 30 Days)</div>
             <div class="sl-items" id="sl-upcoming"></div>
           </div>
-          <!-- risks / overdue -->
           <div class="sl-col">
-            <div class="sl-col-hdr risks">🔴 Risks &amp; Issues</div>
+            <div class="sl-col-hdr risks">&#128308; Risks &amp; Issues</div>
             <div class="sl-items" id="sl-risks"></div>
           </div>
-          <!-- highlights -->
           <div class="sl-col" style="flex:1.2">
-            <div class="sl-col-hdr hilight">📢 Program Highlights</div>
+            <div class="sl-col-hdr hilight">&#128226; Program Highlights</div>
             <div class="sl-hl-text" id="sl-hl"></div>
           </div>
         </div>
@@ -581,18 +655,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <div class="modal-btns">
       <button class="mbtn" onclick="closeProgramList()">Close</button>
       <button class="mbtn primary" onclick="createNewProgram()">➕ New Program</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── EXECUTIVE VIEW OVERLAY ── -->
-<div class="overlay" id="execOverlay" onclick="if(event.target===this)closeExecView()" style="align-items:flex-start;padding-top:48px;overflow-y:auto;">
-  <div class="modal" style="max-width:880px;width:95%;max-height:82vh;overflow-y:auto">
-    <h3>📊 Executive View — Cross-Program Milestone Status</h3>
-    <p class="exec-intro">High-level due-outs from all saved programs, sorted by nearest due date. Only major milestones shown.</p>
-    <div id="execTableContainer"></div>
-    <div class="modal-btns" style="margin-top:14px">
-      <button class="mbtn" onclick="closeExecView()">Close</button>
     </div>
   </div>
 </div>
@@ -851,7 +913,7 @@ const TASKS=[
 //  STATE
 // ═══════════════════════════════════════════════════
 const SK='starcom_te_v2';
-let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{}};
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{}};
 
 function loadS(){
   try{
@@ -994,7 +1056,7 @@ function renderPhases(){
   mc.appendChild(banner);
 
   PHASES.forEach(ph=>{
-    const pts=TASKS.filter(t=>t.phase===ph.id);
+    const pts=TASKS.filter(t=>t.phase===ph.id&&!t.isChild);
     const nc=pts.filter(t=>getT(t.id).status==='complete').length;
     const sec=document.createElement('div');
     sec.className=`ps ${ph.cls}`;sec.id=`phase-${ph.id}`;
@@ -1024,7 +1086,18 @@ function renderPhases(){
       </div>`;
     mc.appendChild(sec);
     const tbody=sec.querySelector(`#tbody-${ph.id}`);
-    pts.forEach(task=>tbody.appendChild(mkRow(task)));
+    pts.forEach(task=>{
+      tbody.appendChild(mkRow(task));
+      // inject child rows after parent
+      if(!task.isChild){
+        const children=TASKS.filter(t=>t.isChild&&t.parent===task.id);
+        children.forEach(child=>{
+          const cr=mkRow(child);
+          if(!childStates[task.id])cr.style.display='none';
+          tbody.appendChild(cr);
+        });
+      }
+    });
   });
 }
 
@@ -1035,9 +1108,12 @@ function mkRow(task){
   const si=SI[ts.status]||SI.none;
 
   const tr=document.createElement('tr');
-  tr.className=`tr ${getRowCls(task)}`;
+  const isChild=!!task.isChild;
+  const hasChildren=TASKS.some(t=>t.isChild&&t.parent===task.id);
+  tr.className=`tr ${getRowCls(task)}${isChild?' tr-child':''}`;
   tr.id=`row-${task.id}`;
   tr.setAttribute('data-id',task.id);
+  if(isChild){tr.setAttribute('data-parent',task.parent);}
 
   // risk badge
   let rkHtml='<span class="rb-none">·</span>';
@@ -1067,9 +1143,11 @@ function mkRow(task){
     <td class="col-rk">${rkHtml}</td>
     <td class="col-due dc">${dateHtml}</td>
     <td class="col-task tnc">
+      ${isChild?'<span class="child-indent">&#8627;</span>':''}
       <span class="tname">${task.name}</span>
+      ${hasChildren?`<button class="child-toggle" id="ctoggle-${task.id}" onclick="toggleChildRows('${task.id}')">${childStates[task.id]?'&#9662; Hide':'&#9656; Expand'}</button>`:''}
       <button class="exbtn" onclick="toggleExp('${task.id}')" title="Show/hide details"><span class="exarrow">▶</span></button>
-      <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>📌 Note:</strong> ${task.note}</span>`:''}</div>
+      <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>&#128204; Note:</strong> ${task.note}</span>`:''}</div>
     </td>
     <td class="col-own"><span class="own">${task.owner}</span></td>
     <td class="col-type"><span class="ttag ${TC[task.type]||'tm'}">${task.type}</span></td>
@@ -1093,6 +1171,8 @@ function refreshRow(id){
   const old=document.getElementById(`row-${id}`);
   if(!old)return;
   const nr=mkRow(task);
+  // preserve display state for child rows
+  if(task.isChild&&old.style.display==='none')nr.style.display='none';
   old.parentNode.replaceChild(nr,old);
   updateVis();
 }
@@ -1253,7 +1333,7 @@ function commitHL(){
 // ═══════════════════════════════════════════════════
 function updateDash(){
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
-  TASKS.forEach(t=>{
+  TASKS.filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
     if(ts.status==='complete')c++;
     else if(ts.status==='progress')p++;
@@ -1262,7 +1342,7 @@ function updateDash(){
     if(rk==='overdue')ov++;
     if(rk==='atrisk')ar++;
   });
-  const tot=TASKS.length;const pct=Math.round(c/tot*100);
+  const tot=TASKS.filter(t=>!t.isChild).length;const pct=Math.round(c/tot*100);
   document.getElementById('sC').textContent=c;
   document.getElementById('sP').textContent=p;
   document.getElementById('sR').textContent=r;
@@ -1274,7 +1354,7 @@ function updateDash(){
   document.getElementById('progLbl').textContent=(S.programName||'Program')+' Overall Completion';
 }
 function updPhCnt(phId){
-  const pts=TASKS.filter(t=>t.phase===phId);
+  const pts=TASKS.filter(t=>t.phase===phId&&!t.isChild);
   const nc=pts.filter(t=>getT(t.id).status==='complete').length;
   const el=document.getElementById(`phcnt-${phId}`);
   if(el)el.textContent=`(${nc}/${pts.length} complete)`;
@@ -1291,21 +1371,20 @@ function hideSlide(){
   document.getElementById('slideOverlay').classList.remove('show');
 }
 function buildSlide(){
-  // header
+  // ── Header ──
   document.getElementById('sl-pname').textContent=S.programName||'Program Name';
   const now=new Date();
   document.getElementById('sl-asof').textContent='As of: '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('sl-foot-date').textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
   const dlines=[];
   if(S.testStart)dlines.push('Test Start: '+fmt(S.testStart));
   if(S.trrDate)dlines.push('TRR: '+fmt(S.trrDate));
   if(S.lteDate)dlines.push('LTE: '+fmt(S.lteDate));
   document.getElementById('sl-dates').innerHTML=dlines.join('<br>');
 
-  // stats
+  // ── Stats ──
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
-  TASKS.forEach(t=>{
+  TASKS.filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
     if(ts.status==='complete')c++;
     else if(ts.status==='progress')p++;
@@ -1314,7 +1393,7 @@ function buildSlide(){
     if(rk==='overdue')ov++;
     if(rk==='atrisk')ar++;
   });
-  const tot=TASKS.length;const pct=Math.round(c/tot*100);
+  const tot=TASKS.filter(t=>!t.isChild).length;const pct=Math.round(c/tot*100);
   document.getElementById('sl-c').textContent=c;
   document.getElementById('sl-p').textContent=p;
   document.getElementById('sl-r').textContent=r;
@@ -1322,65 +1401,81 @@ function buildSlide(){
   document.getElementById('sl-ov').textContent=ov;
   document.getElementById('sl-ar').textContent=ar;
   document.getElementById('sl-pbar').style.width=pct+'%';
-  document.getElementById('sl-ppct').textContent=pct+'% Complete';
-  document.getElementById('sl-plbl').textContent=(S.programName||'Program')+' Completion';
+  document.getElementById('sl-ppct').textContent=pct+'%';
+  document.getElementById('sl-plbl').textContent=(S.programName||'Program')+' Overall Completion';
 
-  // upcoming (next 30 days)
-  const t30=add(tod(),30);
+  // ── Completion ring (conic-gradient donut) ──
+  const ring=document.getElementById('sl-ring-wrap');
+  const ringColor=pct===100?'#22c55e':ov>0?'#ef4444':ar>0?'#f59e0b':'#22c55e';
+  const ringTextColor=pct===100?'#15803d':ov>0?'#dc2626':ar>0?'#d97706':'#15803d';
+  ring.style.background=`conic-gradient(${ringColor} ${pct}%, #e2e8f0 ${pct}%)`;
+  const rpct=document.getElementById('sl-rpct');
+  rpct.textContent=pct+'%';rpct.style.color=ringTextColor;
+
+  // ── Milestone pipeline ──
+  const pipe=document.getElementById('sl-pipeline');
+  pipe.innerHTML=FC_MILESTONES.map((m,i)=>{
+    const clr=FC_COLORS[getFlowColor(m.taskId)];
+    const task=TASKS.find(t=>t.id===m.taskId);
+    const due=task?getEffDue(task):null;
+    const dueTxt=due?fmt(due):'';
+    const arrow=i<FC_MILESTONES.length-1?'<div class="sl-pipe-arrow">&#8594;</div>':'';
+    return`<div class="sl-pipe-node" style="background:${clr.bg};border-color:${clr.border}">
+      <div class="sl-pipe-dot" style="background:${clr.dot}"></div>
+      <div class="sl-pipe-name">${m.label}</div>
+      <div class="sl-pipe-date" style="color:${clr.text}">${dueTxt}</div>
+      <div class="sl-pipe-status" style="color:${clr.text}">${clr.lbl}</div>
+    </div>${arrow}`;
+  }).join('');
+
+  // ── Upcoming (next 30 days) ──
   const upList=TASKS.filter(t=>{
+    if(t.isChild)return false;
     const ts=getT(t.id);if(ts.status==='complete')return false;
     const due=getEffDue(t);if(!due)return false;
-    const d=diff(tod(),due);
-    return d>=0&&d<=30;
-  }).sort((a,b)=>{
-    const da=getEffDue(a),db=getEffDue(b);
-    return da-db;
-  }).slice(0,7);
-
+    const d=diff(tod(),due);return d>=0&&d<=30;
+  }).sort((a,b)=>getEffDue(a)-getEffDue(b)).slice(0,6);
   const upEl=document.getElementById('sl-upcoming');
-  if(upList.length===0){
-    upEl.innerHTML='<div class="sl-none">No items due in next 30 days</div>';
-  } else {
-    upEl.innerHTML=upList.map(t=>{
+  upEl.innerHTML=upList.length===0
+    ?'<div class="sl-none">No items due in next 30 days</div>'
+    :upList.map(t=>{
       const due=getEffDue(t);const d=diff(tod(),due);
       const dotcls=d<=7?'orange':'blue';
-      return `<div class="sl-item"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
+      return`<div class="sl-item"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
     }).join('');
-  }
 
-  // risks (risk status + overdue)
+  // ── Risks & Overdue ──
   const rkItems=TASKS.filter(t=>{
+    if(t.isChild)return false;
     const ts=getT(t.id);const rk=getRisk(t);
     return(ts.status==='risk'||rk==='overdue')&&ts.status!=='complete';
   });
   const rkEl=document.getElementById('sl-risks');
-  if(rkItems.length===0){
-    rkEl.innerHTML='<div class="sl-none">No risk items identified</div>';
-  } else {
-    rkEl.innerHTML=rkItems.slice(0,8).map(t=>{
-      const ts=getT(t.id);const rk=getRisk(t);
-      const due=getEffDue(t);
+  rkEl.innerHTML=rkItems.length===0
+    ?'<div class="sl-none">No risk items identified</div>'
+    :rkItems.slice(0,7).map(t=>{
+      const rk=getRisk(t);const due=getEffDue(t);
       const isOv=rk==='overdue';
-      const tag=isOv?`<strong>${Math.abs(diff(tod(),due))}d overdue</strong>`:'⚠ Flagged Risk';
-      return `<div class="sl-item"><span class="dot red"></span><span>${t.name} <span style="color:#dc2626;font-size:.58rem">[${tag}]</span></span></div>`;
+      const tag=isOv?`<strong>${Math.abs(diff(tod(),due))}d overdue</strong>`:'&#9888; Flagged Risk';
+      return`<div class="sl-item"><span class="dot red"></span><span>${t.name} <span style="color:#dc2626;font-size:.58rem">[${tag}]</span></span></div>`;
     }).join('');
-  }
 
-  // highlights
+  // ── Highlights ──
   const hlEl=document.getElementById('sl-hl');
-  if(S.highlights){
-    hlEl.textContent=S.highlights;
-  } else {
-    hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.62rem">No highlights added. Click "Program Highlights" above the tracker to add updates for leadership.</span>';
-  }
+  hlEl.textContent=S.highlights||'';
+  if(!S.highlights)hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.58rem">No highlights added. Use the Program Highlights panel above the tracker.</span>';
 }
 function printSlide(){
   const s=document.getElementById('theSlide');
+  const css=document.querySelector('style').textContent;
   const w=window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><title>T&E Dashboard</title>
-  <style>*{margin:0;padding:0;box-sizing:border-box;}body{width:1100px;height:619px;overflow:hidden;}</style>
-  </head><body>${s.outerHTML}</body></html>`);
-  w.document.close();w.focus();setTimeout(()=>w.print(),500);
+  w.document.write(`<!DOCTYPE html><html><head><title>T&E Dashboard Slide</title>
+  <style>${css}
+  html,body{width:960px;height:720px;overflow:hidden;background:#fff;margin:0;padding:0;}
+  .slide{width:960px!important;height:720px!important;border-radius:0!important;box-shadow:none!important;}
+  @page{size:10in 7.5in landscape;margin:0;}
+  </style></head><body>${s.outerHTML}</body></html>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),600);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1395,7 +1490,7 @@ function resetAll(){S.tasks={};saveS();hideModal();renderAll();}
 // ═══════════════════════════════════════════════════
 function exportCSV(){
   const rows=[['Phase','Category','Task','Owner','Type','Due Date','Status','Risk','Notes','Ref']];
-  TASKS.forEach(t=>{
+  TASKS.filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);const due=getEffDue(t);
     rows.push([t.phase,t.cat,`"${t.name.replace(/"/g,'""')}"`,`"${t.owner.replace(/"/g,'""')}"`,
       t.type,due?fmt(due):t.lbl,SI[ts.status]?.lbl||ts.status,
@@ -1421,8 +1516,31 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('noBanner').classList.toggle('hidden',!!S.testStart);
   renderAll();
   renderProgramBar();
-  // restore highlights panel state
   renderHL();
+
+  // handle navigation from executive view (must run after normal init)
+  const navRaw=localStorage.getItem('starcom_te_exec_nav');
+  if(navRaw){
+    localStorage.removeItem('starcom_te_exec_nav');
+    try{
+      const nav=JSON.parse(navRaw);
+      if(nav.progId)loadProgram(nav.progId);
+      if(nav.taskId){
+        setTimeout(()=>{
+          const el=document.getElementById(`row-${nav.taskId}`);
+          if(el){
+            const phbody=el.closest('.ph-body');
+            if(phbody&&phbody.style.display==='none')phbody.style.display='';
+            const par=el.getAttribute('data-parent');
+            if(par&&!childStates[par])toggleChildRows(par);
+            el.scrollIntoView({behavior:'smooth',block:'center'});
+            el.style.outline='3px solid var(--gold)';
+            setTimeout(()=>el.style.outline='',2500);
+          }
+        },300);
+      }
+    }catch(e){}
+  }
 });
 // close slide on backdrop click
 document.getElementById('slideOverlay').addEventListener('click',function(e){
@@ -1452,7 +1570,8 @@ function captureCurrentState(){
     testStart:S.testStart?S.testStart.toISOString():null,
     trrDate:S.trrDate?S.trrDate.toISOString():null,
     lteDate:S.lteDate?S.lteDate.toISOString():null,
-    highlights:S.highlights,hlUpdated:S.hlUpdated,tasks:S.tasks
+    highlights:S.highlights,hlUpdated:S.hlUpdated,
+    tasks:S.tasks,murderBoard:S.murderBoard
   };
 }
 function saveCurrentAsProgram(){
@@ -1490,6 +1609,7 @@ function loadProgram(id){
   S.highlights=data.highlights||'';
   S.hlUpdated=data.hlUpdated||'';
   S.tasks=data.tasks||{};
+  S.murderBoard=data.murderBoard||{};
   document.getElementById('cfgName').value=S.programName;
   document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
   document.getElementById('cfgTRR').value=S.trrDate?fmtI(S.trrDate):'';
@@ -1504,7 +1624,7 @@ function createNewProgram(){
     const cur=list.find(p=>p.name===curName);
     if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
   }
-  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{}};
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{}};
   document.getElementById('cfgName').value='';
   document.getElementById('cfgStart').value='';
   document.getElementById('cfgTRR').value='';
@@ -1555,6 +1675,103 @@ function renderProgramListModal(){
       </div>
     </div>`).join('');
 }
+
+// ═══════════════════════════════════════════════════
+//  TEST PLAN CHILD TASKS (sub-items of t10)
+// ═══════════════════════════════════════════════════
+const childStates={};
+function toggleChildRows(parentId){
+  const expanded=childStates[parentId];
+  childStates[parentId]=!expanded;
+  document.querySelectorAll(`[data-parent="${parentId}"]`).forEach(r=>{
+    r.style.display=expanded?'none':'';
+  });
+  const btn=document.getElementById(`ctoggle-${parentId}`);
+  if(btn)btn.innerHTML=childStates[parentId]?'&#9662; Hide':'&#9656; Expand';
+}
+
+[
+  {id:'tp01',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Mission Analysis & COIs',
+   desc:'Critical Operational Issues defined and linked to combat objectives and mission threads.',
+   getDue:(d)=>add(d.start,-90),lbl:'~90 days before Test Start',
+   owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 76',note:''},
+  {id:'tp02',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'MOEs Defined',
+   desc:'Measures of Effectiveness mapped to each COI. Pass/fail criteria established.',
+   getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
+   owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 80',note:''},
+  {id:'tp03',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'MOPs Defined',
+   desc:'Measures of Performance supporting each MOE. Data sources and thresholds identified.',
+   getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
+   owner:'Test Team',type:'Mandatory',ref:'Pg. 82',note:''},
+  {id:'tp04',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Test Design (DOE)',
+   desc:'Design of Experiments or DOTMLPF framework established. Test conditions and variables defined.',
+   getDue:(d)=>add(d.start,-80),lbl:'~80 days before Test Start',
+   owner:'Test Team',type:'Mandatory',ref:'Pg. 85',note:''},
+  {id:'tp05',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Test Event Schedule',
+   desc:'Detailed schedule of test events, sorties, runs, and conditions with timeline.',
+   getDue:(d)=>add(d.start,-75),lbl:'~75 days before Test Start',
+   owner:'Test Team / S3C',type:'Mandatory',ref:'Pg. 88',note:''},
+  {id:'tp06',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Test Scenarios',
+   desc:'Operational scenarios developed for each test event. Threat environment represented.',
+   getDue:(d)=>add(d.start,-75),lbl:'~75 days before Test Start',
+   owner:'Test Team',type:'Mandatory',ref:'Pg. 90',note:''},
+  {id:'tp07',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Threat Representation Plan',
+   desc:'Threat environment confirmed. Red forces, emitters, and threat replication documented.',
+   getDue:(d)=>add(d.start,-70),lbl:'~70 days before Test Start',
+   owner:'Test Team / S2',type:'Mandatory',ref:'Pg. 93',note:''},
+  {id:'tp08',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Resource Plan',
+   desc:'Personnel, equipment, and logistics requirements documented and sourced.',
+   getDue:(d)=>add(d.start,-70),lbl:'~70 days before Test Start',
+   owner:'TD / S4',type:'Mandatory',ref:'Pg. 95',note:''},
+  {id:'tp09',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Facilities & Ranges',
+   desc:'Test ranges, facilities, and airspace reserved. Conflicts deconflicted.',
+   getDue:(d)=>add(d.start,-65),lbl:'~65 days before Test Start',
+   owner:'TD / S3C',type:'Mandatory',ref:'Pg. 97',note:''},
+  {id:'tp10',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'M&S Accreditation Plan',
+   desc:'Modeling & Simulation requirements, VV&A timeline, and S3C TA approval tracked.',
+   getDue:(d)=>add(d.start,-60),lbl:'~60 days before Test Start',
+   owner:'Test Team / S3C TA',type:'Conditional',ref:'Pg. 100',note:'Required only if M&S is used.'},
+  {id:'tp11',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Data Collection Plan',
+   desc:'Data sources, collection methods, forms, and tools identified and dry-run planned.',
+   getDue:(d)=>add(d.start,-60),lbl:'~60 days before Test Start',
+   owner:'Test Team',type:'Mandatory',ref:'Pg. 103',note:''},
+  {id:'tp12',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Data Mgmt & Analysis Plan',
+   desc:'Analysis methods, tools, statistical approaches, and data management procedures documented.',
+   getDue:(d)=>add(d.start,-55),lbl:'~55 days before Test Start',
+   owner:'Test Team',type:'Mandatory',ref:'Pg. 106',note:''},
+  {id:'tp13',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'Test Safety Plan',
+   desc:'Hazards identified, mitigations documented. BSR, THAs, and SRB inputs complete.',
+   getDue:(d)=>add(d.start,-50),lbl:'~50 days before Test Start',
+   owner:'TD / Safety Officer',type:'Mandatory',ref:'Pg. 110',note:''},
+  {id:'tp14',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'ATO / IATT Status',
+   desc:'Cybersecurity authorization tracked with Program Office. RMF artifacts on track.',
+   getDue:(d)=>add(d.start,-45),lbl:'~45 days before Test Start',
+   owner:'TD / Program Office',type:'Mandatory',ref:'Pg. 115',note:''},
+  {id:'tp15',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'OPSEC Plan',
+   desc:'Classification guidance confirmed. OPSEC considerations documented and coordinated.',
+   getDue:(d)=>add(d.start,-40),lbl:'~40 days before Test Start',
+   owner:'TD / S2',type:'Mandatory',ref:'Pg. 118',note:''},
+  {id:'tp16',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'TRB Package Assembly',
+   desc:'All TRB documentation assembled: Test Plan, Safety Plan, risk summary, and attachments.',
+   getDue:(d)=>add(d.start,-30),lbl:'~30 days before Test Start',
+   owner:'TD',type:'Mandatory',ref:'Pg. 120',note:'Final checklist before TRB submission.'},
+].forEach(t=>TASKS.push(t));
 
 // ═══════════════════════════════════════════════════
 //  DASHBOARD FLOWCHART
