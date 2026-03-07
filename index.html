@@ -305,6 +305,55 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 
 @media print{.hdr .hbtn,.filters,.cfg .btn-apply{display:none;}body{background:#fff;}
   .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
+
+/* ── PROGRAM BAR ── */
+.prog-bar{background:var(--navy-mid);padding:8px 24px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.12);}
+.prog-bar-left{display:flex;align-items:center;gap:8px;}
+.prog-bar-lbl{font-size:.68rem;font-weight:700;color:#93b4d8;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.prog-bar-select{padding:4px 10px;border-radius:6px;font-size:.78rem;
+  background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);
+  cursor:pointer;min-width:200px;max-width:280px;}
+.prog-bar-select option{background:var(--navy-mid);color:#fff;}
+.prog-bar-right{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* ── FLOWCHART ── */
+.flowchart-wrap{background:#fff;border-bottom:2px solid var(--g200);padding:12px 24px 14px;}
+.fc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.fc-header-title{font-size:.82rem;font-weight:700;color:var(--navy);}
+.fc-header-sub{font-size:.67rem;color:var(--g400);}
+.fc-legend{display:flex;gap:14px;margin-left:auto;flex-wrap:wrap;}
+.fc-leg-item{display:flex;align-items:center;gap:5px;font-size:.65rem;color:var(--g500);}
+.fc-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.fc-scroll{overflow-x:auto;padding-bottom:4px;}
+.fc-track{display:flex;align-items:center;gap:0;min-width:max-content;padding:6px 0 2px;}
+.fc-node{border:2px solid;border-radius:10px;padding:8px 10px;min-width:108px;max-width:128px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  transition:transform .15s,box-shadow .15s;cursor:default;}
+.fc-node:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.fc-dot{width:10px;height:10px;border-radius:50%;margin-bottom:5px;}
+.fc-label{font-size:.71rem;font-weight:700;color:var(--g800);line-height:1.3;margin-bottom:3px;}
+.fc-due{font-size:.62rem;margin-bottom:2px;font-weight:600;line-height:1.25;}
+.fc-status{font-size:.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.fc-arrow{font-size:1rem;color:var(--g300);padding:0 3px;flex-shrink:0;align-self:center;line-height:1;}
+
+/* ── PROGRAM LIST MODAL ── */
+.prog-list-item{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border:1px solid var(--g200);border-radius:8px;margin-bottom:8px;background:var(--g50);}
+.prog-list-name{font-size:.85rem;font-weight:700;color:var(--g800);}
+.prog-list-meta{font-size:.67rem;color:var(--g400);margin-top:2px;}
+
+/* ── EXECUTIVE VIEW ── */
+.exec-intro{font-size:.8rem;color:var(--g500);margin-bottom:14px;line-height:1.5;}
+.exec-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:4px;}
+.exec-table th{padding:8px 13px;text-align:left;font-size:.67rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;color:var(--g500);
+  background:var(--g100);border-bottom:2px solid var(--g200);white-space:nowrap;}
+.exec-table td{padding:9px 13px;border-bottom:1px solid var(--g100);vertical-align:middle;}
+.exec-table tr:last-child td{border-bottom:none;}
+.exec-table tr:hover td{background:var(--g50);}
+.exec-status-badge{display:inline-block;padding:3px 10px;border-radius:12px;
+  font-size:.72rem;font-weight:700;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -322,6 +371,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <button class="hbtn" onclick="showResetModal()">🗑 Reset</button>
     <button class="hbtn" onclick="window.print()">🖨 Print</button>
     <button class="hbtn gold" onclick="exportCSV()">⬇ CSV</button>
+  </div>
+</div>
+
+<!-- ── PROGRAM BAR ── -->
+<div class="prog-bar">
+  <div class="prog-bar-left">
+    <span class="prog-bar-lbl">Program:</span>
+    <select id="progSelect" class="prog-bar-select" onchange="onProgSelectChange()">
+      <option value="">— Select Saved Program —</option>
+    </select>
+  </div>
+  <div class="prog-bar-right">
+    <button class="hbtn" onclick="createNewProgram()">➕ New Program</button>
+    <button class="hbtn gold" onclick="saveCurrentAsProgram()">💾 Save Program</button>
+    <button class="hbtn" onclick="openProgramList()">📋 Programs</button>
+    <button class="hbtn teal" onclick="openExecView()">📊 Executive View</button>
   </div>
 </div>
 
@@ -377,6 +442,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   <div class="prog-wrap">
     <div class="prog-lbl"><span id="progLbl">Overall Completion</span><span id="progPct">0%</span></div>
     <div class="prog-out"><div class="prog-in" id="progBar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ── FLOWCHART ── -->
+<div class="flowchart-wrap">
+  <div class="fc-header">
+    <span class="fc-header-title">📌 Program Milestone Pipeline</span>
+    <span class="fc-header-sub">Major due-outs · color coded by status</span>
+    <div class="fc-legend">
+      <div class="fc-leg-item"><div class="fc-leg-dot" style="background:#22c55e"></div>Complete</div>
+      <div class="fc-leg-item"><div class="fc-leg-dot" style="background:#f59e0b"></div>At Risk</div>
+      <div class="fc-leg-item"><div class="fc-leg-dot" style="background:#ef4444"></div>Overdue</div>
+      <div class="fc-leg-item"><div class="fc-leg-dot" style="background:#3b82f6"></div>In Progress</div>
+      <div class="fc-leg-item"><div class="fc-leg-dot" style="background:#94a3b8"></div>Not Started</div>
+    </div>
+  </div>
+  <div class="fc-scroll">
+    <div class="fc-track" id="flowchartContainer"></div>
   </div>
 </div>
 
@@ -486,6 +569,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <div class="modal-btns">
       <button class="mbtn" onclick="hideModal()">Cancel</button>
       <button class="mbtn danger" onclick="resetAll()">Reset Task Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROGRAM LIST MODAL ── -->
+<div class="overlay" id="progListOverlay" onclick="if(event.target===this)closeProgramList()">
+  <div class="modal" style="max-width:560px;width:95%">
+    <h3>📋 Saved Programs</h3>
+    <div id="progListContainer" style="max-height:360px;overflow-y:auto;margin:12px 0"></div>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="closeProgramList()">Close</button>
+      <button class="mbtn primary" onclick="createNewProgram()">➕ New Program</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXECUTIVE VIEW OVERLAY ── -->
+<div class="overlay" id="execOverlay" onclick="if(event.target===this)closeExecView()" style="align-items:flex-start;padding-top:48px;overflow-y:auto;">
+  <div class="modal" style="max-width:880px;width:95%;max-height:82vh;overflow-y:auto">
+    <h3>📊 Executive View — Cross-Program Milestone Status</h3>
+    <p class="exec-intro">High-level due-outs from all saved programs, sorted by nearest due date. Only major milestones shown.</p>
+    <div id="execTableContainer"></div>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="mbtn" onclick="closeExecView()">Close</button>
     </div>
   </div>
 </div>
@@ -871,6 +978,7 @@ function renderAll(){
   updateDash();
   updateVis();
   updateHdrSub();
+  renderFlowchart();
 }
 function updateHdrSub(){
   document.getElementById('hdrSub').textContent=
@@ -1047,6 +1155,7 @@ function pickStatus(st,e){
   openDDid=null;
   refreshRow(id);
   updateDash();
+  renderFlowchart();
   const task=TASKS.find(t=>t.id===id);
   if(task)updPhCnt(task.phase);
 }
@@ -1311,6 +1420,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(S.programName)document.getElementById('cfgName').value=S.programName;
   document.getElementById('noBanner').classList.toggle('hidden',!!S.testStart);
   renderAll();
+  renderProgramBar();
   // restore highlights panel state
   renderHL();
 });
@@ -1318,6 +1428,238 @@ window.addEventListener('DOMContentLoaded',()=>{
 document.getElementById('slideOverlay').addEventListener('click',function(e){
   if(e.target===this)hideSlide();
 });
+
+// ═══════════════════════════════════════════════════
+//  MULTI-PROGRAM MANAGEMENT
+// ═══════════════════════════════════════════════════
+const PROG_LIST_KEY='starcom_te_programs_v1';
+
+function getProgramList(){
+  try{return JSON.parse(localStorage.getItem(PROG_LIST_KEY))||[];}catch(e){return[];}
+}
+function saveProgramList(list){
+  localStorage.setItem(PROG_LIST_KEY,JSON.stringify(list));
+}
+function getProgramData(id){
+  try{return JSON.parse(localStorage.getItem('starcom_te_prog_'+id));}catch(e){return null;}
+}
+function saveProgramData(id,data){
+  localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(data));
+}
+function captureCurrentState(){
+  return{
+    programName:S.programName,
+    testStart:S.testStart?S.testStart.toISOString():null,
+    trrDate:S.trrDate?S.trrDate.toISOString():null,
+    lteDate:S.lteDate?S.lteDate.toISOString():null,
+    highlights:S.highlights,hlUpdated:S.hlUpdated,tasks:S.tasks
+  };
+}
+function saveCurrentAsProgram(){
+  const name=(S.programName||'').trim();
+  if(!name){alert('Enter a Program Name in the configuration bar first.');return;}
+  const list=getProgramList();
+  let prog=list.find(p=>p.name===name);
+  let id;
+  if(prog){
+    id=prog.id;prog.updatedAt=new Date().toISOString();
+  }else{
+    id='p'+Date.now();
+    list.push({id,name,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+  }
+  saveProgramList(list);
+  saveProgramData(id,captureCurrentState());
+  saveS();
+  renderProgramBar();
+  const lsEl=document.getElementById('lastSaved');
+  if(lsEl){lsEl.textContent='Program saved ✓';setTimeout(()=>saveS(),2000);}
+}
+function loadProgram(id){
+  const curName=(S.programName||'').trim();
+  if(curName){
+    const list=getProgramList();
+    const cur=list.find(p=>p.name===curName);
+    if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
+  }
+  const data=getProgramData(id);
+  if(!data){alert('Program data not found.');return;}
+  S.programName=data.programName||'';
+  S.testStart=data.testStart?new Date(data.testStart):null;
+  S.trrDate=data.trrDate?new Date(data.trrDate):null;
+  S.lteDate=data.lteDate?new Date(data.lteDate):null;
+  S.highlights=data.highlights||'';
+  S.hlUpdated=data.hlUpdated||'';
+  S.tasks=data.tasks||{};
+  document.getElementById('cfgName').value=S.programName;
+  document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
+  document.getElementById('cfgTRR').value=S.trrDate?fmtI(S.trrDate):'';
+  document.getElementById('cfgLTE').value=S.lteDate?fmtI(S.lteDate):'';
+  document.getElementById('noBanner').classList.toggle('hidden',!!S.testStart);
+  saveS();renderAll();renderProgramBar();closeProgramList();
+}
+function createNewProgram(){
+  const curName=(S.programName||'').trim();
+  if(curName){
+    const list=getProgramList();
+    const cur=list.find(p=>p.name===curName);
+    if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
+  }
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{}};
+  document.getElementById('cfgName').value='';
+  document.getElementById('cfgStart').value='';
+  document.getElementById('cfgTRR').value='';
+  document.getElementById('cfgLTE').value='';
+  document.getElementById('noBanner').classList.remove('hidden');
+  renderAll();renderProgramBar();closeProgramList();
+  document.getElementById('cfgName').focus();
+}
+function deleteProgram(id,name){
+  if(!confirm('Delete program "'+name+'"? This cannot be undone.'))return;
+  const list=getProgramList().filter(p=>p.id!==id);
+  saveProgramList(list);localStorage.removeItem('starcom_te_prog_'+id);
+  renderProgramListModal();renderProgramBar();
+}
+function renderProgramBar(){
+  const sel=document.getElementById('progSelect');if(!sel)return;
+  const list=getProgramList();const curName=(S.programName||'').trim();
+  sel.innerHTML='<option value="">— Select Saved Program —</option>';
+  list.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id;opt.textContent=p.name;
+    if(p.name===curName)opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+function onProgSelectChange(){
+  const id=document.getElementById('progSelect').value;
+  if(id)loadProgram(id);
+}
+function openProgramList(){renderProgramListModal();document.getElementById('progListOverlay').classList.add('show');}
+function closeProgramList(){document.getElementById('progListOverlay').classList.remove('show');}
+function renderProgramListModal(){
+  const list=getProgramList();
+  const container=document.getElementById('progListContainer');
+  if(!list.length){
+    container.innerHTML='<p style="color:var(--g400);font-size:.83rem;text-align:center;padding:24px 0">No saved programs yet.<br>Enter a Program Name and click <strong>&#128190; Save Program</strong>.</p>';
+    return;
+  }
+  container.innerHTML=list.map(p=>`
+    <div class="prog-list-item">
+      <div>
+        <div class="prog-list-name">${p.name}</div>
+        <div class="prog-list-meta">Updated: ${p.updatedAt?new Date(p.updatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="mbtn primary" onclick="loadProgram('${p.id}')">Open</button>
+        <button class="mbtn danger" onclick="deleteProgram('${p.id}',${JSON.stringify(p.name)})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD FLOWCHART
+// ═══════════════════════════════════════════════════
+const FC_MILESTONES=[
+  {taskId:'t03',label:'ITT Charter'},
+  {taskId:'t06',label:'Test Campaign Plan'},
+  {taskId:'t10',label:'Test Plan'},
+  {taskId:'t12',label:'TRB'},
+  {taskId:'t13',label:'SRB'},
+  {taskId:'t17',label:'TRR'},
+  {taskId:'t24',label:'Test Start'},
+  {taskId:'t31',label:'LTE'},
+  {taskId:'t32',label:'Final Report'},
+  {taskId:'t34',label:'Closeout'},
+];
+const FC_COLORS={
+  green:{bg:'#dcfce7',border:'#16a34a',text:'#15803d',dot:'#22c55e',lbl:'Complete'},
+  red:  {bg:'#fee2e2',border:'#dc2626',text:'#dc2626',dot:'#ef4444',lbl:'Overdue'},
+  yellow:{bg:'#fef9c3',border:'#d97706',text:'#92400e',dot:'#f59e0b',lbl:'At Risk'},
+  blue: {bg:'#dbeafe',border:'#2563eb',text:'#1d4ed8',dot:'#3b82f6',lbl:'In Progress'},
+  gray: {bg:'#f1f5f9',border:'#94a3b8',text:'#64748b',dot:'#94a3b8',lbl:'Not Started'},
+};
+function getFlowColor(taskId){
+  const task=TASKS.find(t=>t.id===taskId);if(!task)return'gray';
+  const ts=getT(taskId);const rk=getRisk(task);
+  if(ts.status==='complete')return'green';
+  if(rk==='overdue')return'red';
+  if(ts.status==='risk'||rk==='atrisk')return'yellow';
+  if(ts.status==='progress')return'blue';
+  return'gray';
+}
+function renderFlowchart(){
+  const container=document.getElementById('flowchartContainer');if(!container)return;
+  container.innerHTML=FC_MILESTONES.map((m,i)=>{
+    const clr=FC_COLORS[getFlowColor(m.taskId)];
+    const task=TASKS.find(t=>t.id===m.taskId);
+    const due=task?getEffDue(task):null;
+    const dueTxt=due?fmt(due):(task?task.lbl.replace(/\s*\(.*\)/,'').trim():'');
+    const arrow=i<FC_MILESTONES.length-1?'<div class="fc-arrow">&#8594;</div>':'';
+    return`<div class="fc-node" style="background:${clr.bg};border-color:${clr.border}">
+      <div class="fc-dot" style="background:${clr.dot}"></div>
+      <div class="fc-label">${m.label}</div>
+      <div class="fc-due" style="color:${clr.text}">${dueTxt||'—'}</div>
+      <div class="fc-status" style="color:${clr.text}">${clr.lbl}</div>
+    </div>${arrow}`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  EXECUTIVE VIEW
+// ═══════════════════════════════════════════════════
+function openExecView(){renderExecView();document.getElementById('execOverlay').classList.add('show');}
+function closeExecView(){document.getElementById('execOverlay').classList.remove('show');}
+function renderExecView(){
+  const list=getProgramList();
+  const container=document.getElementById('execTableContainer');
+  if(!list.length){
+    container.innerHTML='<p style="text-align:center;color:var(--g400);padding:40px 0;font-size:.86rem">No saved programs found.<br>Save programs using <strong>&#128190; Save Program</strong> in the program bar.</p>';
+    return;
+  }
+  let rows=[];
+  list.forEach(prog=>{
+    const data=getProgramData(prog.id);if(!data)return;
+    const dates={
+      start:data.testStart?new Date(data.testStart):null,
+      trr:data.trrDate?new Date(data.trrDate):null,
+      lte:data.lteDate?new Date(data.lteDate):null,
+    };
+    FC_MILESTONES.forEach(m=>{
+      const task=TASKS.find(t=>t.id===m.taskId);if(!task)return;
+      let due=null;
+      try{due=task.getDue(dates);}catch(e){}
+      const taskState=(data.tasks||{})[task.id]||{status:'none'};
+      if(taskState.customDate)due=new Date(taskState.customDate);
+      let color='gray';
+      if(taskState.status==='complete'){color='green';}
+      else if(due){
+        const today=new Date();today.setHours(0,0,0,0);
+        const d=Math.round((due-today)/86400000);
+        if(d<0)color='red';
+        else if(d<=14&&taskState.status==='none')color='yellow';
+        else if(taskState.status==='risk')color='yellow';
+        else if(taskState.status==='progress')color='blue';
+      }else if(taskState.status==='risk')color='yellow';
+      else if(taskState.status==='progress')color='blue';
+      rows.push({program:prog.name,milestone:m.label,due,color});
+    });
+  });
+  rows.sort((a,b)=>{if(!a.due&&!b.due)return 0;if(!a.due)return 1;if(!b.due)return -1;return a.due-b.due;});
+  if(!rows.length){
+    container.innerHTML='<p style="text-align:center;color:var(--g400);padding:32px 0">No milestone data available.</p>';return;
+  }
+  container.innerHTML=`<table class="exec-table">
+    <thead><tr><th>Program</th><th>Milestone</th><th>Due Date</th><th>Status</th></tr></thead>
+    <tbody>${rows.map(r=>{
+      const c=FC_COLORS[r.color];
+      return`<tr>
+        <td><strong>${r.program}</strong></td>
+        <td>${r.milestone}</td>
+        <td style="white-space:nowrap">${r.due?fmt(r.due):'—'}</td>
+        <td><span class="exec-status-badge" style="background:${c.bg};color:${c.text}">${c.lbl}</span></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
 </script>
 </body>
 </html>
