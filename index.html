@@ -250,16 +250,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 
 /* slide header */
 .sl-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));
-  padding:14px 22px 12px;border-bottom:3px solid var(--gold);
+  padding:16px 26px 14px;border-bottom:3px solid var(--gold);
   display:flex;align-items:flex-start;justify-content:space-between;}
-.sl-prog-name{color:#fff;font-size:1.2rem;font-weight:800;letter-spacing:.3px;}
-.sl-prog-sub{color:#93b4d8;font-size:.65rem;margin-top:2px;}
+.sl-prog-name{color:#fff;font-size:1.6rem;font-weight:800;letter-spacing:.3px;}
+.sl-prog-sub{color:#93b4d8;font-size:.82rem;margin-top:3px;}
 .sl-hdr-right{text-align:right;}
-.sl-asof{color:var(--gold-light);font-size:.65rem;font-weight:600;}
-.sl-dates{color:#93b4d8;font-size:.6rem;margin-top:2px;line-height:1.55;}
+.sl-asof{color:var(--gold-light);font-size:.82rem;font-weight:600;}
+.sl-dates{color:#93b4d8;font-size:.76rem;margin-top:3px;line-height:1.6;}
 
 /* slide body */
-.sl-body{flex:1;display:flex;flex-direction:column;padding:8px 18px 6px;gap:8px;overflow:hidden;}
+.sl-body{flex:1;display:flex;flex-direction:column;padding:10px 22px 8px;gap:10px;overflow:hidden;}
 
 /* stat row */
 .sl-stats{display:flex;gap:8px;}
@@ -279,22 +279,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-ppct{font-size:.62rem;font-weight:700;color:#15803d;white-space:nowrap;}
 
 /* bottom columns — fill all remaining height */
-.sl-cols{flex:1;display:flex;gap:8px;min-height:0;}
+.sl-cols{flex:1;display:flex;gap:10px;min-height:0;}
 .sl-col{flex:1;display:flex;flex-direction:column;overflow:hidden;
-  background:var(--g50);border-radius:8px;border:1px solid var(--g200);padding:8px 10px;}
-.sl-col-hdr{font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
-  display:flex;align-items:center;gap:5px;padding-bottom:5px;margin-bottom:4px;
+  background:var(--g50);border-radius:10px;border:1px solid var(--g200);padding:12px 14px;}
+.sl-col-hdr{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  display:flex;align-items:center;gap:6px;padding-bottom:8px;margin-bottom:6px;
   border-bottom:2px solid var(--g200);flex-shrink:0;}
 .sl-col-hdr.upcoming{color:#1d4ed8;border-color:#bfdbfe;}
 .sl-col-hdr.risks{color:#c2410c;border-color:#fecaca;}
 .sl-col-hdr.hilight{color:#854d0e;border-color:#fde68a;}
-.sl-items{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:4px;}
-.sl-item{font-size:.66rem;color:var(--g700);display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
-.sl-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.sl-items{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.sl-item{flex:1;min-height:20px;font-size:.82rem;color:var(--g700);
+  display:flex;align-items:center;gap:8px;line-height:1.4;
+  border-bottom:1px solid var(--g200);padding:3px 0;}
+.sl-item:last-child{border-bottom:none;}
+.sl-item .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .sl-item .dot.blue{background:#3b82f6;} .sl-item .dot.red{background:#ef4444;}
 .sl-item .dot.orange{background:#f59e0b;}
-.sl-none{font-size:.63rem;color:var(--g400);font-style:italic;padding:4px 0;}
-.sl-hl-text{font-size:.7rem;color:var(--g700);line-height:1.65;white-space:pre-wrap;
+.sl-none{flex:1;font-size:.78rem;color:var(--g400);font-style:italic;
+  display:flex;align-items:center;}
+.sl-hl-text{font-size:.86rem;color:var(--g700);line-height:1.8;white-space:pre-wrap;
   overflow:hidden;flex:1;}
 
 /* slide footer */
@@ -310,23 +314,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
 
 /* ── SLIDE REDESIGN: TOP ROW ── */
-.sl-toprow{display:flex;align-items:center;gap:14px;flex-shrink:0;padding:2px 0;}
+.sl-toprow{display:flex;align-items:center;gap:18px;flex-shrink:0;padding:2px 0;}
 /* Completion ring */
-.sl-ring-wrap{width:88px;height:88px;border-radius:50%;flex-shrink:0;position:relative;
+.sl-ring-wrap{width:110px;height:110px;border-radius:50%;flex-shrink:0;position:relative;
   display:flex;align-items:center;justify-content:center;}
 .sl-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;border-radius:50%;
-  background:#fff;margin:11px;}
-.sl-rpct{font-size:1.15rem;font-weight:800;line-height:1;}
-.sl-rsub{font-size:.39rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
-  color:var(--g500);margin-top:2px;}
+  background:#fff;margin:13px;}
+.sl-rpct{font-size:1.45rem;font-weight:800;line-height:1;}
+.sl-rsub{font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--g500);margin-top:3px;}
 /* Stat bubbles */
-.sl-bubbles{display:flex;gap:8px;flex:1;}
+.sl-bubbles{display:flex;gap:10px;flex:1;}
 .sl-bubble{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:50%;border:2.5px solid;width:70px;height:70px;flex-shrink:0;}
-.sl-bubble .sl-sn{font-size:1.25rem;font-weight:800;line-height:1;}
-.sl-bubble .sl-sl{font-size:.38rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.3px;text-align:center;line-height:1.3;margin-top:2px;}
+  border-radius:50%;border:3px solid;width:88px;height:88px;flex-shrink:0;}
+.sl-bubble .sl-sn{font-size:1.6rem;font-weight:800;line-height:1;}
+.sl-bubble .sl-sl{font-size:.46rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.3px;text-align:center;line-height:1.3;margin-top:3px;}
 .sl-b-c{background:#dcfce7;border-color:#16a34a;} .sl-b-c .sl-sn{color:#15803d;}
 .sl-b-p{background:#dbeafe;border-color:#2563eb;} .sl-b-p .sl-sn{color:#1d4ed8;}
 .sl-b-r{background:#fff7ed;border-color:#d97706;} .sl-b-r .sl-sn{color:#c2410c;}
@@ -334,30 +338,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-b-ov{background:#fee2e2;border-color:#dc2626;} .sl-b-ov .sl-sn{color:#dc2626;}
 .sl-b-ar{background:#fef9c3;border-color:#d97706;} .sl-b-ar .sl-sn{color:#d97706;}
 /* Prog block */
-.sl-prog-block{flex-shrink:0;min-width:130px;}
-.sl-prog-block .sl-plbl{font-size:.56rem;font-weight:700;color:var(--g500);margin-bottom:2px;}
-.sl-prog-block .sl-ppct{font-size:1.1rem;font-weight:800;color:#15803d;line-height:1.1;}
-.sl-prog-block .sl-prow{margin-top:6px;display:flex;align-items:center;}
-.sl-prog-block .sl-pout{flex:1;height:8px;background:var(--g200);border-radius:4px;overflow:hidden;}
+.sl-prog-block{flex-shrink:0;min-width:160px;}
+.sl-prog-block .sl-plbl{font-size:.68rem;font-weight:700;color:var(--g500);margin-bottom:3px;}
+.sl-prog-block .sl-ppct{font-size:1.5rem;font-weight:800;color:#15803d;line-height:1.1;}
+.sl-prog-block .sl-prow{margin-top:8px;display:flex;align-items:center;}
+.sl-prog-block .sl-pout{flex:1;height:12px;background:var(--g200);border-radius:6px;overflow:hidden;}
 .sl-prog-block .sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
-  border-radius:4px;transition:width .5s;}
+  border-radius:6px;transition:width .5s;}
 /* Pipeline: 2-row phase layout */
 .sl-pipeline-section{flex-shrink:0;}
-.sl-pipe-hdr{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
-  color:var(--g400);margin-bottom:4px;}
-.sl-pipeline{display:flex;flex-direction:column;gap:4px;}
+.sl-pipe-hdr{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--g400);margin-bottom:6px;}
+.sl-pipeline{display:flex;flex-direction:column;gap:6px;}
 .sl-pipe-row{display:flex;align-items:stretch;gap:0;}
-.sl-pipe-phase-lbl{font-size:.37rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+.sl-pipe-phase-lbl{font-size:.47rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
   color:#fff;background:var(--navy-light);writing-mode:vertical-lr;transform:rotate(180deg);
-  min-width:14px;text-align:center;flex-shrink:0;padding:2px 1px;border-radius:3px;margin-right:4px;}
+  min-width:18px;text-align:center;flex-shrink:0;padding:2px 2px;border-radius:4px;margin-right:6px;}
 .sl-pipe-nodes{display:flex;align-items:center;flex:1;gap:0;}
-.sl-pipe-node{border:2px solid;border-radius:7px;padding:5px 3px;text-align:center;
-  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
-.sl-pipe-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.sl-pipe-name{font-size:.54rem;font-weight:700;color:var(--g800);line-height:1.2;}
-.sl-pipe-date{font-size:.46rem;font-weight:600;line-height:1.2;}
-.sl-pipe-status{font-size:.44rem;font-weight:700;text-transform:uppercase;letter-spacing:.2px;}
-.sl-pipe-arrow{font-size:.7rem;color:var(--g300);padding:0 1px;flex-shrink:0;}
+.sl-pipe-node{border:2px solid;border-radius:8px;padding:8px 4px;text-align:center;
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sl-pipe-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sl-pipe-name{font-size:.72rem;font-weight:700;color:var(--g800);line-height:1.2;}
+.sl-pipe-date{font-size:.6rem;font-weight:600;line-height:1.2;}
+.sl-pipe-status{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.2px;}
+.sl-pipe-arrow{font-size:.9rem;color:var(--g300);padding:0 2px;flex-shrink:0;}
+.sl-clickable{cursor:pointer;transition:filter .12s,box-shadow .12s;}
+.sl-clickable:hover{filter:brightness(.92);box-shadow:0 2px 10px rgba(0,0,0,.18);}
 
 /* ── CHILD TASK ROWS (Test Plan sub-items) ── */
 .tr-child td{background:rgba(30,58,138,.028);border-bottom-color:var(--g100);}
@@ -396,8 +402,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .fc-track{display:flex;align-items:center;gap:0;min-width:max-content;padding:6px 0 2px;}
 .fc-node{border:2px solid;border-radius:10px;padding:8px 10px;min-width:108px;max-width:128px;
   display:flex;flex-direction:column;align-items:center;text-align:center;
-  transition:transform .15s,box-shadow .15s;cursor:default;}
-.fc-node:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12);}
+  transition:transform .15s,box-shadow .15s;cursor:pointer;}
+.fc-node:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18);filter:brightness(.94);}
 .fc-dot{width:10px;height:10px;border-radius:50%;margin-bottom:5px;}
 .fc-label{font-size:.71rem;font-weight:700;color:var(--g800);line-height:1.3;margin-bottom:3px;}
 .fc-due{font-size:.62rem;margin-bottom:2px;font-weight:600;line-height:1.25;}
@@ -945,6 +951,18 @@ function saveS(){
     document.getElementById('lastSaved').textContent=
       'Saved '+n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){}
+  // debounced auto-save to named program slot
+  clearTimeout(saveS._t);
+  saveS._t=setTimeout(()=>{
+    const name=(S.programName||'').trim();if(!name)return;
+    const list=getProgramList();
+    const prog=list.find(p=>p.name===name);if(!prog)return;
+    prog.updatedAt=new Date().toISOString();
+    saveProgramList(list);
+    saveProgramData(prog.id,captureCurrentState());
+    const lsEl=document.getElementById('lastSaved');
+    if(lsEl)lsEl.textContent='Auto-saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  },1500);
 }
 function getT(id){return S.tasks[id]||{status:'none',notes:'',customDate:null};}
 function setT(id,u){S.tasks[id]={...getT(id),...u};saveS();}
@@ -1432,7 +1450,7 @@ function buildSlide(){
       const due=task?getEffDue(task):null;
       const dueTxt=due?fmt(due):'';
       const arrow=i<row.items.length-1?'<div class="sl-pipe-arrow">&#8594;</div>':'';
-      return`<div class="sl-pipe-node" style="background:${clr.bg};border-color:${clr.border}">
+      return`<div class="sl-pipe-node sl-clickable" style="background:${clr.bg};border-color:${clr.border}" onclick="navToTask('${m.taskId}')" title="Go to ${m.label}">
         <div class="sl-pipe-dot" style="background:${clr.dot}"></div>
         <div class="sl-pipe-name">${m.label}</div>
         <div class="sl-pipe-date" style="color:${clr.text}">${dueTxt}</div>
@@ -1458,7 +1476,7 @@ function buildSlide(){
     :upList.map(t=>{
       const due=getEffDue(t);const d=diff(tod(),due);
       const dotcls=d<=7?'orange':'blue';
-      return`<div class="sl-item"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
+      return`<div class="sl-item sl-clickable" onclick="navToTask('${t.id}')" title="Go to ${t.name}"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
     }).join('');
 
   // ── Risks & Overdue ──
@@ -1474,14 +1492,31 @@ function buildSlide(){
       const rk=getRisk(t);const due=getEffDue(t);
       const isOv=rk==='overdue';
       const tag=isOv?`<strong>${Math.abs(diff(tod(),due))}d overdue</strong>`:'&#9888; Flagged Risk';
-      return`<div class="sl-item"><span class="dot red"></span><span>${t.name} <span style="color:#dc2626;font-size:.58rem">[${tag}]</span></span></div>`;
+      return`<div class="sl-item sl-clickable" onclick="navToTask('${t.id}')" title="Go to ${t.name}"><span class="dot red"></span><span>${t.name} <span style="color:#dc2626;font-size:.75rem">[${tag}]</span></span></div>`;
     }).join('');
 
   // ── Highlights ──
   const hlEl=document.getElementById('sl-hl');
   hlEl.textContent=S.highlights||'';
-  if(!S.highlights)hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.58rem">No highlights added. Use the Program Highlights panel above the tracker.</span>';
+  if(!S.highlights)hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.82rem">No highlights added. Use the Program Highlights panel above the tracker.</span>';
 }
+function navToTask(taskId){
+  hideSlide();
+  setTimeout(()=>{
+    const el=document.getElementById(`row-${taskId}`);
+    if(!el)return;
+    // expand phase if collapsed
+    const phbody=el.closest('.ph-body');
+    if(phbody&&phbody.style.display==='none')phbody.style.display='';
+    // expand parent if this is a child row
+    const par=el.getAttribute('data-parent');
+    if(par&&!childStates[par])toggleChildRows(par);
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.style.outline='3px solid var(--gold)';
+    setTimeout(()=>el.style.outline='',2500);
+  },300);
+}
+
 function printSlide(){
   const s=document.getElementById('theSlide');
   const css=document.querySelector('style').textContent;
@@ -1829,7 +1864,7 @@ function renderFlowchart(){
     const due=task?getEffDue(task):null;
     const dueTxt=due?fmt(due):(task?task.lbl.replace(/\s*\(.*\)/,'').trim():'');
     const arrow=i<FC_MILESTONES.length-1?'<div class="fc-arrow">&#8594;</div>':'';
-    return`<div class="fc-node" style="background:${clr.bg};border-color:${clr.border}">
+    return`<div class="fc-node" style="background:${clr.bg};border-color:${clr.border}" onclick="navToTask('${m.taskId}')" title="Go to ${m.label}">
       <div class="fc-dot" style="background:${clr.dot}"></div>
       <div class="fc-label">${m.label}</div>
       <div class="fc-due" style="color:${clr.text}">${dueTxt||'—'}</div>

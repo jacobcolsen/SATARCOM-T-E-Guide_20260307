@@ -60,10 +60,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   font-size:.66rem;min-width:190px;}
 
 /* Program cell */
-td.prog-cell{padding:10px 14px;background:#fff;border:1px solid var(--g200);
-  border-right:3px solid var(--g300);vertical-align:top;min-width:190px;}
-.prog-name{font-size:.88rem;font-weight:800;color:var(--navy);line-height:1.2;}
-.prog-meta{font-size:.62rem;color:var(--g400);margin-top:5px;line-height:1.7;}
+td.prog-cell{padding:14px 16px;background:#fff;border:1px solid var(--g200);
+  border-right:3px solid var(--g300);vertical-align:middle;min-width:200px;}
+.prog-name{font-size:.92rem;font-weight:800;color:var(--navy);line-height:1.2;}
+.prog-meta{font-size:.64rem;color:var(--g400);margin-top:6px;line-height:1.8;}
 .prog-meta span{display:block;}
 
 /* Status cell */
@@ -72,9 +72,17 @@ td.sc{padding:0;border:2px solid;text-align:center;vertical-align:middle;
 td.sc:hover{filter:brightness(.91);}
 td.sc.sc-link{cursor:pointer;}
 td.sc.sc-link:hover{filter:brightness(.88);box-shadow:inset 0 0 0 2px rgba(0,0,0,.18);}
-.sc-inner{padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.sc-lbl{font-size:.67rem;font-weight:800;letter-spacing:.2px;line-height:1;}
-.sc-date{font-size:.58rem;font-weight:600;opacity:.85;line-height:1;}
+.sc-inner{padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sc-lbl{font-size:.7rem;font-weight:800;letter-spacing:.2px;line-height:1;}
+.sc-date{font-size:.62rem;font-weight:600;opacity:.85;line-height:1;}
+
+/* Thick divider between program rows and before Overall Health */
+tr.prog-row + tr.prog-row td,
+tr.prog-row + tr.prog-row td.prog-cell,
+tr.prog-row + tr.sum-row td,
+tr.prog-row + tr.sum-row td.sum-prog-cell {
+  border-top: 5px solid var(--navy-mid) !important;
+}
 
 /* Summary row */
 tr.sum-row td{border:1px solid rgba(255,255,255,.12);padding:6px 8px;
@@ -238,7 +246,7 @@ function buildMatrix(){
       dates.lte   ? `<span>&#9873; LTE: ${fmtD(dates.lte)}</span>` : '',
     ].filter(Boolean).join('');
 
-    return `<tr>
+    return `<tr class="prog-row">
       <td class="prog-cell">
         <div class="prog-name">${prog.name}</div>
         <div class="prog-meta">${metaLines || '<span style="color:var(--g300);font-style:italic">No dates set</span>'}</div>
