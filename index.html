@@ -442,6 +442,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <span class="hdr-saved" id="lastSaved"></span>
     <button class="hbtn teal" onclick="showSlide()">📊 Dashboard Slide</button>
     <a class="hbtn teal" href="executive_view.html" target="_blank">&#128202; Executive View</a>
+    <button class="hbtn" onclick="loadDemoPrograms()" style="background:rgba(240,165,0,.18);border-color:var(--gold)" title="Load 6 realistic demo programs for presentations">🎯 Load Demo</button>
     <button class="hbtn" onclick="showResetModal()">🗑 Reset</button>
     <button class="hbtn" onclick="window.print()">🖨 Print</button>
     <button class="hbtn gold" onclick="exportCSV()">⬇ CSV</button>
@@ -1876,6 +1877,328 @@ function renderFlowchart(){
 // ═══════════════════════════════════════════════════
 //  EXECUTIVE VIEW
 // ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  DEMO DATA SEED  (🎯 Load Demo button)
+// ═══════════════════════════════════════════════════
+function loadDemoPrograms(){
+  const DEMO_IDS=['demo_p1','demo_p2','demo_p3','demo_p4','demo_p5','demo_p6'];
+  const existing=getProgramList();
+  if(DEMO_IDS.some(id=>existing.find(p=>p.id===id))){
+    if(!confirm('Demo programs are already loaded. Reload and overwrite them?'))return;
+    DEMO_IDS.forEach(id=>localStorage.removeItem('starcom_te_prog_'+id));
+    saveProgramList(existing.filter(p=>!DEMO_IDS.includes(p.id)));
+  }
+  const C=(s,n='',cd=null)=>({status:s,notes:n,customDate:cd});
+  const done=(n='')=>C('complete',n);
+  const prog=(n='')=>C('progress',n);
+  const risk=(n='')=>C('risk',n);
+
+  // ── PROGRAM 1: LASER SHARK IOT&E — Active test execution, Day 14 ──
+  const p1={
+    t01:done('STARCOM awareness memo signed 14 Mar 2024. Involvement determination: Full OTA support.'),
+    t02:done('Funding agreement executed 22 Apr 2024. $6.8M obligated. Co-funded by PEO Space C2.'),
+    t03:done('ITT Charter signed all parties 30 May 2024. Sub-charters (DRB, TDSB, JRMET) complete.'),
+    t04:done('TEMP/T&E Strategy initial approved. Updated at MS C (Sep 2024). IDSK attached as Annex A.'),
+    t05:done('IDSK ICT Meeting #1: 5 Jul 2024. ICT Meeting #2: 12 Nov 2024. All long-lead resources mapped.'),
+    t06:done('TCP approved 12 Sep 2024. 63 test points across 3 phases. Platforms: HAMMERHEAD, MAKO, TIGER, BULL.'),
+    t07:done('All 4 battlespace dev tasks complete. 7 COTs documented. TDW I and II complete.'),
+    t08:done('Test Concept Brief delivered and approved Dec 2024. DOT&E AO concurred.'),
+    t09:done('M&S Accreditation Plan approved by S3C TA 20 Oct 2024.'),
+    t10:done('Test Plan v1.2 approved by TEA 15 Dec 2024. TRB cleared all 3 findings. TEA signed.'),
+    t11:done('Test Safety Plan approved. Laser eye-safety exclusion zones established. Risk: MEDIUM.'),
+    t12:done('TRB completed 20 Dec 2024. 3 findings — all resolved prior to TEA approval.'),
+    t13:done('SRB completed 6 Jan 2026. Medium risk accepted. SRB Summary Memo signed DEL12/SE 8 Jan.'),
+    t14:done('M&S Accreditation Report approved before TRR. No M&S risks carried forward.'),
+    t15:done('TEA approval signed by DEL12/CC 6 Feb 2026. Test Approval Briefing (TAB) conducted 5 Feb.'),
+    t16:done('Dry runs completed 6–7 Feb 2026. All 63 procedures dry-ran. Data tools validated. 4 procedure updates made.'),
+    t17:done('TRR conducted 9 Feb 2026. All parties concurred. Dr. Evil cleared as independent observer. Test team deployed 20 Feb.'),
+    t18:done('RMRR submitted to CFC S4S/S33 5 Jan 2026. Approved 3 Feb 2026. No conditions.'),
+    t19:done('PEO Certification Memo received 10 Feb 2026 — 13 days before test start. System ready for dedicated OT&E.'),
+    t20:done('Certification Acknowledgement Memo prepared by test team/S3C and transmitted 12 Feb 2026.'),
+    t21:done('ATO confirmed valid through Jun 2026. IATT not required. RMF current.'),
+    t22:done('ATC for cyber test toolkit signed by AO 17 Feb 2026. ISA documented in eMASS.'),
+    t23:done('PO Safety Release Letter received 20 Feb 2026. All ESOH hazards and risk acceptance documented.'),
+    t24:done('Test Start Memo transmitted 0600L 23 Feb 2026. All 47 stakeholders notified via SIPR.'),
+    t25:risk('CAT I DR #37 filed 3 Mar 2026. Laser targeting gimbal loses lock on fast-movers >800m range. Expedited DRB convened 6 Mar. PO engineering team onsite Peterson SFB. Root cause: gimbal servo feedback latency at high angular rate. Firmware patch v4.7.2 in regression testing. Expected close NLT 14 Mar. No test pause required — TEA/S3C concurred.'),
+    t26:prog('CAT II DR #12 (cooling fan acoustic signature exceeds spec at thermal limit) — DRB review in progress, PO response due 11 Mar. CAT II DR #14 (HUD flicker below 20% battery) — mitigation accepted, patch scheduled next maintenance window.'),
+    t27:prog('TEASRs #1 (27 Feb), #2 (3 Mar), #3 (6 Mar) published via SIPR. ITF Director approved all 3. Distribution: S3C, DEL12/CC, PEO, S3 Ops, DOT&E AO. TEASR #4 due 12 Mar.'),
+    t37:done('ITT Charter revalidated 15 Jan 2026. Membership unchanged. Next review: post-test closeout.'),
+    t38:done('TEMP updated at MS C (Sep 2024). No changes required before test execution.'),
+    t39:prog('DR tracking active. Weekly DRB telecon every Tuesday 1000L. 1 CAT I (DR #37) and 2 CAT II (DR #12, #14) open. 4 prior DT-phase DRs closed before OT&E start.'),
+    t40:done('TRP finalized 1 Feb 2026. All resources confirmed: 4 laser platforms, 2 target vessels, 1 C2 node Peterson SFB.'),
+    tp01:done('Mission Analysis complete. Combat objectives mapped. 7 COTs established and approved.'),
+    tp02:done('MOEs defined for all 7 COIs. Pass/fail thresholds approved by ITF Director.'),
+    tp03:done('MOPs defined. Data sources and collection methods confirmed for all MOPs.'),
+    tp04:done('DOE framework established. Full-factorial design for primary laser accuracy COIs.'),
+    tp05:done('Test Event Schedule finalized. 63 test points across 3 phases. Range deconflicted.'),
+    tp06:done('Test scenarios developed for all 3 phases: Maritime, Littoral, Open-Water.'),
+    tp07:done('Threat Representation Plan complete. Red force contractor confirmed. Emitter array set.'),
+    tp08:done('Resource plan finalized. All personnel billets filled. Equipment and logistics confirmed.'),
+    tp09:done('Facilities and ranges reserved. Peterson SFB C2 node reserved. Target vessel MOUs signed.'),
+    tp10:done('M&S Accreditation Plan approved. Only 1 sim tool used — targeting engagement model. Accredited.'),
+    tp11:done('Data Collection Plan complete. All forms and tools dry-run validated 7 Feb 2026.'),
+    tp12:done('Data Management & Analysis Plan approved. Statistical methods reviewed by TDSB.'),
+    tp13:done('Test Safety Plan sub-section in Test Plan complete. BSR and THAs all finalized.'),
+    tp14:done('ATO/IATT tracking complete. ATO valid through Jun 2026.'),
+    tp15:done('OPSEC plan complete. Classification guidance confirmed. Classified TEASRs via SIPR.'),
+    tp16:done('TRB package fully assembled and distributed to 14 reviewers 20 Dec 2024.'),
+  };
+
+  // ── PROGRAM 2: POLARIS STRIKE EOA — Post-LTE, final report in progress ──
+  const p2={
+    t01:done('STARCOM awareness memo signed 1 Apr 2024. Full OTA support.'),
+    t02:done('Funding agreement executed 15 May 2024. $4.7M obligated.'),
+    t03:done('ITT Charter signed all parties 20 Jun 2024.'),
+    t04:done('TEMP/T&E Strategy initial complete. Updated at start of campaign planning.'),
+    t05:done('IDSK ICT Meeting #1: 10 Jul 2024. ICT Meeting #2: 5 Dec 2024. IDSK complete.'),
+    t06:done('TCP approved 10 Oct 2024. 118 test points across 9 test events.'),
+    t07:done('All 4 battlespace dev tasks complete. 6 COTs documented. TDW I and II complete.'),
+    t08:done('Test Concept Brief delivered and approved Nov 2024.'),
+    t09:done('M&S Accreditation Plan approved by S3C TA Nov 2024.'),
+    t10:done('Test Plan v1.0 approved by TEA 5 Nov 2025. TRB cleared all findings.'),
+    t11:done('Test Safety Plan approved. Safety Risk: LOW. SRB waived per DEL12I 91-220 for low-risk threshold.'),
+    t12:done('TRB completed 12 Nov 2025. No unresolved findings. Test Plan APPROVED.'),
+    t13:done('SRB waived — Low safety risk. NRR (DEL12 Form 203) signed and included in test package.'),
+    t14:done('M&S Accreditation Report approved before TRR. 2 sim tools accredited.'),
+    t15:done('TEA approval signed by ITF Director 19 Dec 2025.'),
+    t16:done('Dry runs completed 21–22 Dec 2025. All procedures and data tools validated.'),
+    t17:done('TRR conducted 23 Dec 2025. All parties concurred. Test team deployed 30 Dec.'),
+    t18:done('RMRR submitted and approved. No conditions.'),
+    t19:done('PEO Certification Memo received 22 Dec 2025.'),
+    t20:done('Certification Acknowledgement Memo transmitted 26 Dec 2025.'),
+    t21:done('ATO confirmed valid. RMF current.'),
+    t22:done('ATC signed by AO 28 Dec 2025.'),
+    t23:done('PO Safety Release Letter received 29 Dec 2025.'),
+    t24:done('Test Start Memo transmitted 0600L 6 Jan 2026. All stakeholders notified.'),
+    t25:done('2 CAT I DRs filed during test. Both resolved before LTE. DRB closed both.'),
+    t26:done('4 CAT II DRs filed. 0 closed before LTE. 4 carried forward to PO — documented in LTE Memo.'),
+    t27:done('TEASRs #1–9 published and distributed. Final TEASR (#9) transmitted 1 Mar 2026 (post-LTE). All archived on SIPR SharePoint.'),
+    t28:done('Test Pause Memo issued 3 Feb 2026 (CAT I DR #2 — safety issue). Re-entry criteria met 6 Feb. Test resumed 7 Feb without TRR.'),
+    t29:C('none','No test stop required.'),
+    t30:done('Test Complete Memo signed and transmitted 0800L 1 Mar 2026 — within 24 hours of LTE. Operational community released.'),
+    t31:done('LTE Memo transmitted 1 Mar 2026. LTE conditions fully met: 118/118 test points complete, TDSB data validation complete, JRMET final meeting done 27 Feb 2026.'),
+    t32:prog('Final Test Report in progress. 6-person analysis team assembled. Draft 35% complete as of 6 Mar 2026. COIs 1–4 analysis largely complete. COI 5 and COI 6 analysis ongoing. On track for 30 May delivery.'),
+    t37:done('ITT Charter reviewed and revalidated through test. Post-test review scheduled after closeout.'),
+    t38:done('TEMP updated at test start. Post-test update will be included with final report.'),
+    t39:done('All DRs tracked and managed throughout test. 4 CAT II DRs carried forward documented and assigned to PO.'),
+    t40:done('TRP finalized and all resources tracked through LTE. Resources returned to owners 1 Mar.'),
+    tp01:done(),tp02:done(),tp03:done(),tp04:done(),tp05:done(),tp06:done(),
+    tp07:done(),tp08:done(),tp09:done(),tp10:done(),tp11:done(),tp12:done(),
+    tp13:done(),tp14:done(),tp15:done(),tp16:done(),
+  };
+
+  // ── PROGRAM 3: IRON FALCON DT/OT — TRB imminent, test start in 56 days ──
+  const p3={
+    t01:done('STARCOM awareness memo 15 Feb 2025. Full OTA + LDTO integrated support.'),
+    t02:done('Funding agreement signed 1 Apr 2025. $3.1M ITF support funded by SPO.'),
+    t03:done('ITT Charter signed 15 May 2025. Revalidated 10 Jan 2026 — 2 SME additions (cyber, spectrum).'),
+    t04:done('TEMP/T&E Strategy initial approved at MS B. Updated draft submitted to DOT&E AO 20 Jan 2026.'),
+    t05:done('IDSK ICT Meeting #1: 2 Jun 2025. ICT Meeting #2: 14 Oct 2025. IDSK complete and linked to TEMP.'),
+    t06:done('TCP approved by ITF Director 15 Sep 2025. 89 test points across DT and OT objectives.'),
+    t07:done('All 4 battlespace dev tasks complete as of 3 Nov 2025. 8 COTs documented. TDW I complete 17 Nov. TDW II complete 19 Jan 2026.'),
+    t08:done('Test Concept Brief delivered to STARCOM/S3C and DEL12 leadership 5 Nov 2025. Approved without conditions.'),
+    t09:done('M&S Accreditation Plan approved by S3C TA 15 Dec 2025.'),
+    t10:prog('Test Plan v2.1 FINAL DRAFT submitted to TRA 7 Mar 2026. TRB scheduled 30 Mar at Peterson SFB, Bldg 1400 Conf Rm A. 14 external reviewers confirmed. Pre-read package distributing 14 Mar. TEA approval expected NLT 14 Apr.'),
+    t11:done('Test Safety Plan final approved 15 Feb 2026. Safety risk: LOW-MEDIUM. SRB accepted risk.'),
+    t12:prog('TRB scheduled 30 Mar 2026. Peterson SFB Bldg 1400. 14 reviewers (DEL12/SE, DOT&E AO, LDTO rep, 11 ITT members). Pre-read distributed 14 Mar.'),
+    t13:done('SRB conducted 20 Feb 2026. Safety risk accepted. SRB Summary Memo signed DEL12/SE 24 Feb 2026.'),
+    t14:prog('M&S Accreditation Report 80% complete. V&V activities finalized. QA review and formatting remaining. On track for TRR (20 Apr).'),
+    t18:done('RMRR submitted to CFC S4S/S33 on 2 Mar 2026. 30-day review expires 2 Apr. No concerns anticipated.'),
+    t21:done('ATO confirmed valid through Aug 2026 by Space AO. IATT not required. RMF package current.'),
+    t37:done('ITT Charter reviewed 10 Jan 2026. Updated membership and deliverables table.'),
+    t38:prog('TEMP update in progress — incorporating TDW I and II outcomes and DOT&E AO comments. Target submission: 1 Apr 2026.'),
+    t39:prog('5 open DRs carried forward from DT phase. DRB charter active. Pre-OT&E DRB closeout meeting scheduled 25 Mar to convert or close all prior DT DRs.'),
+    t40:done('TRP finalized 1 Feb 2026. All assets confirmed: Iron Falcon Mk.II (3 units), JSTARS support, Edwards AFB range reserved.'),
+    tp01:done('Mission Analysis complete. 8 COTs established and linked to campaign objectives.'),
+    tp02:done('MOEs defined for all COIs. Pass/fail criteria approved by ITF Director at TDW II.'),
+    tp03:done('MOPs finalized. All data sources identified and confirmed available.'),
+    tp04:done('DOE framework established. Mixed-design approach for DT/OT objectives.'),
+    tp05:done('Test Event Schedule finalized. 89 test points scheduled across 8 weeks.'),
+    tp06:done('Test scenarios complete for all DT and OT events.'),
+    tp07:done('Threat Representation Plan complete. Red Air from 527th AS confirmed.'),
+    tp08:done('Resource plan finalized. All billets filled. Equipment and logistics confirmed.'),
+    tp09:done('Edwards AFB range reserved. Airspace coordinated. No conflicts.'),
+    tp10:done('M&S plan approved. 2 sim tools identified and in VV&A pipeline.'),
+    tp11:done('Data Collection Plan complete. All forms finalized.'),
+    tp12:done('Data Mgmt & Analysis Plan approved. Statistical approach reviewed by TDSB.'),
+    tp13:done('Safety Plan sub-section complete. Incorporated into Test Safety Plan.'),
+    tp14:done('ATO/IATT tracked and confirmed.'),
+    tp15:done('OPSEC plan complete. Classification guidance confirmed with S2.'),
+    tp16:prog('TRB package assembled. Final QA check before 30 Mar TRB.'),
+  };
+
+  // ── PROGRAM 4: NEXUS GUARDIAN OA — Test plan ~40% done, 210 days to test ──
+  const p4={
+    t01:done('STARCOM awareness memo signed 3 Mar 2025. Involvement: Full OTA + DOT&E oversight.'),
+    t02:done('Funding agreement executed 15 Apr 2025. $5.4M obligated. DOT&E oversight program.'),
+    t03:done('ITT Charter signed 10 Jun 2025. DOT&E action officer included as voting member.'),
+    t04:done('TEMP/T&E Strategy initial approved at MS B (Oct 2025). DOT&E inputs incorporated. IDSK attached as Annex A.'),
+    t05:done('IDSK ICT Meeting #1: 5 Jul 2025. ICT Meeting #2: 18 Nov 2025. 6 COIs mapped to combat objectives. 3 long-lead resources identified.'),
+    t06:done('TCP approved ITF Director 19 Dec 2025. DT, OT, and Live Fire phases. 97 total test points.'),
+    t07:done('All 4 battlespace dev tasks complete. 6 COTs documented. TDW I complete 4 Feb 2026. TDW II scheduled 15 Apr 2026.'),
+    t08:done('Test Concept Brief delivered 15 Jan 2026. Approved. DOT&E AO concurred.'),
+    t09:prog('M&S Accreditation Plan submitted to S3C Technical Advisor 3 Mar 2026. Awaiting TA review (due NLT 21 Mar). 6 simulation tools identified for VV&A. JTIC and AFSIM in pipeline.'),
+    t10:prog('Test Plan draft 40% complete. Mission Analysis, 6 COIs, MOEs for COIs 1–4, and test design framework established. TDW II (15 Apr) will inform remaining test design sections — scenarios, threat rep plan, resource plan, data collection plan. Safety plan and remaining sub-sections targeted by 30 Jun 2026.'),
+    t37:done('ITT Charter reviewed 10 Feb 2026. New cyber SME added to ITT membership.'),
+    t38:prog('TEMP update in progress — incorporating TDW I outcomes and DOT&E AO comments. Target: 15 Apr 2026.'),
+    t39:prog('No open DRs at this phase. DRB charter active and sub-charter complete. Pre-test DR tracking protocol established.'),
+    t40:prog('TRP submitted 1 Feb 2026. Range scheduling requests submitted to RAAF Base Darwin and White Sands. Threat replication assets confirmed for Q4 FY26 window.'),
+    tp01:done('Mission Analysis complete. Combat objectives and COTs approved by core test team and ITF Director.'),
+    tp02:done('MOEs defined for COIs 1–4. COIs 5–6 MOEs pending TDW II outcome and DOT&E AO guidance.'),
+    tp03:done('MOPs finalized for COIs 1–4. Data sources identified and confirmed.'),
+    tp04:prog('DOE framework being developed. TDW II (15 Apr) will finalize test conditions and variables for COIs 5–6.'),
+  };
+
+  // ── PROGRAM 5: CENTURION LINK IOT&E — Campaign planning, 307 days out ──
+  const p5={
+    t01:done('STARCOM awareness memo signed 10 Aug 2025. Involvement: Full IOT&E. ACAT I / DOT&E oversight.'),
+    t02:done('Funding agreement signed and executed 27 Feb 2026. $7.2M obligated. Co-funded: PEO C3 and STARCOM.'),
+    t03:done('ITT Charter signed all parties 5 Mar 2026. First formal ITT meeting scheduled 24 Mar. Sub-charters in development, target 31 Mar.'),
+    t04:done('TEMP/T&E Strategy initial draft submitted to DOT&E AO 21 Feb 2026. 30-day review window expires 23 Mar.'),
+    t05:done('IDSK ICT Meeting #1: 15 Jan 2026. ICT Meeting #2: 18 Feb 2026. Key data-to-decision links mapped. Long-lead needs: 2 Kirtland UAS range days, 1 AEHF terminal, Red Air from 527th AS.'),
+    t06:prog('TCP development underway. Kickoff 3 Mar 2026. Schedule, data sources, and test event framework being drafted. Key ITT sub-groups engaged. Draft TCP expected NLT 30 Apr 2026.'),
+    t37:prog('ITT Charter just signed 5 Mar 2026. First 12-month review due Mar 2027. Sub-charters in development.'),
+    t38:prog('TEMP initial submitted 21 Feb 2026. Awaiting DOT&E AO comments (30-day window expires 23 Mar).'),
+    t40:prog('TRP initial draft in progress. Long-lead resources identified at ICT Meeting #2. POM submission inputs due to STARCOM FM by 15 Apr 2026.'),
+  };
+
+  // ── PROGRAM 6: PHANTOM GRID OA — Fully closed, Nov 2025 ──
+  const p6base=['t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','t25','t26','t27','t28','t29','t30','t31','t32','t33','t34','t35','t36','t37','t38','t39','t40',
+    'tp01','tp02','tp03','tp04','tp05','tp06','tp07','tp08','tp09','tp10','tp11','tp12','tp13','tp14','tp15','tp16'];
+  const p6=Object.fromEntries(p6base.map(id=>[id,done()]));
+  p6.t28=C('none','No test pause required. Continuous test execution throughout window.');
+  p6.t29=C('none','No test stop required.');
+  p6.t32=done('Final Test Report approved by ITF Director 22 Oct 2025. Transmitted to DAF/TE, STARCOM/CC, and DOT&E action officer 24 Oct 2025. No CAF response required.');
+  p6.t33=done('Final Results Briefing delivered to STARCOM/CC 31 Oct 2025. PEO present. PM acknowledged all DRs and committed to Q1 FY26 resolution. No questions outstanding.');
+  p6.t34=done('Closeout MFR signed and filed on DEL12 SharePoint 10 Nov 2025. HQ coordination (S1, S3C, S4/6, S5/8/9, HO) complete.');
+  p6.t35=done('All funds reconciled. $112K unobligated funds returned to PO 7 Nov 2025. All contracts/task orders terminated. MIPRs closed. AF Forms 616 complete.');
+  p6.t36=done('12 lessons learned submitted to STARCOM S9 and DEL 10 repository 10 Nov 2025. 3 STARCOM-level recommendations forwarded to S3C for policy update to STARCOM T&E Guide v2.0.');
+
+  const DEMOS=[
+    {
+      id:'demo_p1',name:'LASER SHARK IOT&E',
+      createdAt:'2024-03-15T14:00:00Z',updatedAt:'2026-03-08T16:42:00Z',
+      data:{
+        programName:'LASER SHARK IOT&E',
+        testStart:'2026-02-23T06:00:00.000Z',
+        trrDate:'2026-02-09T06:00:00.000Z',
+        lteDate:'2026-04-30T06:00:00.000Z',
+        highlights:
+`• ACTIVE TEST — Day 14 of 67-day window (23 Feb – 30 Apr 2026). 47/63 test points complete (75%).
+• LASER PLATFORM STATUS: All 4 shark-mounted laser systems (HAMMERHEAD, MAKO, TIGER, BULL) operating within calibration spec. Beam coherence exceeding MOP thresholds at all test ranges 200–600m.
+• CAT I DR #37 FILED (3 Mar): Laser targeting gimbal loses lock on fast-movers at ranges >800m. Expedited DRB convened 6 Mar. PO engineering team onsite Peterson SFB. Root cause identified: gimbal servo feedback latency under high angular rate. Firmware patch v4.7.2 in regression testing. Expected close NLT 14 Mar. No test pause required — TEA and S3C concurred.
+• CAT II DRs: DR #12 (cooling fan acoustic signature exceeds spec at thermal limit) under DRB review — PO response due 11 Mar. DR #14 (HUD flicker below 20% battery state) — mitigation accepted, patch next maintenance cycle.
+• TEASR #3 published 5 Mar via SIPR. All 47 stakeholders on distribution. TEASR #4 due 12 Mar.
+• Dr. Evil independent observer team (4 personnel) departs Peterson SFB 11 Mar. No concerns raised. Formal observer report to follow within 30 days.
+• UPCOMING: Phase II maritime target profiles begin 16 Mar. Night operations window 22–26 Mar. Phase III open-water scenarios begin 7 Apr.`,
+        hlUpdated:'2026-03-08T16:42:00Z',tasks:p1,murderBoard:{}}
+    },
+    {
+      id:'demo_p2',name:'POLARIS STRIKE EOA',
+      createdAt:'2024-06-01T14:00:00Z',updatedAt:'2026-03-06T13:20:00Z',
+      data:{
+        programName:'POLARIS STRIKE EOA',
+        testStart:'2026-01-06T06:00:00.000Z',
+        trrDate:'2025-12-23T06:00:00.000Z',
+        lteDate:'2026-02-28T06:00:00.000Z',
+        highlights:
+`• LTE DECLARED 28 FEB 2026. Test Complete Memo and LTE Memo both transmitted 1 Mar 2026 NLT 24 hours of LTE. Operational community released. All test resources returned to owners.
+• PRELIMINARY RESULTS: 118/118 test points executed across 9 test events (62 days). 6 COIs assessed: COI 1 (Target Acquisition) PASS · COI 2 (Strike Accuracy) PASS · COI 3 (BDA Integration) PASS · COI 4 (Multi-Domain Coordination) PASS · COI 5 (Precision Targeting Under Jamming) FAIL — system degraded below threshold in contested EMS environment · COI 6 (Survivability) CONDITIONAL — 3 of 6 sub-MOEs failed.
+• 4 open CAT II DRs carried forward to PO for resolution. DRB closeout meeting scheduled 19 Mar 2026.
+• FINAL TEST REPORT: 6-person analysis team assembled. Draft 35% complete as of 6 Mar. COIs 1–4 analysis largely complete. COI 5 and 6 analysis ongoing. On track for 30 May delivery to ITF Director.
+• Final Results Briefing scheduled 3 Jun 2026 to ITF Director / STARCOM S3C. Pre-brief to PEO requested 26 May. GO-level coordination initiated via S3C action officer.
+• FUNDS: $47K outstanding MIPRs tracked by resource manager. Expected reconciliation by 30 Apr 2026. 2 contract task orders being terminated NLT 15 Apr.`,
+        hlUpdated:'2026-03-06T13:20:00Z',tasks:p2,murderBoard:{}}
+    },
+    {
+      id:'demo_p3',name:'IRON FALCON DT/OT',
+      createdAt:'2025-04-10T14:00:00Z',updatedAt:'2026-03-07T09:15:00Z',
+      data:{
+        programName:'IRON FALCON DT/OT',
+        testStart:'2026-05-04T06:00:00.000Z',
+        trrDate:'2026-04-20T06:00:00.000Z',
+        lteDate:'2026-07-11T06:00:00.000Z',
+        highlights:
+`• TEST START: 4 May 2026 (56 days). TRR: 20 Apr. LTE (est.): 11 Jul 2026.
+• TEST PLAN: Final draft v2.1 submitted to TRA 7 Mar 2026. TRB scheduled 30 Mar at Peterson SFB, Bldg 1400 Conf Rm A. 14 external reviewers confirmed. Pre-read package distributing 14 Mar. TEA approval expected NLT 14 Apr.
+• SAFETY REVIEW BOARD: COMPLETE (20 Feb 2026). Safety risk: LOW-MEDIUM. SRB Summary Memo signed by DEL12/SE 24 Feb 2026.
+• M&S ACCREDITATION: Report 80% complete. V&V activities finalized. QA review and final formatting remaining. On track for TRR.
+• RMRR: Submitted to CFC S4S/S33 on 2 Mar 2026. 30-day review window expires 2 Apr. Coordination began Dec 2025. No concerns anticipated.
+• ATO: Confirmed valid through Aug 2026 by Space AO. IATT not required.
+• PEO CERTIFICATION MEMO: Anticipated 19 Apr 2026 (15 days before test start). PM confirmed system ready for dedicated OT&E. Letter being coordinated through SPO.
+• RISK: Iron Falcon Mk.II avionics software patch v4.2.1 pending lab regression testing — affects 6 test points. If not verified by 25 Apr, TD will brief risk at TRR and propose mitigation (reorder test sequence). No test pause anticipated. Tracking daily.`,
+        hlUpdated:'2026-03-07T09:15:00Z',tasks:p3,murderBoard:{}}
+    },
+    {
+      id:'demo_p4',name:'NEXUS GUARDIAN OA',
+      createdAt:'2025-03-01T14:00:00Z',updatedAt:'2026-03-05T14:30:00Z',
+      data:{
+        programName:'NEXUS GUARDIAN OA',
+        testStart:'2026-10-05T06:00:00.000Z',
+        trrDate:'2026-09-21T06:00:00.000Z',
+        lteDate:'2026-12-15T06:00:00.000Z',
+        highlights:
+`• TEST START: 5 Oct 2026 (210 days). TRR: 21 Sep. LTE (est.): 15 Dec 2026.
+• TEST PLAN STATUS: Draft 40% complete. Mission Analysis finalized. 6 COIs approved by ITF Director. MOEs and MOPs defined for COIs 1–4. Test design (DOE) framework established. Remaining sections (scenarios, threat rep, resource plan, data plan) to be informed by TDW II on 15 Apr 2026.
+• BATTLESPACE DEVELOPMENT: All 4 tasks complete. 6 Combat Operational Threads (COTs) documented and approved by core test team.
+• M&S ACCREDITATION PLAN: Submitted to S3C Technical Advisor 3 Mar 2026. Awaiting TA review (due NLT 21 Mar per schedule). 6 simulation tools (incl. JTIC and AFSIM) identified for VV&A.
+• TEST RESOURCES: Range scheduling requests submitted to RAAF Base Darwin and White Sands Missile Range. Threat replication assets confirmed for Q4 FY26 test window.
+• UPCOMING: TDW II on 15 Apr is next critical milestone. Safety Plan development begins Apr. Data collection tool dry run planned for May.
+• RISK: DOT&E AO has requested additional test points for COI 5 (EW resilience). Test team assessing impact on resource plan and schedule. ITF Director briefed 28 Feb 2026. Resolution expected at TDW II. If accepted, may require range extension and add $220K to test cost.`,
+        hlUpdated:'2026-03-05T14:30:00Z',tasks:p4,murderBoard:{}}
+    },
+    {
+      id:'demo_p5',name:'CENTURION LINK IOT&E',
+      createdAt:'2025-08-15T14:00:00Z',updatedAt:'2026-03-04T11:00:00Z',
+      data:{
+        programName:'CENTURION LINK IOT&E',
+        testStart:'2027-01-11T06:00:00.000Z',
+        trrDate:'2026-12-28T06:00:00.000Z',
+        lteDate:'2027-03-22T06:00:00.000Z',
+        highlights:
+`• TEST START: 11 Jan 2027 (307 days). TRR: 28 Dec 2026. LTE (est.): 22 Mar 2027. ACAT I / DOT&E Oversight.
+• FUNDING AGREEMENT: Signed and executed 27 Feb 2026. $7.2M obligated for ITF support. Co-funded: PEO C3 and STARCOM budget lines.
+• ITT CHARTER: Signed by all parties 5 Mar 2026. First formal ITT meeting scheduled 24 Mar 2026. Sub-charters (DRB, TDSB, JRMET) targeted NLT 31 Mar.
+• TEMP/T&E STRATEGY: Initial draft submitted to DOT&E AO 21 Feb 2026. 30-day review window expires 23 Mar. Initial DOT&E coordination positive — no objections anticipated.
+• TCP DEVELOPMENT: Kickoff held 3 Mar 2026. Schedule, data sources, and test event framework being drafted. Key ITT sub-groups engaged. Draft TCP expected NLT 30 Apr 2026.
+• IDSK: ICT Meeting #2 complete (18 Feb 2026). Key data-to-decision links mapped. Long-lead resources identified: 2 range days at Kirtland UAS range, 1 AEHF terminal, Red Air from 527th AS.
+• RISK (YELLOW): Test Director position unfilled as of 9 Mar 2026. TD assignment expected NLT 31 Mar per program MTO. Delay beyond 31 Mar will compress test planning timeline — ITF Director monitoring. SPO APDP Level III candidate identified; awaiting command release.
+• UPCOMING: Mission Analysis and COI development begins Apr 2026. TDW I targeted for Aug 2026.`,
+        hlUpdated:'2026-03-04T11:00:00Z',tasks:p5,murderBoard:{}}
+    },
+    {
+      id:'demo_p6',name:'PHANTOM GRID OA',
+      createdAt:'2024-01-20T14:00:00Z',updatedAt:'2025-11-15T09:00:00Z',
+      data:{
+        programName:'PHANTOM GRID OA',
+        testStart:'2025-05-05T06:00:00.000Z',
+        trrDate:'2025-04-21T06:00:00.000Z',
+        lteDate:'2025-07-14T06:00:00.000Z',
+        highlights:
+`• STATUS: PROGRAM CLOSED — 15 Nov 2025.
+• FINAL TEST REPORT approved by ITF Director 22 Oct 2025. Transmitted to DAF/TE, STARCOM/CC, and DOT&E action officer 24 Oct 2025. No CAF response required.
+• ASSESSMENT SUMMARY (5 COIs): COI 1 (Threat Detection) PASS · COI 2 (Network Resilience) PASS · COI 3 (Data Fusion) PASS · COI 4 (User Interface Under Stress) PASS · COI 5 (Cybersecurity Resilience in GPS-Denied Environment) CONDITIONAL — system performed above threshold in 4 of 6 GPS-denied scenarios; 2 scenarios degraded below MOE threshold.
+• RECOMMENDATION: System ready for LIMITED FIELDING pending PO resolution of 3 CAT II DRs. IOC achievable Q2 FY26 pending DR closure. Full FOC recommendation deferred pending cybersecurity fix.
+• RESULTS BRIEFING: Delivered to STARCOM/CC 31 Oct 2025. PEO present. PM acknowledged all DRs and committed to Q1 FY26 resolution schedule.
+• FUNDS: All funds fully reconciled. $112K unobligated funds returned to PO 7 Nov 2025. All contracts and task orders terminated. MIPRs closed. AF Forms 616 complete. No outstanding financial actions.
+• LESSONS LEARNED: 12 lessons submitted to STARCOM S9 and DEL 10 repository 10 Nov 2025. 3 STARCOM-level recommendations forwarded to S3C for potential update to STARCOM T&E Guide v2.0.
+• Closeout MFR signed and filed on DEL12 SharePoint 10 Nov 2025. HQ coordination complete.`,
+        hlUpdated:'2025-11-15T09:00:00Z',tasks:p6,murderBoard:{}}
+    }
+  ];
+
+  DEMOS.forEach(p=>saveProgramData(p.id,p.data));
+  const kept=getProgramList().filter(p=>!DEMO_IDS.includes(p.id));
+  saveProgramList([
+    ...DEMOS.map(p=>({id:p.id,name:p.name,createdAt:p.createdAt,updatedAt:p.updatedAt})),
+    ...kept
+  ]);
+  renderProgramBar();
+  // Auto-load first demo program (LASER SHARK)
+  loadProgram('demo_p1');
+  document.getElementById('lastSaved').textContent='🎯 6 demo programs loaded — use the dropdown to switch programs';
+}
+
 function openExecView(){renderExecView();document.getElementById('execOverlay').classList.add('show');}
 function closeExecView(){document.getElementById('execOverlay').classList.remove('show');}
 function renderExecView(){
