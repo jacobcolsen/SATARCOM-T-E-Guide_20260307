@@ -42,7 +42,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .page{padding:20px 24px 40px;}
 
 .matrix-wrap{overflow:auto;max-height:var(--matrix-h,calc(100vh - 100px));border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
-.matrix thead th{position:sticky;top:0;z-index:10;}
+.matrix thead tr:first-child th{position:sticky;top:0;z-index:11;}
+.matrix thead tr:last-child th{position:sticky;top:var(--thead-r1,33px);z-index:10;}
 .matrix{border-collapse:collapse;width:100%;min-width:1000px;}
 
 /* Phase header */
@@ -309,6 +310,8 @@ function syncMatrixH(){
   const meta=document.querySelector('.meta-bar');
   const used=(hdr?hdr.offsetHeight:60)+(meta?meta.offsetHeight:36)+32;
   document.documentElement.style.setProperty('--matrix-h',(window.innerHeight-used)+'px');
+  const r1=document.querySelector('.matrix thead tr:first-child');
+  if(r1)document.documentElement.style.setProperty('--thead-r1',r1.offsetHeight+'px');
 }
 window.addEventListener('DOMContentLoaded',()=>{buildMatrix();syncMatrixH();});
 window.addEventListener('resize',syncMatrixH);
