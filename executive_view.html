@@ -41,8 +41,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* ── MATRIX PAGE ── */
 .page{padding:20px 24px 40px;}
 
-.matrix-wrap{overflow-x:auto;overflow-y:clip;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
-.matrix thead th{position:sticky;top:var(--hdr-h,58px);z-index:10;}
+.matrix-wrap{overflow:auto;max-height:var(--matrix-h,calc(100vh - 100px));border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
+.matrix thead th{position:sticky;top:0;z-index:10;}
 .matrix{border-collapse:collapse;width:100%;min-width:1000px;}
 
 /* Phase header */
@@ -304,12 +304,14 @@ function navToTracker(progId, taskId){
   window.location.href = 'index.html';
 }
 
-function syncHdrH(){
-  const h=document.querySelector('.hdr');
-  if(h)document.documentElement.style.setProperty('--hdr-h',h.offsetHeight+'px');
+function syncMatrixH(){
+  const hdr=document.querySelector('.hdr');
+  const meta=document.querySelector('.meta-bar');
+  const used=(hdr?hdr.offsetHeight:60)+(meta?meta.offsetHeight:36)+32;
+  document.documentElement.style.setProperty('--matrix-h',(window.innerHeight-used)+'px');
 }
-window.addEventListener('DOMContentLoaded',()=>{buildMatrix();syncHdrH();});
-window.addEventListener('resize',syncHdrH);
+window.addEventListener('DOMContentLoaded',()=>{buildMatrix();syncMatrixH();});
+window.addEventListener('resize',syncMatrixH);
 </script>
 </body>
 </html>
