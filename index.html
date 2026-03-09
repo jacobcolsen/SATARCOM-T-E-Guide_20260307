@@ -673,6 +673,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
 </div>
 
+<!-- ── DELETE CONFIRM MODAL ── -->
+<div class="overlay" id="delConfirmOverlay" onclick="if(event.target===this)cancelDelete()">
+  <div class="modal">
+    <h3>🗑 Delete Program?</h3>
+    <p id="delConfirmMsg" style="font-size:.83rem;color:var(--g600);line-height:1.5"></p>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="cancelDelete()">Cancel</button>
+      <button class="mbtn danger" onclick="confirmDelete()">Delete Program</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════
 //  TASKS
@@ -1686,11 +1698,26 @@ function createNewProgram(){
   renderAll();renderProgramBar();closeProgramList();
   document.getElementById('cfgName').focus();
 }
-function deleteProgram(id,name){
-  if(!confirm('Delete program "'+name+'"? This cannot be undone.'))return;
-  const list=getProgramList().filter(p=>p.id!==id);
-  saveProgramList(list);localStorage.removeItem('starcom_te_prog_'+id);
+let _delPendingId=null;
+function deleteProgram(id){
+  _delPendingId=id;
+  const prog=getProgramList().find(p=>p.id===id);
+  const name=prog?prog.name:id;
+  document.getElementById('delConfirmMsg').textContent='Delete "'+name+'"? This cannot be undone.';
+  document.getElementById('delConfirmOverlay').classList.add('show');
+}
+function confirmDelete(){
+  if(!_delPendingId)return;
+  const list=getProgramList().filter(p=>p.id!==_delPendingId);
+  saveProgramList(list);
+  localStorage.removeItem('starcom_te_prog_'+_delPendingId);
+  _delPendingId=null;_delPendingName=null;
+  document.getElementById('delConfirmOverlay').classList.remove('show');
   renderProgramListModal();renderProgramBar();
+}
+function cancelDelete(){
+  _delPendingId=null;
+  document.getElementById('delConfirmOverlay').classList.remove('show');
 }
 function renderProgramBar(){
   const sel=document.getElementById('progSelect');if(!sel)return;
@@ -1724,7 +1751,7 @@ function renderProgramListModal(){
       </div>
       <div style="display:flex;gap:6px">
         <button class="mbtn primary" onclick="loadProgram('${p.id}')">Open</button>
-        <button class="mbtn danger" onclick="deleteProgram('${p.id}',${JSON.stringify(p.name)})">Delete</button>
+        <button class="mbtn danger" onclick="deleteProgram('${p.id}')">Delete</button>
       </div>
     </div>`).join('');
 }
