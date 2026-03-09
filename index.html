@@ -313,6 +313,57 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 @media print{.hdr .hbtn,.filters,.cfg .btn-apply{display:none;}body{background:#fff;}
   .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
 
+/* ── TEST EXECUTION BOARD ── */
+.tex-panel{background:#fff;border-bottom:2px solid var(--navy-light);overflow:hidden;}
+.tex-hdr{display:flex;align-items:center;gap:10px;padding:10px 24px;cursor:pointer;
+  background:linear-gradient(90deg,#eff6ff,#fff);user-select:none;transition:background .15s;}
+.tex-hdr:hover{background:linear-gradient(90deg,#dbeafe,#eff6ff);}
+.tex-hdr-title{font-size:.85rem;font-weight:700;color:#1e40af;letter-spacing:.2px;}
+.tex-hdr-sub{font-size:.68rem;color:#3b82f6;margin-left:4px;}
+.tex-toggle{margin-left:auto;color:#3b82f6;transition:transform .25s;font-size:.9rem;}
+.tex-toggle.open{transform:rotate(90deg);}
+.tex-body{padding:0 24px 16px;display:none;}
+.tex-body.open{display:block;}
+.tex-stat{display:flex;gap:18px;align-items:center;padding:8px 0 4px;flex-wrap:wrap;}
+.tex-stat-item{font-size:.74rem;color:var(--g600);}
+.tex-stat-item strong{color:var(--g800);}
+.tex-stat-bar{flex:1;min-width:100px;height:8px;background:var(--g200);border-radius:4px;overflow:hidden;}
+.tex-stat-bar-in{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:4px;transition:width .4s;}
+.tex-cols{display:flex;gap:24px;margin-top:8px;}
+.tex-col{flex:1;min-width:0;}
+.tex-col-hdr{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--g500);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.tex-add-btn{padding:2px 11px;background:var(--navy-light);color:#fff;border:none;border-radius:5px;
+  font-size:.65rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.tex-add-btn:hover{background:var(--navy);}
+.tex-tbl{width:100%;border-collapse:collapse;}
+.tex-tbl th{padding:5px 8px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--g500);background:var(--g100);border-bottom:1.5px solid var(--g200);white-space:nowrap;}
+.tex-tbl td{padding:5px 8px;border-bottom:1px solid var(--g100);font-size:.78rem;vertical-align:middle;}
+.tex-tbl tr:last-child td{border-bottom:none;}
+.tex-tbl tr:hover td{background:var(--g50);}
+.tex-lbl{font-size:.7rem;font-weight:700;color:var(--g400);white-space:nowrap;}
+.tex-name{outline:none;cursor:text;min-width:80px;display:inline-block;}
+.tex-name:focus{background:#fffbeb;border-radius:3px;padding:1px 4px;outline:1.5px solid var(--gold);}
+.tex-del{padding:1px 7px;background:transparent;color:var(--g400);border:1px solid var(--g300);
+  border-radius:4px;font-size:.65rem;cursor:pointer;transition:all .15s;}
+.tex-del:hover{background:#fee2e2;border-color:#dc2626;color:#dc2626;}
+.csb{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.69rem;font-weight:700;
+  cursor:pointer;user-select:none;white-space:nowrap;transition:filter .1s;}
+.csb:hover{filter:brightness(.9);}
+.csb-pending{background:#f1f5f9;color:var(--g500);border:1.5px solid var(--g300);}
+.csb-inprog{background:#dbeafe;color:#1d4ed8;border:1.5px solid #93c5fd;}
+.csb-pass{background:#dcfce7;color:#15803d;border:1.5px solid #86efac;}
+.csb-fail{background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;}
+.csb-cond{background:#fff7ed;color:#c2410c;border:1.5px solid #fdba74;}
+.tsb{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.69rem;font-weight:700;
+  cursor:pointer;user-select:none;white-space:nowrap;transition:filter .1s;}
+.tsb:hover{filter:brightness(.9);}
+.tsb-ns{background:#f1f5f9;color:var(--g500);border:1.5px solid var(--g300);}
+.tsb-inprog{background:#dbeafe;color:#1d4ed8;border:1.5px solid #93c5fd;}
+.tsb-done{background:#dcfce7;color:#15803d;border:1.5px solid #86efac;}
+.tsb-nogo{background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;}
+
 /* ── SLIDE REDESIGN: TOP ROW ── */
 .sl-toprow{display:flex;align-items:center;gap:18px;flex-shrink:0;padding:2px 0;}
 /* Completion ring */
@@ -534,6 +585,41 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
   <div class="fc-scroll">
     <div class="fc-track" id="flowchartContainer"></div>
+  </div>
+</div>
+
+<!-- ── TEST EXECUTION BOARD ── -->
+<div class="tex-panel">
+  <div class="tex-hdr" onclick="toggleTex()">
+    <span style="font-size:1rem">🎯</span>
+    <span class="tex-hdr-title">Test Execution Board</span>
+    <span class="tex-hdr-sub" id="texHdrSub">— COIs &amp; Test Points</span>
+    <span class="tex-toggle" id="texToggle">▶</span>
+  </div>
+  <div class="tex-body" id="texBody">
+    <div class="tex-stat" id="texStat"></div>
+    <div class="tex-cols">
+      <div class="tex-col">
+        <div class="tex-col-hdr">
+          <span>Critical Operational Issues (COIs)</span>
+          <button class="tex-add-btn" onclick="addTexObj()">+ Add COI</button>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th>#</th><th>COI Name</th><th>Status</th><th></th></tr></thead>
+          <tbody id="texObjBody"></tbody>
+        </table>
+      </div>
+      <div class="tex-col">
+        <div class="tex-col-hdr">
+          <span>Test Points</span>
+          <button class="tex-add-btn" onclick="addTexTp()">+ Add TP</button>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th>#</th><th>Test Point Description</th><th>COI</th><th>Status</th><th></th></tr></thead>
+          <tbody id="texTpBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -939,7 +1025,7 @@ const TASKS=[
 //  STATE
 // ═══════════════════════════════════════════════════
 const SK='starcom_te_v2';
-let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{}};
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[]}};
 
 function loadS(){
   try{
@@ -1079,6 +1165,7 @@ function renderAll(){
   updateVis();
   updateHdrSub();
   renderFlowchart();
+  renderTex();
 }
 function updateHdrSub(){
   document.getElementById('hdrSub').textContent=
@@ -1636,7 +1723,8 @@ function captureCurrentState(){
     trrDate:S.trrDate?S.trrDate.toISOString():null,
     lteDate:S.lteDate?S.lteDate.toISOString():null,
     highlights:S.highlights,hlUpdated:S.hlUpdated,
-    tasks:S.tasks,murderBoard:S.murderBoard
+    tasks:S.tasks,murderBoard:S.murderBoard,
+    testExec:S.testExec||{objectives:[],testPoints:[]}
   };
 }
 function saveCurrentAsProgram(){
@@ -1675,6 +1763,7 @@ function loadProgram(id){
   S.hlUpdated=data.hlUpdated||'';
   S.tasks=data.tasks||{};
   S.murderBoard=data.murderBoard||{};
+  S.testExec=data.testExec||{objectives:[],testPoints:[]};
   document.getElementById('cfgName').value=S.programName;
   document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
   document.getElementById('cfgTRR').value=S.trrDate?fmtI(S.trrDate):'';
@@ -1689,7 +1778,7 @@ function createNewProgram(){
     const cur=list.find(p=>p.name===curName);
     if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
   }
-  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{}};
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[]}};
   document.getElementById('cfgName').value='';
   document.getElementById('cfgStart').value='';
   document.getElementById('cfgTRR').value='';
@@ -1899,6 +1988,143 @@ function renderFlowchart(){
       <div class="fc-status" style="color:${clr.text}">${clr.lbl}</div>
     </div>${arrow}`;
   }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  TEST EXECUTION BOARD
+// ═══════════════════════════════════════════════════
+let texOpen=false;
+function getTE(){
+  if(!S.testExec)S.testExec={objectives:[],testPoints:[]};
+  if(!S.testExec.objectives)S.testExec.objectives=[];
+  if(!S.testExec.testPoints)S.testExec.testPoints=[];
+  return S.testExec;
+}
+function toggleTex(){
+  texOpen=!texOpen;
+  document.getElementById('texBody').classList.toggle('open',texOpen);
+  document.getElementById('texToggle').classList.toggle('open',texOpen);
+}
+function renderTex(){
+  renderTexObjTable();
+  renderTexTpTable();
+  updateTexHdrSub();
+}
+const COI_STATUSES=['Pending','In Progress','PASS','FAIL','CONDITIONAL'];
+const COI_CLS   =['csb-pending','csb-inprog','csb-pass','csb-fail','csb-cond'];
+const TP_STATUSES=['Not Started','In Progress','Complete','No-Go'];
+const TP_CLS    =['tsb-ns','tsb-inprog','tsb-done','tsb-nogo'];
+
+function renderTexObjTable(){
+  const te=getTE();
+  const tbody=document.getElementById('texObjBody');if(!tbody)return;
+  if(!te.objectives.length){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--g400);padding:14px 0;font-size:.78rem;font-style:italic">No COIs defined. Click + Add COI to begin.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=te.objectives.map((o,i)=>{
+    const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+    return`<tr>
+      <td class="tex-lbl">COI ${i+1}</td>
+      <td><div class="tex-name" contenteditable="true"
+            onblur="saveTexText(this,'obj-name','${o.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(o.name||'')}</div></td>
+      <td><span class="csb ${COI_CLS[si]}" onclick="cycleTexSt('obj','${o.id}')">${COI_STATUSES[si]}</span></td>
+      <td><button class="tex-del" onclick="delTex('obj','${o.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function renderTexTpTable(){
+  const te=getTE();
+  const tbody=document.getElementById('texTpBody');if(!tbody)return;
+  if(!te.testPoints.length){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--g400);padding:14px 0;font-size:.78rem;font-style:italic">No test points defined. Click + Add TP to begin.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=te.testPoints.map((tp,i)=>{
+    const si=Math.max(0,TP_STATUSES.indexOf(tp.status));
+    const num=String(i+1).padStart(3,'0');
+    return`<tr>
+      <td class="tex-lbl">TP-${num}</td>
+      <td><div class="tex-name" contenteditable="true" style="min-width:180px"
+            onblur="saveTexText(this,'tp-name','${tp.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(tp.name||'')}</div></td>
+      <td><div class="tex-name" contenteditable="true" style="min-width:50px"
+            onblur="saveTexText(this,'tp-coi','${tp.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(tp.coiRef||'')}</div></td>
+      <td><span class="tsb ${TP_CLS[si]}" onclick="cycleTexSt('tp','${tp.id}')">${TP_STATUSES[si]}</span></td>
+      <td><button class="tex-del" onclick="delTex('tp','${tp.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function addTexObj(){
+  const te=getTE();
+  te.objectives.push({id:'o'+Date.now(),name:'',status:'Pending'});
+  saveS();renderTexObjTable();updateTexHdrSub();
+}
+function addTexTp(){
+  const te=getTE();
+  te.testPoints.push({id:'tp'+Date.now(),name:'',coiRef:'',status:'Not Started'});
+  saveS();renderTexTpTable();updateTexHdrSub();
+}
+function cycleTexSt(type,id){
+  const te=getTE();
+  if(type==='obj'){
+    const o=te.objectives.find(x=>x.id===id);if(!o)return;
+    const i=COI_STATUSES.indexOf(o.status);
+    o.status=COI_STATUSES[(i<0?0:i+1)%COI_STATUSES.length];
+  }else{
+    const tp=te.testPoints.find(x=>x.id===id);if(!tp)return;
+    const i=TP_STATUSES.indexOf(tp.status);
+    tp.status=TP_STATUSES[(i<0?0:i+1)%TP_STATUSES.length];
+  }
+  saveS();renderTex();
+}
+function delTex(type,id){
+  const te=getTE();
+  if(type==='obj')te.objectives=te.objectives.filter(x=>x.id!==id);
+  else te.testPoints=te.testPoints.filter(x=>x.id!==id);
+  saveS();renderTex();
+}
+function saveTexText(el,type,id){
+  const te=getTE();
+  const val=(el.innerText||el.textContent||'').trim();
+  if(type==='obj-name'){
+    const o=te.objectives.find(x=>x.id===id);if(o)o.name=val;
+  }else if(type==='tp-name'){
+    const tp=te.testPoints.find(x=>x.id===id);if(tp)tp.name=val;
+  }else if(type==='tp-coi'){
+    const tp=te.testPoints.find(x=>x.id===id);if(tp)tp.coiRef=val;
+  }
+  saveS();updateTexHdrSub();
+}
+function updateTexHdrSub(){
+  const te=getTE();
+  const tpTotal=te.testPoints.length;
+  const tpDone=te.testPoints.filter(x=>x.status==='Complete').length;
+  const coiTotal=te.objectives.length;
+  const coiAssessed=te.objectives.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length;
+  const pct=tpTotal?Math.round(tpDone/tpTotal*100):0;
+  const sub=document.getElementById('texHdrSub');
+  if(sub){
+    sub.textContent=coiTotal?
+      `— ${tpDone}/${tpTotal} TPs Complete · ${coiAssessed}/${coiTotal} COIs Assessed`:
+      '— COIs & Test Points';
+  }
+  const el=document.getElementById('texStat');
+  if(!el)return;
+  el.innerHTML=tpTotal?`
+    <div class="tex-stat-item"><strong>${tpDone}/${tpTotal}</strong> Test Points Complete</div>
+    <div class="tex-stat-item"><strong>${pct}%</strong> Execution Progress</div>
+    <div class="tex-stat-item"><strong>${coiAssessed}/${coiTotal}</strong> COIs Assessed</div>
+    <div class="tex-stat-bar"><div class="tex-stat-bar-in" style="width:${pct}%"></div></div>
+  `:'';
+}
+function escH(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ═══════════════════════════════════════════════════
@@ -2136,6 +2362,73 @@ function loadDemoPrograms(){
     t02:prog('Funding agreement in negotiation with PEO ISR. $8.1M ITF support requested. SPO working color of money issues with STARCOM FM. Target execution NLT 30 Apr 2026.'),
   };
 
+  // ── TEST EXECUTION DATA for active-test programs ──
+  const tex_p1={
+    objectives:[
+      {id:'swl_o1',name:'Shark Platform Maneuverability Under Combat Load',status:'PASS'},
+      {id:'swl_o2',name:'Target Acquisition & Track Initiation',status:'In Progress'},
+      {id:'swl_o3',name:'Laser Accuracy at Range (200–600m)',status:'PASS'},
+      {id:'swl_o4',name:'Laser Accuracy at Extended Range (600–1000m)',status:'In Progress'},
+      {id:'swl_o5',name:'Laser Thermal Management & Continuous Firing',status:'PASS'},
+      {id:'swl_o6',name:'Human-Shark Communication Protocol Reliability',status:'PASS'},
+      {id:'swl_o7',name:'Multi-Platform Coordinated Strike (2+ sharks)',status:'Pending'},
+    ],
+    testPoints:[
+      {id:'swl_tp1',name:'Maneuverability — 5kt evasive course change under laser load',coiRef:'COI 1',status:'Complete'},
+      {id:'swl_tp2',name:'Maneuverability — 15kt sprint and target re-acquisition',coiRef:'COI 1',status:'Complete'},
+      {id:'swl_tp3',name:'Maneuverability — full dive and surface under active laser fire',coiRef:'COI 1',status:'Complete'},
+      {id:'swl_tp4',name:'Target acq — stationary surface target at 200m',coiRef:'COI 2',status:'Complete'},
+      {id:'swl_tp5',name:'Target acq — slow-mover (<10kt) at 300m in sea state 2',coiRef:'COI 2',status:'Complete'},
+      {id:'swl_tp6',name:'Target acq — fast-mover (>30kt) at 500m',coiRef:'COI 2',status:'Complete'},
+      {id:'swl_tp7',name:'Target acq — fast-mover (>30kt) at 800m with gimbal offset',coiRef:'COI 2',status:'In Progress'},
+      {id:'swl_tp8',name:'Laser accuracy — point target 200m, day, sea state 2',coiRef:'COI 3',status:'Complete'},
+      {id:'swl_tp9',name:'Laser accuracy — point target 400m, day, sea state 2',coiRef:'COI 3',status:'Complete'},
+      {id:'swl_tp10',name:'Laser accuracy — point target 600m, day, sea state 3',coiRef:'COI 3',status:'Complete'},
+      {id:'swl_tp11',name:'Laser accuracy — point target 600m, night, sea state 2',coiRef:'COI 3',status:'Complete'},
+      {id:'swl_tp12',name:'Laser accuracy — fast-mover 700m extended range',coiRef:'COI 4',status:'Complete'},
+      {id:'swl_tp13',name:'Laser accuracy — stationary target 850m extended range',coiRef:'COI 4',status:'In Progress'},
+      {id:'swl_tp14',name:'Thermal performance — 5min continuous firing 150kW',coiRef:'COI 5',status:'Complete'},
+      {id:'swl_tp15',name:'Thermal performance — 15min burst cycle, 3-second intervals',coiRef:'COI 5',status:'Complete'},
+      {id:'swl_tp16',name:'Thermal management — ambient 38°C full power profile',coiRef:'COI 5',status:'Complete'},
+      {id:'swl_tp17',name:'H-S comm — full basic command set (24 commands)',coiRef:'COI 6',status:'Complete'},
+      {id:'swl_tp18',name:'H-S comm — emergency recall under active threat',coiRef:'COI 6',status:'Complete'},
+      {id:'swl_tp19',name:'H-S comm — EW jamming environment resilience (broad spectrum)',coiRef:'COI 6',status:'Complete'},
+      {id:'swl_tp20',name:'Coordinated strike — 2-shark simultaneous engagement, single target',coiRef:'COI 7',status:'Not Started'},
+    ]
+  };
+
+  const tex_p7={
+    objectives:[
+      {id:'qdb_o1',name:'Multi-Domain Track Continuity (all domains simultaneous)',status:'PASS'},
+      {id:'qdb_o2',name:'Autonomous Engagement Latency < 200ms from cue',status:'PASS'},
+      {id:'qdb_o3',name:'Target Discrimination (friend/foe/neutral)',status:'PASS'},
+      {id:'qdb_o4',name:'Fratricide Avoidance Under Mass Engagement',status:'PASS'},
+      {id:'qdb_o5',name:'Sensor Fusion at Maximum Track Load (1,000 targets)',status:'PASS'},
+      {id:'qdb_o6',name:'Thermal Management at High Processor Load (>85%)',status:'CONDITIONAL'},
+      {id:'qdb_o7',name:'Operator Supervisory Workload — Mass Engagement Scenario',status:'In Progress'},
+    ],
+    testPoints:[
+      {id:'qdb_tp1',name:'Multi-domain track — air, space, maritime simultaneous (100 targets)',coiRef:'COI 1',status:'Complete'},
+      {id:'qdb_tp2',name:'Multi-domain track — air, space, maritime, cyber (250 targets)',coiRef:'COI 1',status:'Complete'},
+      {id:'qdb_tp3',name:'Multi-domain track continuity through simulated comms degradation',coiRef:'COI 1',status:'Complete'},
+      {id:'qdb_tp4',name:'Engagement latency — single-domain, 50 targets, no EW',coiRef:'COI 2',status:'Complete'},
+      {id:'qdb_tp5',name:'Engagement latency — multi-domain, 200 targets, EW active',coiRef:'COI 2',status:'Complete'},
+      {id:'qdb_tp6',name:'Engagement latency — 1,000 targets, full EW environment',coiRef:'COI 2',status:'Complete'},
+      {id:'qdb_tp7',name:'Target discrimination — 500 mixed targets, 10% friendly',coiRef:'COI 3',status:'Complete'},
+      {id:'qdb_tp8',name:'Target discrimination — spoofed IFF environment, 200 targets',coiRef:'COI 3',status:'Complete'},
+      {id:'qdb_tp9',name:'Fratricide avoidance — coordinated multi-platform engagement',coiRef:'COI 4',status:'Complete'},
+      {id:'qdb_tp10',name:'Fratricide avoidance — degraded IFF, mass engagement (800 targets)',coiRef:'COI 4',status:'Complete'},
+      {id:'qdb_tp11',name:'Sensor fusion — 800-target load, all domains, no EW',coiRef:'COI 5',status:'Complete'},
+      {id:'qdb_tp12',name:'Sensor fusion — 1,000-target max load, contested environment',coiRef:'COI 5',status:'Complete'},
+      {id:'qdb_tp13',name:'Sensor fusion — track recovery after sensor denial event',coiRef:'COI 5',status:'Complete'},
+      {id:'qdb_tp14',name:'Thermal throttling onset — processor load 85–95%',coiRef:'COI 6',status:'Complete'},
+      {id:'qdb_tp15',name:'Thermal throttling — sustained 90% load, 30-minute profile',coiRef:'COI 6',status:'Complete'},
+      {id:'qdb_tp16',name:'Thermal cap workaround — 850-target limit, full mission profile',coiRef:'COI 6',status:'Complete'},
+      {id:'qdb_tp17',name:'Operator workload — single operator, 500-target simultaneous engagement',coiRef:'COI 7',status:'In Progress'},
+      {id:'qdb_tp18',name:'Operator workload — single operator, 1,000-target mass engagement',coiRef:'COI 7',status:'In Progress'},
+    ]
+  };
+
   const DEMOS=[
     {
       id:'demo_p1',name:'SHARKS WITH LASERS',
@@ -2154,7 +2447,7 @@ function loadDemoPrograms(){
 • TEASR #3 published 5 Mar via SIPR. All 47 stakeholders on distribution. TEASR #4 due 12 Mar.
 • Dr. Evil independent observer team (4 personnel) departs Peterson SFB 11 Mar. No concerns raised.
 • UPCOMING: Phase II maritime target profiles begin 16 Mar. Night ops window 22–26 Mar. Phase III open-water scenarios begin 7 Apr.`,
-        hlUpdated:'2026-03-08T16:42:00Z',tasks:p1,murderBoard:{}}
+        hlUpdated:'2026-03-08T16:42:00Z',tasks:p1,murderBoard:{},testExec:tex_p1}
     },
     {
       id:'demo_p7',name:'QUANTUM DEATH BLENDER',
@@ -2172,7 +2465,7 @@ function loadDemoPrograms(){
 • CAT II DR #14 (thermal throttling above 85% processor load): PO workaround accepted; system operating at 850-target cap for remaining test points. Full resolution expected before FOC.
 • TEASR #7 published 5 Mar. TEASR #8 due 10 Mar. Final TEASR (#9) planned for day of LTE.
 • UPCOMING: Final 6 test points (COI 7 — operator workload under simultaneous mass engagement scenario) execute 11–14 Mar. TDSB final data validation session 16–17 Mar. LTE declaration 18 Mar.`,
-        hlUpdated:'2026-03-08T05:30:00Z',tasks:p7,murderBoard:{}}
+        hlUpdated:'2026-03-08T05:30:00Z',tasks:p7,murderBoard:{},testExec:tex_p7}
     },
     {
       id:'demo_p2',name:'ORBITAL DEATH RAY',
