@@ -41,7 +41,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* ── MATRIX PAGE ── */
 .page{padding:20px 24px 40px;}
 
-.matrix-wrap{overflow-x:auto;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
+.matrix-wrap{overflow-x:auto;overflow-y:clip;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.09);}
+.matrix thead th{position:sticky;top:var(--hdr-h,58px);z-index:10;}
 .matrix{border-collapse:collapse;width:100%;min-width:1000px;}
 
 /* Phase header */
@@ -303,7 +304,12 @@ function navToTracker(progId, taskId){
   window.location.href = 'index.html';
 }
 
-window.addEventListener('DOMContentLoaded', buildMatrix);
+function syncHdrH(){
+  const h=document.querySelector('.hdr');
+  if(h)document.documentElement.style.setProperty('--hdr-h',h.offsetHeight+'px');
+}
+window.addEventListener('DOMContentLoaded',()=>{buildMatrix();syncHdrH();});
+window.addEventListener('resize',syncHdrH);
 </script>
 </body>
 </html>
