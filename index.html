@@ -1908,7 +1908,7 @@ function renderFlowchart(){
 //  DEMO DATA SEED  (🎯 Load Demo button)
 // ═══════════════════════════════════════════════════
 function loadDemoPrograms(){
-  const DEMO_IDS=['demo_p1','demo_p2','demo_p3','demo_p4','demo_p5','demo_p6'];
+  const DEMO_IDS=['demo_p1','demo_p2','demo_p3','demo_p4','demo_p5','demo_p6','demo_p7','demo_p8','demo_p9'];
   const existing=getProgramList();
   if(DEMO_IDS.some(id=>existing.find(p=>p.id===id))){
     if(!confirm('Demo programs are already loaded. Reload and overwrite them?'))return;
@@ -2101,6 +2101,41 @@ function loadDemoPrograms(){
   p6.t35=done('All funds reconciled. $112K unobligated funds returned to PO 7 Nov 2025. All contracts/task orders terminated. MIPRs closed. AF Forms 616 complete.');
   p6.t36=done('12 lessons learned submitted to STARCOM S9 and DEL 10 repository 10 Nov 2025. 3 STARCOM-level recommendations forwarded to S3C for policy update to STARCOM T&E Guide v2.0.');
 
+  // ── PROGRAM 7: QUANTUM DEATH BLENDER — Active test, day 41/50, approaching LTE ──
+  const p7pre=['t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','tp01','tp02','tp03','tp04','tp05','tp06','tp07','tp08','tp09','tp10','tp11','tp12','tp13','tp14','tp15','tp16'];
+  const p7=Object.fromEntries(p7pre.map(id=>[id,done()]));
+  p7.t01=done('STARCOM awareness memo signed 4 Jan 2024. Full OTA support. DOT&E interest program.');
+  p7.t02=done('Funding agreement executed 18 Feb 2024. $5.9M obligated. Co-funded PEO C2.');
+  p7.t06=done('TCP approved 8 Aug 2024. 63 test points across air, space, cyber, and maritime domains.');
+  p7.t10=done('Test Plan v1.3 approved by TEA 15 Oct 2025. TRB cleared all 2 findings.');
+  p7.t17=done('TRR conducted 13 Jan 2026. All parties concurred. Quantum processor safety exclusion zones briefed and accepted.');
+  p7.t19=done('PEO Certification Memo received 10 Jan 2026. System declared ready for dedicated OT&E.');
+  p7.t24=done('Test Start Memo transmitted 0600L 27 Jan 2026.');
+  p7.t25=done('CAT I DR #4 filed 14 Feb (sensor fusion lag >300ms at max track load). DRB convened. PO resolved via algorithm patch v3.1 on 22 Feb. CLOSED 24 Feb 2026.');
+  p7.t26=prog('3 CAT II DRs total: DR #8 and #11 CLOSED. DR #14 (thermal throttling above 85% processor load) — PO workaround accepted; system limited to 850-target tracking for remaining test points. Expected close after test.');
+  p7.t27=prog('TEASRs #1–7 published via SIPR. TEASR #8 due 10 Mar 2026. ITF Director approved all. Distribution: S3C, DEL12/CC, PEO, DOT&E AO.');
+  p7.t37=done('ITT Charter revalidated 5 Jan 2026. Membership unchanged.');
+  p7.t38=done('TEMP updated at MS C (Aug 2025).');
+  p7.t39=prog('1 CAT I (closed) and 3 CAT II (2 closed, 1 open) tracked through test. Weekly DRB telecon Thursdays 0900L.');
+  p7.t40=done('TRP finalized 15 Jan 2026. All resources confirmed.');
+
+  // ── PROGRAM 8: THUNDER MARMOT — Post-test, closeout in progress ──
+  const p8base=['t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','t25','t26','t27','t30','t31','t32','t33','t37','t38','t39','t40','tp01','tp02','tp03','tp04','tp05','tp06','tp07','tp08','tp09','tp10','tp11','tp12','tp13','tp14','tp15','tp16'];
+  const p8=Object.fromEntries(p8base.map(id=>[id,done()]));
+  p8.t28=C('none','No test pause required.');
+  p8.t29=C('none','No test stop required.');
+  p8.t32=done('Final Test Report approved by ITF Director 28 Jan 2026. Transmitted to DAF/TE, STARCOM/CC, DOT&E AO 30 Jan 2026.');
+  p8.t33=done('Final Results Briefing delivered to STARCOM/CC 14 Feb 2026. No questions outstanding. PEO committed to CAT II DR resolution by Q2 FY26.');
+  p8.t34=prog('Closeout checklist 60% complete. MFR being drafted by TD. HQ coordination (S1, S3C, S4/6, S5/8/9, HO) in progress. Target: 31 Mar 2026.');
+  p8.t35=prog('$83K unobligated funds. Resource manager reconciling 3 outstanding MIPRs. 1 contract task order pending termination. Expected completion 31 Mar 2026.');
+  p8.t36=prog('9 lessons learned drafted. Coordinating with STARCOM S9 and DEL 10 for repository submission. Target: 20 Mar 2026.');
+
+  // ── PROGRAM 9: LASER PLATYPUS — Very early planning, funding not yet signed ──
+  const p9={
+    t01:done('STARCOM awareness memo signed 14 Jan 2026. Involvement determination: Full IOT&E. ACAT I / DOT&E oversight. 5-Eyes partner nations notified and observing.'),
+    t02:prog('Funding agreement in negotiation with PEO ISR. $8.1M ITF support requested. SPO working color of money issues with STARCOM FM. Target execution NLT 30 Apr 2026.'),
+  };
+
   const DEMOS=[
     {
       id:'demo_p1',name:'SHARKS WITH LASERS',
@@ -2120,6 +2155,24 @@ function loadDemoPrograms(){
 • Dr. Evil independent observer team (4 personnel) departs Peterson SFB 11 Mar. No concerns raised.
 • UPCOMING: Phase II maritime target profiles begin 16 Mar. Night ops window 22–26 Mar. Phase III open-water scenarios begin 7 Apr.`,
         hlUpdated:'2026-03-08T16:42:00Z',tasks:p1,murderBoard:{}}
+    },
+    {
+      id:'demo_p7',name:'QUANTUM DEATH BLENDER',
+      createdAt:'2024-01-10T14:00:00Z',updatedAt:'2026-03-08T05:30:00Z',
+      data:{
+        programName:'QUANTUM DEATH BLENDER',
+        testStart:'2026-01-27T06:00:00.000Z',
+        trrDate:'2026-01-13T06:00:00.000Z',
+        lteDate:'2026-03-18T06:00:00.000Z',
+        highlights:
+`• PROGRAM DESCRIPTION: IOT&E of the QC-7 Autonomous Quantum Battle Management System — a combat decision-making AI running on a room-temperature quantum processor achieving 10^18 operations per second, capable of simultaneously tracking and autonomously engaging up to 1,000 threats across all domains within 200 milliseconds of cueing. The system generates and executes engagement solutions without human-in-the-loop, in compliance with DoD AI ethics directives via an onboard "Don't Do That" override subroutine. Evaluates 7 COIs including multi-domain track continuity, engagement latency, target discrimination, fratricide avoidance, and operator supervisory workload.
+• ACTIVE TEST — Day 41 of 50-day window (27 Jan – 18 Mar 2026). 57/63 test points complete (90%). LTE declaration expected 18 Mar — 10 days away.
+• PLATFORM STATUS: Quantum processor operating within thermal spec. All 7 COI data packages on track for TDSB validation by LTE.
+• CAT I DR #4: CLOSED 24 Feb. Sensor fusion lag >300ms at max track load — resolved via algorithm patch v3.1. DRB closed with no conditions. 4 remaining test points address affected COI.
+• CAT II DR #14 (thermal throttling above 85% processor load): PO workaround accepted; system operating at 850-target cap for remaining test points. Full resolution expected before FOC.
+• TEASR #7 published 5 Mar. TEASR #8 due 10 Mar. Final TEASR (#9) planned for day of LTE.
+• UPCOMING: Final 6 test points (COI 7 — operator workload under simultaneous mass engagement scenario) execute 11–14 Mar. TDSB final data validation session 16–17 Mar. LTE declaration 18 Mar.`,
+        hlUpdated:'2026-03-08T05:30:00Z',tasks:p7,murderBoard:{}}
     },
     {
       id:'demo_p2',name:'ORBITAL DEATH RAY',
@@ -2199,6 +2252,41 @@ function loadDemoPrograms(){
         hlUpdated:'2026-03-04T11:00:00Z',tasks:p5,murderBoard:{}}
     },
     {
+      id:'demo_p8',name:'THUNDER MARMOT',
+      createdAt:'2024-09-05T14:00:00Z',updatedAt:'2026-03-03T14:00:00Z',
+      data:{
+        programName:'THUNDER MARMOT',
+        testStart:'2025-08-11T06:00:00.000Z',
+        trrDate:'2025-07-28T06:00:00.000Z',
+        lteDate:'2025-10-20T06:00:00.000Z',
+        highlights:
+`• PROGRAM DESCRIPTION: OA of the BW-4 Subterranean Autonomous Cyber-Physical Infiltration Vehicle — an 8cm-diameter burrowing drone with a carbon-fiber chassis, diamond-tipped tungsten boring bits (6 inches per minute through reinforced concrete), a quantum-shielded cyber payload module, and retractable network tap hardware. Physically breaches and penetrates air-gapped adversary facilities by boring directly into infrastructure, autonomously installs a full suite of persistent offensive cyber tools, and self-destructs upon exfil. Evaluates 5 COIs: tunnel accuracy, breach time, cyber payload delivery success rate, detection avoidance, and self-destruct reliability. ACAT II program.
+• STATUS: CLOSEOUT IN PROGRESS. LTE declared 20 Oct 2025. Final Report approved 28 Jan 2026.
+• ASSESSMENT SUMMARY (5 COIs): COI 1 (Tunnel Accuracy) PASS · COI 2 (Breach Speed) PASS · COI 3 (Cyber Payload Delivery) PASS · COI 4 (Detection Avoidance) PASS · COI 5 (Self-Destruct Reliability) CONDITIONAL — 2 of 12 test vehicles failed to fully self-destruct, leaving recoverable components. 2 CAT II DRs assigned to PO.
+• FINAL RESULTS BRIEFING: Delivered to STARCOM/CC 14 Feb 2026. Recommendation: OPERATIONALLY EFFECTIVE and SUITABLE pending PO resolution of self-destruct CAT II DRs.
+• CLOSEOUT: Checklist 60% complete. MFR being drafted. HQ coordination in progress. Target: 31 Mar 2026.
+• FUNDS: $83K unobligated. 3 MIPRs and 1 task order being reconciled/terminated. Expected 31 Mar 2026.
+• LESSONS LEARNED: 9 lessons drafted, coordinating with STARCOM S9 and DEL 10. Submission target 20 Mar 2026.`,
+        hlUpdated:'2026-03-03T14:00:00Z',tasks:p8,murderBoard:{}}
+    },
+    {
+      id:'demo_p9',name:'LASER PLATYPUS',
+      createdAt:'2025-11-01T14:00:00Z',updatedAt:'2026-02-28T09:00:00Z',
+      data:{
+        programName:'LASER PLATYPUS',
+        testStart:'2027-09-13T06:00:00.000Z',
+        trrDate:'2027-08-30T06:00:00.000Z',
+        lteDate:'2027-11-22T06:00:00.000Z',
+        highlights:
+`• PROGRAM DESCRIPTION: Full IOT&E of the MONOTREME-1 Quantum-Entanglement Stealth Reconnaissance System — an unmanned semi-aquatic intelligence collection platform engineered to be visually, acoustically, and thermally indistinguishable from a common platypus. The venomous bill conceals a co-aperture EO/IR/SIGINT sensor suite; the tail houses a retractable quantum-radar receiver and communications relay; and the rear flippers contain a directed acoustic harassment device for self-defense. Capable of 90-day autonomous operations in adversary coastal, riverine, and zoo environments. Evaluates 9 COIs. ACAT I, DOT&E oversight, 5-Eyes partner nations observing.
+• STATUS: EARLY INVOLVEMENT PHASE. STARCOM awareness complete. Funding agreement in negotiation. Test Start target: 13 Sep 2027 (553 days).
+• STARCOM AWARENESS: Memo signed 14 Jan 2026. STARCOM involvement determination: Full IOT&E support. ACAT I designation confirmed. DOT&E oversight required per USD(R&E) direction.
+• FUNDING AGREEMENT: In active negotiation with PEO ISR. $8.1M ITF support requested. SPO working color of money issues. STARCOM FM engaged. Target execution: NLT 30 Apr 2026.
+• UPCOMING: Once funding is signed, ITT Charter development begins immediately. IDSK ICT Meeting #1 targeted for Jun 2026. TEMP/T&E Strategy initial draft targeted Sep 2026.
+• RISK (RED): No funding agreement = no test planning beyond early involvement. If agreement slips past 30 Apr 2026, TCP and Test Plan milestones will compress significantly, threatening the Sep 2027 test start. ITF Director flagged to STARCOM S3C on 24 Feb 2026.`,
+        hlUpdated:'2026-02-28T09:00:00Z',tasks:p9,murderBoard:{}}
+    },
+    {
       id:'demo_p6',name:'GHOST FREQUENCY',
       createdAt:'2024-01-20T14:00:00Z',updatedAt:'2025-11-15T09:00:00Z',
       data:{
@@ -2228,7 +2316,7 @@ function loadDemoPrograms(){
   renderProgramBar();
   // Auto-load first demo program (SHARKS WITH LASERS)
   loadProgram('demo_p1');
-  document.getElementById('lastSaved').textContent='🎯 6 demo programs loaded — use the dropdown to switch programs';
+  document.getElementById('lastSaved').textContent='🎯 9 demo programs loaded — use the dropdown to switch programs';
 }
 
 function openExecView(){renderExecView();document.getElementById('execOverlay').classList.add('show');}
