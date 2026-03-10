@@ -758,18 +758,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 
         <!-- ROW 1: Completion ring + stat bubbles + progress -->
         <div class="sl-toprow">
-          <!-- OT completion ring -->
-          <div class="sl-ring-wrap" id="sl-ring-wrap" style="background:conic-gradient(#22c55e 0%,#e2e8f0 0%)">
-            <div class="sl-ring-inner">
-              <div class="sl-rpct" id="sl-rpct" style="color:#15803d">0%</div>
-              <div class="sl-rsub" id="sl-rsub">Complete</div>
-            </div>
-          </div>
           <!-- DT completion ring (exec mode only, hidden by default) -->
           <div class="sl-ring-wrap" id="sl-ring-wrap-dt" style="background:conic-gradient(#f97316 0%,#e2e8f0 0%);display:none">
             <div class="sl-ring-inner">
               <div class="sl-rpct" id="sl-rpct-dt" style="color:#ea580c;font-size:1.05rem">0/0</div>
               <div class="sl-rsub" id="sl-rsub-dt" style="color:#ea580c">DT TPs</div>
+            </div>
+          </div>
+          <!-- OT completion ring -->
+          <div class="sl-ring-wrap" id="sl-ring-wrap" style="background:conic-gradient(#22c55e 0%,#e2e8f0 0%)">
+            <div class="sl-ring-inner">
+              <div class="sl-rpct" id="sl-rpct" style="color:#15803d">0%</div>
+              <div class="sl-rsub" id="sl-rsub">Complete</div>
             </div>
           </div>
           <!-- stat bubbles -->
@@ -2604,15 +2604,15 @@ function updateTexHdrSub(){
     ${dtTotal?`<div class="esc c" style="background:var(--ft-orange-light);border-color:var(--ft-orange-border)"><div class="esc-n" style="color:var(--ft-orange-dark)">${dtDone}</div><div class="esc-l">DT Complete</div></div>`:''}
     ${testDay!==null?`<div class="esc day"><div class="esc-n">${testDay}<span style="font-size:.85rem;font-weight:600;color:var(--g500)">${dayDenom}</span></div><div class="esc-l">Test Day</div></div>`:''}
     ${daysToLTE!==null?`<div class="esc lte"><div class="esc-n">${daysToLTE}</div><div class="esc-l">Days to LTE</div></div>`:''}
-    ${tpTotal?`<div class="exec-bar-card">
-      <div class="exec-bar-lbl"><span>OT Test Points</span><strong>${tpDone}/${tpTotal} (${pct}%)</strong></div>
-      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
-      ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
-    </div>`:''}
     ${dtTotal?`<div class="exec-bar-card" style="border-color:var(--ft-orange-border)">
       <div class="exec-bar-lbl"><span>DT Test Points</span><strong>${dtDone}/${dtTotal} (${dtPct}%)</strong></div>
       <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,var(--ft-orange),var(--ft-orange-dark))"></div></div>
       ${te.dtSTOs&&te.dtSTOs.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtSTOs.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length} of ${te.dtSTOs.length} STOs assessed</div>`:''}
+    </div>`:''}
+    ${tpTotal?`<div class="exec-bar-card">
+      <div class="exec-bar-lbl"><span>OT Test Points</span><strong>${tpDone}/${tpTotal} (${pct}%)</strong></div>
+      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
+      ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
     </div>`:''}`;
 }
 function escH(s){
