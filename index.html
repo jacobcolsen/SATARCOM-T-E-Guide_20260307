@@ -2348,26 +2348,33 @@ const TP_STATUSES=['Not Started','In Progress','Complete','No-Go'];
 const TP_CLS    =['tsb-ns','tsb-inprog','tsb-done','tsb-nogo'];
 
 // ── Status derivation helpers ──
-function deriveStatusFromTPs(tps){
+function deriveCoiStatus(tps){
   if(!tps.length)return'Pending';
   if(tps.some(tp=>tp.status==='No-Go'))return'FAIL';
   if(tps.every(tp=>tp.status==='Complete'))return'PASS';
   if(tps.some(tp=>tp.status==='In Progress'||tp.status==='Complete'))return'In Progress';
   return'Pending';
 }
+function deriveDtStatus(tps){
+  if(!tps.length)return'Pending';
+  if(tps.some(tp=>tp.status==='No-Go'))return'FAIL';
+  if(tps.every(tp=>tp.status==='Complete'))return'Complete';
+  if(tps.some(tp=>tp.status==='In Progress'||tp.status==='Complete'))return'In Progress';
+  return'Pending';
+}
 function computeCoiStatus(coiLabel,tps){
-  return deriveStatusFromTPs(tps.filter(tp=>tp.coiRef===coiLabel));
+  return deriveCoiStatus(tps.filter(tp=>tp.coiRef===coiLabel));
 }
 function computeStoStatus(stoId,dtps){
-  return deriveStatusFromTPs(dtps.filter(dtp=>dtp.stoId===stoId));
+  return deriveDtStatus(dtps.filter(dtp=>dtp.stoId===stoId));
 }
 function computeGtoStatus(gtoId,dtSTOs,dtps){
   const stos=dtSTOs.filter(s=>s.gtoId===gtoId);
   if(!stos.length)return'Pending';
   const ss=stos.map(s=>computeStoStatus(s.id,dtps));
   if(ss.some(s=>s==='FAIL'))return'FAIL';
-  if(ss.every(s=>s==='PASS'))return'PASS';
-  if(ss.some(s=>s==='In Progress'||s==='PASS'))return'In Progress';
+  if(ss.every(s=>s==='Complete'))return'Complete';
+  if(ss.some(s=>s==='In Progress'||s==='Complete'))return'In Progress';
   return'Pending';
 }
 
@@ -2461,7 +2468,7 @@ function saveTexText(el,type,id){
   saveS();updateTexHdrSub();
 }
 // ── DT Framework functions ──
-const DT_STO_STATUSES=['Pending','In Progress','PASS','FAIL','CONDITIONAL'];
+const DT_STO_STATUSES=['Pending','In Progress','Complete','FAIL','CONDITIONAL'];
 const DT_STO_CLS=['csb-pending','csb-inprog','csb-pass','csb-fail','csb-cond'];
 // Build a lookup: stoId → {lbl:'STO #1.1', name:'...'}
 function getDtStoMap(){
@@ -2679,7 +2686,7 @@ function updateTexHdrSub(){
     ${dtTotal?`<div class="exec-bar-card" style="border-color:var(--ft-orange-border)">
       <div class="exec-bar-lbl"><span>DT Test Points</span><strong>${dtDone}/${dtTotal} (${dtPct}%)</strong></div>
       <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,var(--ft-orange),var(--ft-orange-dark))"></div></div>
-      ${te.dtSTOs&&te.dtSTOs.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtSTOs.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length} of ${te.dtSTOs.length} STOs assessed</div>`:''}
+      ${te.dtSTOs&&te.dtSTOs.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtSTOs.filter(x=>computeStoStatus(x.id,te.dtTestPoints||[])!=='Pending').length} of ${te.dtSTOs.length} STOs assessed</div>`:''}
     </div>`:''}
     ${tpTotal?`<div class="exec-bar-card" style="border-color:var(--ot-blue-border)">
       <div class="exec-bar-lbl"><span>OT Test Points</span><strong>${tpDone}/${tpTotal} (${pct}%)</strong></div>
