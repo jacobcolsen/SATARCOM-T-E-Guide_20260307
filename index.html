@@ -9,6 +9,7 @@
   --navy:#0a1628; --navy-mid:#14274e; --navy-light:#1e3a6e;
   --gold:#f0a500; --gold-light:#fbbf24;
   --ft-orange:#f97316; --ft-orange-dark:#ea580c; --ft-orange-light:#fff7ed; --ft-orange-border:#fed7aa;
+  --ot-blue:#1d4ed8; --ot-blue-dark:#1e3a8a; --ot-blue-light:#eff6ff; --ot-blue-border:#bfdbfe;
   --g50:#f8fafc; --g100:#f1f5f9; --g200:#e2e8f0; --g300:#cbd5e1;
   --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b;
   --s-none-bg:#f1f5f9;    --s-none-t:#475569;  --s-none-b:#cbd5e1;
@@ -340,7 +341,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .esc-n{font-size:1.5rem;font-weight:800;line-height:1.1;}
 .esc-l{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
   color:var(--g500);margin-top:2px;}
-.esc.c .esc-n{color:#15803d;} .esc.p .esc-n{color:#1d4ed8;}
+.esc.c .esc-n{color:var(--ot-blue);} .esc.p .esc-n{color:#1d4ed8;}
 .esc.r .esc-n{color:#dc2626;} .esc.ns .esc-n{color:var(--g500);}
 .esc.day .esc-n{color:var(--navy);} .esc.lte .esc-n{color:#d97706;}
 .exec-bar-card{background:#fff;border:1px solid var(--g200);border-radius:10px;
@@ -349,7 +350,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .exec-bar-lbl{font-size:.68rem;font-weight:600;color:var(--g600);
   display:flex;justify-content:space-between;}
 .exec-bar-out{height:14px;background:var(--g200);border-radius:7px;overflow:hidden;}
-.exec-bar-in{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
+.exec-bar-in{height:100%;background:linear-gradient(90deg,var(--ot-blue),var(--ot-blue-dark));
   border-radius:7px;transition:width .5s;}
 .exec-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:280px;gap:12px;color:var(--g400);}
@@ -435,7 +436,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-bubble .sl-sn{font-size:1.6rem;font-weight:800;line-height:1;}
 .sl-bubble .sl-sl{font-size:.46rem;font-weight:700;text-transform:uppercase;
   letter-spacing:.3px;text-align:center;line-height:1.3;margin-top:3px;}
-.sl-b-c{background:#dcfce7;border-color:#16a34a;} .sl-b-c .sl-sn{color:#15803d;}
+.sl-b-c{background:var(--ot-blue-light);border-color:var(--ot-blue);} .sl-b-c .sl-sn{color:var(--ot-blue-dark);}
 .sl-b-p{background:#dbeafe;border-color:#2563eb;} .sl-b-p .sl-sn{color:#1d4ed8;}
 .sl-b-r{background:#fff7ed;border-color:#d97706;} .sl-b-r .sl-sn{color:#c2410c;}
 .sl-b-ns{background:#f1f5f9;border-color:#94a3b8;} .sl-b-ns .sl-sn{color:var(--g500);}
@@ -444,10 +445,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* Prog block */
 .sl-prog-block{flex-shrink:0;min-width:160px;}
 .sl-prog-block .sl-plbl{font-size:.68rem;font-weight:700;color:var(--g500);margin-bottom:3px;}
-.sl-prog-block .sl-ppct{font-size:1.5rem;font-weight:800;color:#15803d;line-height:1.1;}
+.sl-prog-block .sl-ppct{font-size:1.5rem;font-weight:800;color:var(--ot-blue);line-height:1.1;}
 .sl-prog-block .sl-prow{margin-top:8px;display:flex;align-items:center;}
 .sl-prog-block .sl-pout{flex:1;height:12px;background:var(--g200);border-radius:6px;overflow:hidden;}
-.sl-prog-block .sl-pin{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
+.sl-prog-block .sl-pin{height:100%;background:linear-gradient(90deg,var(--ot-blue),var(--ot-blue-dark));
   border-radius:6px;transition:width .5s;}
 /* Pipeline: 2-row phase layout */
 .sl-pipeline-section{flex-shrink:0;}
@@ -701,7 +702,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
       </div>
     </div>
     <!-- OT Section -->
-    <div class="tex-section-hdr">🎯 Operational Testing (OT)</div>
+    <div class="tex-section-hdr" style="background:linear-gradient(90deg,var(--ot-blue-dark),var(--ot-blue))">🎯 Operational Testing (OT)</div>
     <div class="tex-cols">
       <div class="tex-col">
         <div class="tex-col-hdr">
@@ -1570,9 +1571,11 @@ function getActivePhaseSummary(){
   if(start&&today>=start){
     // Prefer TE board test points if populated (more meaningful than admin task count)
     const tps=(S.testExec&&S.testExec.testPoints)||[];
-    if(tps.length){
-      const done=tps.filter(x=>x.status==='Complete').length;
-      return{phase:'Test Execution · Test Points',done,total:tps.length};
+    const dtps=(S.testExec&&S.testExec.dtTestPoints)||[];
+    const allTps=[...tps,...dtps];
+    if(allTps.length){
+      const done=allTps.filter(x=>x.status==='Complete').length;
+      return{phase:'Test Execution · Test Points',done,total:allTps.length};
     }
     // Fall back to during-phase admin tasks
     const grp=TASKS.filter(t=>t.phase==='during'&&!t.isChild);
@@ -1779,8 +1782,8 @@ function applyTestExecSlide(taskPct,ov,ar){
   // ── OT Ring ──
   if(tpTotal){
     const hasNoGo=tpNoGo>0;
-    const ringColor=tpPct===100?'#22c55e':hasNoGo?'#ef4444':'#1d4ed8';
-    const ringTextColor=tpPct===100?'#15803d':hasNoGo?'#dc2626':'#1d4ed8';
+    const ringColor=hasNoGo?'#ef4444':'#1d4ed8';
+    const ringTextColor=hasNoGo?'#dc2626':'#1d4ed8';
     document.getElementById('sl-ring-wrap').style.background=
       `conic-gradient(${ringColor} ${tpPct}%, #e2e8f0 ${tpPct}%)`;
     const rpct=document.getElementById('sl-rpct');
@@ -1866,7 +1869,7 @@ function applyTestExecSlide(taskPct,ov,ar){
   });
   let html='';
   if(hasOT&&hasDT){
-    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#1d4ed8;padding:4px 0 3px;border-bottom:2px solid #dbeafe;margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
+    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ot-blue-dark);padding:4px 0 3px;border-bottom:2px solid var(--ot-blue-border);margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
   }
   if(hasOT){
     html+=cois.map((o,i)=>{
@@ -2632,7 +2635,7 @@ function updateTexHdrSub(){
   const dayDenom=windowDays?'/'+windowDays:'';
   el.innerHTML=`
     ${tpTotal?`
-    <div class="esc c"><div class="esc-n">${tpDone}</div><div class="esc-l">OT Complete</div></div>
+    <div class="esc c" style="background:var(--ot-blue-light);border-color:var(--ot-blue-border)"><div class="esc-n" style="color:var(--ot-blue-dark)">${tpDone}</div><div class="esc-l">OT Complete</div></div>
     <div class="esc p"><div class="esc-n">${tpInProg}</div><div class="esc-l">In Progress</div></div>
     <div class="esc r"><div class="esc-n">${tpNoGo}</div><div class="esc-l">No-Go</div></div>
     <div class="esc ns"><div class="esc-n">${tpNS}</div><div class="esc-l">Remaining</div></div>`:''}
@@ -2644,9 +2647,9 @@ function updateTexHdrSub(){
       <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,var(--ft-orange),var(--ft-orange-dark))"></div></div>
       ${te.dtSTOs&&te.dtSTOs.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtSTOs.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length} of ${te.dtSTOs.length} STOs assessed</div>`:''}
     </div>`:''}
-    ${tpTotal?`<div class="exec-bar-card">
+    ${tpTotal?`<div class="exec-bar-card" style="border-color:var(--ot-blue-border)">
       <div class="exec-bar-lbl"><span>OT Test Points</span><strong>${tpDone}/${tpTotal} (${pct}%)</strong></div>
-      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
+      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%;background:linear-gradient(90deg,var(--ot-blue),var(--ot-blue-dark))"></div></div>
       ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
     </div>`:''}`;
 }
