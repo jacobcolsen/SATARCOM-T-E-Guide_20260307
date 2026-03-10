@@ -313,6 +313,46 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 @media print{.hdr .hbtn,.filters,.cfg .btn-apply{display:none;}body{background:#fff;}
   .ps{box-shadow:none;}#slideOverlay{display:none!important;}}
 
+/* ── TAB BAR ── */
+.tab-bar{background:var(--g100);border-bottom:2px solid var(--g200);padding:0 24px;
+  display:flex;align-items:flex-end;gap:2px;}
+.tab-btn{padding:11px 22px;font-size:.82rem;font-weight:700;border:none;
+  background:transparent;cursor:pointer;color:var(--g500);
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  display:flex;align-items:center;gap:7px;transition:color .15s;}
+.tab-btn:hover{color:var(--navy-light);}
+.tab-btn.tab-act{color:var(--navy);border-bottom-color:var(--navy);background:#fff;}
+.tab-badge{padding:1px 8px;border-radius:10px;font-size:.63rem;font-weight:700;
+  background:var(--g300);color:var(--g700);transition:all .15s;}
+.tab-btn.tab-act .tab-badge{background:var(--navy);color:#fff;}
+.tab-badge.has-data{background:var(--navy-light);color:#fff;}
+.tab-btn.tab-act .tab-badge.has-data{background:var(--gold);color:var(--navy);}
+
+/* ── EXEC TAB VIEW ── */
+.exec-tab-view{background:var(--g50);min-height:420px;padding:18px 24px 28px;}
+.exec-stat-strip{display:flex;gap:10px;align-items:stretch;margin-bottom:18px;flex-wrap:wrap;}
+.esc{background:#fff;border:1px solid var(--g200);border-radius:10px;
+  padding:10px 16px;text-align:center;min-width:84px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;}
+.esc-n{font-size:1.5rem;font-weight:800;line-height:1.1;}
+.esc-l{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--g500);margin-top:2px;}
+.esc.c .esc-n{color:#15803d;} .esc.p .esc-n{color:#1d4ed8;}
+.esc.r .esc-n{color:#dc2626;} .esc.ns .esc-n{color:var(--g500);}
+.esc.day .esc-n{color:var(--navy);} .esc.lte .esc-n{color:#d97706;}
+.exec-bar-card{background:#fff;border:1px solid var(--g200);border-radius:10px;
+  padding:10px 18px;flex:1;min-width:200px;display:flex;flex-direction:column;
+  justify-content:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.exec-bar-lbl{font-size:.68rem;font-weight:600;color:var(--g600);
+  display:flex;justify-content:space-between;}
+.exec-bar-out{height:14px;background:var(--g200);border-radius:7px;overflow:hidden;}
+.exec-bar-in{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);
+  border-radius:7px;transition:width .5s;}
+.exec-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:280px;gap:12px;color:var(--g400);}
+.exec-empty-icon{font-size:2.5rem;opacity:.4;}
+.exec-empty-msg{font-size:.85rem;text-align:center;line-height:1.6;max-width:360px;}
+
 /* ── TEST EXECUTION BOARD ── */
 .tex-panel{background:#fff;border-bottom:2px solid var(--navy-light);overflow:hidden;}
 .tex-hdr{display:flex;align-items:center;gap:10px;padding:10px 24px;cursor:pointer;
@@ -588,16 +628,41 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
 </div>
 
-<!-- ── TEST EXECUTION BOARD ── -->
-<div class="tex-panel">
-  <div class="tex-hdr" onclick="toggleTex()">
-    <span style="font-size:1rem">🎯</span>
-    <span class="tex-hdr-title">Test Execution Board</span>
-    <span class="tex-hdr-sub" id="texHdrSub">— COIs &amp; Test Points</span>
-    <span class="tex-toggle" id="texToggle">▶</span>
+<!-- ── TAB BAR ── -->
+<div class="tab-bar">
+  <button class="tab-btn tab-act" id="tabTracker" onclick="switchTab('tracker')">
+    📋 Planning Tracker
+  </button>
+  <button class="tab-btn" id="tabExec" onclick="switchTab('execution')">
+    🎯 Test Execution
+    <span class="tab-badge" id="tabExecBadge">0 TPs</span>
+  </button>
+</div>
+
+<!-- ── TRACKER VIEW (tab 1) ── -->
+<div id="trackerView">
+  <div class="filters">
+    <span class="fl">Filter:</span>
+    <button class="fbtn act" onclick="setFilter('all',this)">All</button>
+    <button class="fbtn" onclick="setFilter('none',this)">⚪ Not Started</button>
+    <button class="fbtn" onclick="setFilter('progress',this)">🔵 In Progress</button>
+    <button class="fbtn" onclick="setFilter('complete',this)">✅ Complete</button>
+    <button class="fbtn rk-btn" onclick="setFilter('risk',this)">⚠ Risk</button>
+    <span class="fsep">|</span>
+    <button class="fbtn ov-btn" onclick="setFilter('overdue',this)">🔴 Overdue</button>
+    <button class="fbtn ar-btn" onclick="setFilter('atrisk',this)">⚡ Due Soon (&lt;14d)</button>
   </div>
-  <div class="tex-body" id="texBody">
-    <div class="tex-stat" id="texStat"></div>
+  <div class="main" id="mainContent">
+    <div class="no-dt-banner" id="noBanner">
+      ⚠️ <strong>Enter your Test Start Date above</strong> and click <strong>Apply Dates</strong> to auto-calculate all due dates and activate risk tracking.
+    </div>
+  </div>
+</div>
+
+<!-- ── EXECUTION VIEW (tab 2) ── -->
+<div id="execView" style="display:none;">
+  <div class="exec-tab-view">
+    <div class="exec-stat-strip" id="texStat"></div>
     <div class="tex-cols">
       <div class="tex-col">
         <div class="tex-col-hdr">
@@ -605,41 +670,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
           <button class="tex-add-btn" onclick="addTexObj()">+ Add COI</button>
         </div>
         <table class="tex-tbl">
-          <thead><tr><th>#</th><th>COI Name</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th style="width:46px">#</th><th>COI Name</th><th>Status</th><th style="width:36px"></th></tr></thead>
           <tbody id="texObjBody"></tbody>
         </table>
       </div>
-      <div class="tex-col">
+      <div class="tex-col" style="flex:1.5">
         <div class="tex-col-hdr">
           <span>Test Points</span>
           <button class="tex-add-btn" onclick="addTexTp()">+ Add TP</button>
         </div>
         <table class="tex-tbl">
-          <thead><tr><th>#</th><th>Test Point Description</th><th>COI</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th style="width:52px">#</th><th>Test Point Description</th><th style="width:60px">COI</th><th>Status</th><th style="width:36px"></th></tr></thead>
           <tbody id="texTpBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- ── FILTERS ── -->
-<div class="filters">
-  <span class="fl">Filter:</span>
-  <button class="fbtn act" onclick="setFilter('all',this)">All</button>
-  <button class="fbtn" onclick="setFilter('none',this)">⚪ Not Started</button>
-  <button class="fbtn" onclick="setFilter('progress',this)">🔵 In Progress</button>
-  <button class="fbtn" onclick="setFilter('complete',this)">✅ Complete</button>
-  <button class="fbtn rk-btn" onclick="setFilter('risk',this)">⚠ Risk</button>
-  <span class="fsep">|</span>
-  <button class="fbtn ov-btn" onclick="setFilter('overdue',this)">🔴 Overdue</button>
-  <button class="fbtn ar-btn" onclick="setFilter('atrisk',this)">⚡ Due Soon (&lt;14d)</button>
-</div>
-
-<!-- ── MAIN ── -->
-<div class="main" id="mainContent">
-  <div class="no-dt-banner" id="noBanner">
-    ⚠️ <strong>Enter your Test Start Date above</strong> and click <strong>Apply Dates</strong> to auto-calculate all due dates and activate risk tracking.
   </div>
 </div>
 
@@ -1165,7 +1210,7 @@ function renderAll(){
   updateVis();
   updateHdrSub();
   renderFlowchart();
-  renderTex();
+  autoSwitchTab();
 }
 function updateHdrSub(){
   document.getElementById('hdrSub').textContent=
@@ -2122,19 +2167,31 @@ function renderFlowchart(){
 }
 
 // ═══════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════
+let activeTab='tracker';
+function switchTab(tab){
+  activeTab=tab;
+  document.getElementById('tabTracker').classList.toggle('tab-act',tab==='tracker');
+  document.getElementById('tabExec').classList.toggle('tab-act',tab==='execution');
+  document.getElementById('trackerView').style.display=tab==='tracker'?'':'none';
+  document.getElementById('execView').style.display=tab==='execution'?'':'none';
+  if(tab==='execution')renderTex();
+}
+function autoSwitchTab(){
+  const today=tod();
+  const inExec=S.testStart&&today>=S.testStart&&!(S.lteDate&&today>S.lteDate);
+  switchTab(inExec?'execution':'tracker');
+}
+
+// ═══════════════════════════════════════════════════
 //  TEST EXECUTION BOARD
 // ═══════════════════════════════════════════════════
-let texOpen=false;
 function getTE(){
   if(!S.testExec)S.testExec={objectives:[],testPoints:[]};
   if(!S.testExec.objectives)S.testExec.objectives=[];
   if(!S.testExec.testPoints)S.testExec.testPoints=[];
   return S.testExec;
-}
-function toggleTex(){
-  texOpen=!texOpen;
-  document.getElementById('texBody').classList.toggle('open',texOpen);
-  document.getElementById('texToggle').classList.toggle('open',texOpen);
 }
 function renderTex(){
   renderTexObjTable();
@@ -2150,7 +2207,7 @@ function renderTexObjTable(){
   const te=getTE();
   const tbody=document.getElementById('texObjBody');if(!tbody)return;
   if(!te.objectives.length){
-    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--g400);padding:14px 0;font-size:.78rem;font-style:italic">No COIs defined. Click + Add COI to begin.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No COIs defined yet — click + Add COI to get started.</td></tr>';
     return;
   }
   tbody.innerHTML=te.objectives.map((o,i)=>{
@@ -2170,7 +2227,7 @@ function renderTexTpTable(){
   const te=getTE();
   const tbody=document.getElementById('texTpBody');if(!tbody)return;
   if(!te.testPoints.length){
-    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--g400);padding:14px 0;font-size:.78rem;font-style:italic">No test points defined. Click + Add TP to begin.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No test points defined yet — click + Add TP to get started.</td></tr>';
     return;
   }
   tbody.innerHTML=te.testPoints.map((tp,i)=>{
@@ -2236,23 +2293,43 @@ function updateTexHdrSub(){
   const te=getTE();
   const tpTotal=te.testPoints.length;
   const tpDone=te.testPoints.filter(x=>x.status==='Complete').length;
+  const tpInProg=te.testPoints.filter(x=>x.status==='In Progress').length;
+  const tpNoGo=te.testPoints.filter(x=>x.status==='No-Go').length;
+  const tpNS=tpTotal-tpDone-tpInProg-tpNoGo;
   const coiTotal=te.objectives.length;
   const coiAssessed=te.objectives.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length;
   const pct=tpTotal?Math.round(tpDone/tpTotal*100):0;
-  const sub=document.getElementById('texHdrSub');
-  if(sub){
-    sub.textContent=coiTotal?
-      `— ${tpDone}/${tpTotal} TPs Complete · ${coiAssessed}/${coiTotal} COIs Assessed`:
-      '— COIs & Test Points';
+
+  // Update tab badge
+  const badge=document.getElementById('tabExecBadge');
+  if(badge){
+    badge.textContent=tpTotal?tpDone+'/'+tpTotal+' TPs':'0 TPs';
+    badge.classList.toggle('has-data',tpTotal>0);
   }
+
+  // Update stat strip in exec tab
   const el=document.getElementById('texStat');
   if(!el)return;
-  el.innerHTML=tpTotal?`
-    <div class="tex-stat-item"><strong>${tpDone}/${tpTotal}</strong> Test Points Complete</div>
-    <div class="tex-stat-item"><strong>${pct}%</strong> Execution Progress</div>
-    <div class="tex-stat-item"><strong>${coiAssessed}/${coiTotal}</strong> COIs Assessed</div>
-    <div class="tex-stat-bar"><div class="tex-stat-bar-in" style="width:${pct}%"></div></div>
-  `:'';
+  if(!tpTotal&&!coiTotal){
+    el.innerHTML='';return;
+  }
+  const today=tod();
+  const testDay=S.testStart?diff(S.testStart,today)+1:null;
+  const windowDays=(S.testStart&&S.lteDate)?diff(S.testStart,S.lteDate)+1:null;
+  const daysToLTE=S.lteDate?Math.max(0,diff(today,S.lteDate)):null;
+  el.innerHTML=`
+    ${tpTotal?`
+    <div class="esc c"><div class="esc-n">${tpDone}</div><div class="esc-l">Complete</div></div>
+    <div class="esc p"><div class="esc-n">${tpInProg}</div><div class="esc-l">In Progress</div></div>
+    <div class="esc r"><div class="esc-n">${tpNoGo}</div><div class="esc-l">No-Go</div></div>
+    <div class="esc ns"><div class="esc-n">${tpNS}</div><div class="esc-l">Remaining</div></div>
+    ${testDay!==null?`<div class="esc day"><div class="esc-n">${testDay}${windowDays?'<span style="font-size:.85rem;font-weight:600;color:var(--g500)">/${windowDays}</span>':''}</div><div class="esc-l">Test Day</div></div>`:''}
+    ${daysToLTE!==null?`<div class="esc lte"><div class="esc-n">${daysToLTE}</div><div class="esc-l">Days to LTE</div></div>`:''}
+    <div class="exec-bar-card">
+      <div class="exec-bar-lbl"><span>Test Point Completion</span><strong>${tpDone}/${tpTotal} &nbsp;(${pct}%)</strong></div>
+      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
+      ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
+    </div>`:''}`;
 }
 function escH(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
