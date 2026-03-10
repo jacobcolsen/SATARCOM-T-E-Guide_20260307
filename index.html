@@ -1821,33 +1821,68 @@ function applyTestExecSlide(taskPct,ov,ar){
       <div class="sl-sn">${daysToLTE}</div>
       <div class="sl-sl">Days to LTE</div></div>`:''}`;
 
-  // ── Replace upcoming column with COI assessment grid ──
+  // ── Replace upcoming column with COI + STO assessment grid ──
   const upHdr=document.querySelector('.sl-col-hdr.upcoming');
-  if(upHdr)upHdr.innerHTML='&#128202;&nbsp;COI Assessment';
+  const dtGTOs=te.dtGTOs||[];
+  const dtSTOs=te.dtSTOs||[];
+  const hasDT=dtSTOs.length>0;
+  const hasOT=cois.length>0;
+  if(upHdr)upHdr.innerHTML='&#128202;&nbsp;Objectives Assessment';
   const upEl=document.getElementById('sl-upcoming');
   if(!upEl)return;
-  if(!cois.length){
-    upEl.innerHTML='<div class="sl-none" style="font-style:italic">No COIs defined — add them in the Test Execution Board</div>';
+  if(!hasOT&&!hasDT){
+    upEl.innerHTML='<div class="sl-none" style="font-style:italic">No objectives defined — add COIs or DT GTOs/STOs in the Test Execution Board</div>';
     return;
   }
-  const COI_COLORS={
+  const OBJ_COLORS={
     'PASS':       {bg:'#dcfce7',color:'#15803d',icon:'✓'},
     'FAIL':       {bg:'#fee2e2',color:'#dc2626',icon:'✕'},
     'CONDITIONAL':{bg:'#fff7ed',color:'#c2410c',icon:'△'},
     'In Progress':{bg:'#dbeafe',color:'#1d4ed8',icon:'●'},
     'Pending':    {bg:'#f1f5f9',color:'#64748b',icon:'○'},
   };
-  upEl.innerHTML=cois.map((o,i)=>{
-    const si=Math.max(0,COI_STATUSES.indexOf(o.status));
-    const status=COI_STATUSES[si];
-    const clr=COI_COLORS[status]||COI_COLORS['Pending'];
-    const nm=o.name.length>40?o.name.slice(0,40)+'\u2026':o.name;
-    return`<div style="display:flex;align-items:center;gap:7px;padding:5px 2px;border-bottom:1px solid #f1f5f9">
-      <span style="font-size:.65rem;font-weight:800;color:#94a3b8;white-space:nowrap;min-width:36px">COI\u00a0${i+1}</span>
-      <span style="font-size:.71rem;flex:1;color:#334155;line-height:1.3">${escH(nm)}</span>
-      <span style="padding:2px 8px;border-radius:9px;font-size:.63rem;font-weight:700;white-space:nowrap;background:${clr.bg};color:${clr.color}">${clr.icon}\u00a0${status}</span>
+  const OBJ_COLORS_DT={
+    'PASS':       {bg:'#dcfce7',color:'#15803d',icon:'✓'},
+    'FAIL':       {bg:'#fee2e2',color:'#dc2626',icon:'✕'},
+    'CONDITIONAL':{bg:'#fff7ed',color:'#c2410c',icon:'△'},
+    'In Progress':{bg:'#fff7ed',color:'#ea580c',icon:'●'},
+    'Pending':    {bg:'#fff7ed',color:'#f97316',icon:'○'},
+  };
+  const row=(lbl,lblColor,name,status,colors)=>{
+    const clr=colors[status]||colors['Pending'];
+    const nm=name.length>38?name.slice(0,38)+'\u2026':name;
+    return`<div style="display:flex;align-items:center;gap:7px;padding:4px 2px;border-bottom:1px solid #f1f5f9">
+      <span style="font-size:.63rem;font-weight:800;color:${lblColor};white-space:nowrap;min-width:42px">${lbl}</span>
+      <span style="font-size:.69rem;flex:1;color:#334155;line-height:1.3">${escH(nm)}</span>
+      <span style="padding:2px 7px;border-radius:9px;font-size:.61rem;font-weight:700;white-space:nowrap;background:${clr.bg};color:${clr.color}">${clr.icon}\u00a0${status}</span>
     </div>`;
-  }).join('');
+  };
+  // Build STO label map
+  const stoLabels={};
+  dtGTOs.forEach((gto,gi)=>{
+    dtSTOs.filter(s=>s.gtoId===gto.id).forEach((sto,si)=>{
+      stoLabels[sto.id]='STO\u00a0#'+(gi+1)+'.'+(si+1);
+    });
+  });
+  let html='';
+  if(hasOT&&hasDT){
+    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#1d4ed8;padding:4px 0 3px;border-bottom:2px solid #dbeafe;margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
+  }
+  if(hasOT){
+    html+=cois.map((o,i)=>{
+      const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+      return row('COI\u00a0'+(i+1),'#94a3b8',o.name,COI_STATUSES[si],OBJ_COLORS);
+    }).join('');
+  }
+  if(hasDT){
+    if(hasOT) html+=`<div style="height:6px"></div>`;
+    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#ea580c;padding:4px 0 3px;border-bottom:2px solid #fed7aa;margin-bottom:2px">🔬 DT — Specific Test Objectives</div>`;
+    html+=dtSTOs.map(sto=>{
+      const si=Math.max(0,DT_STO_STATUSES.indexOf(sto.status));
+      return row(stoLabels[sto.id]||'STO','#f97316',sto.name,DT_STO_STATUSES[si],OBJ_COLORS_DT);
+    }).join('');
+  }
+  upEl.innerHTML=html;
 }
 
 function navToTask(taskId){
@@ -2886,6 +2921,35 @@ function loadDemoPrograms(){
       {id:'swl_tp18',name:'H-S comm — emergency recall under active threat',coiRef:'COI 6',status:'Complete'},
       {id:'swl_tp19',name:'H-S comm — EW jamming environment resilience (broad spectrum)',coiRef:'COI 6',status:'Complete'},
       {id:'swl_tp20',name:'Coordinated strike — 2-shark simultaneous engagement, single target',coiRef:'COI 7',status:'Not Started'},
+    ],
+    dtGTOs:[
+      {id:'swl_gto1',name:'Free-Electron Laser (FEL) System Performance Verification'},
+      {id:'swl_gto2',name:'Dorsal-Fin Stabilized Gimbal Assembly'},
+      {id:'swl_gto3',name:'Neural-Optical Interface (NOI) Integration'},
+    ],
+    dtSTOs:[
+      {id:'swl_sto11',gtoId:'swl_gto1',name:'Laser output power maintains 150kW ±5% across full thermal profile',status:'PASS'},
+      {id:'swl_sto12',gtoId:'swl_gto1',name:'Beam coherence ≥ 98% at all operational ranges (200–1000m)',status:'PASS'},
+      {id:'swl_sto21',gtoId:'swl_gto2',name:'Gimbal pointing accuracy ≤ 0.5 mrad at platform speeds up to 5kt',status:'PASS'},
+      {id:'swl_sto22',gtoId:'swl_gto2',name:'Targeting lock retention ≥ 95% during evasive maneuvers at 15kt',status:'In Progress'},
+      {id:'swl_sto31',gtoId:'swl_gto3',name:'Neural cue to beam activation latency < 80ms across full command set',status:'PASS'},
+      {id:'swl_sto32',gtoId:'swl_gto3',name:'Interface reliability ≥ 99.5% over 4-hour continuous operation',status:'In Progress'},
+    ],
+    dtTestPoints:[
+      {id:'swl_dtp1',name:'FEL output power — 25% duty cycle, 5-min baseline profile',stoId:'swl_sto11',status:'Complete'},
+      {id:'swl_dtp2',name:'FEL output power — 75% duty cycle, 10-min sustained',stoId:'swl_sto11',status:'Complete'},
+      {id:'swl_dtp3',name:'FEL output power — 100% duty cycle to thermal cutoff threshold',stoId:'swl_sto11',status:'Complete'},
+      {id:'swl_dtp4',name:'Beam coherence — 200m range, sea state 1, ambient 22°C',stoId:'swl_sto12',status:'Complete'},
+      {id:'swl_dtp5',name:'Beam coherence — 600m range, sea state 3, ambient 32°C',stoId:'swl_sto12',status:'Complete'},
+      {id:'swl_dtp6',name:'Beam coherence — 1000m range, sea state 2, night conditions',stoId:'swl_sto12',status:'Complete'},
+      {id:'swl_dtp7',name:'Gimbal accuracy — static platform, stationary target at 400m',stoId:'swl_sto21',status:'Complete'},
+      {id:'swl_dtp8',name:'Gimbal accuracy — 5kt platform speed, slow-moving target at 300m',stoId:'swl_sto21',status:'Complete'},
+      {id:'swl_dtp9',name:'Lock retention — 10kt evasive course change, 90° turn',stoId:'swl_sto22',status:'Complete'},
+      {id:'swl_dtp10',name:'Lock retention — 15kt sprint with target hand-off between sharks',stoId:'swl_sto22',status:'In Progress'},
+      {id:'swl_dtp11',name:'Neural latency — single engagement command, calm sea state',stoId:'swl_sto31',status:'Complete'},
+      {id:'swl_dtp12',name:'Neural latency — sequential 3-target engagement, EW environment',stoId:'swl_sto31',status:'Complete'},
+      {id:'swl_dtp13',name:'Interface reliability — 2-hour continuous ops, standard load',stoId:'swl_sto32',status:'In Progress'},
+      {id:'swl_dtp14',name:'Interface reliability — 4-hour extended profile with thermal stress cycling',stoId:'swl_sto32',status:'Not Started'},
     ]
   };
 
