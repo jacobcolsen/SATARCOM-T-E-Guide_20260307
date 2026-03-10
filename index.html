@@ -1868,21 +1868,19 @@ function applyTestExecSlide(taskPct,ov,ar){
     });
   });
   let html='';
-  if(hasOT&&hasDT){
-    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ot-blue-dark);padding:4px 0 3px;border-bottom:2px solid var(--ot-blue-border);margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
-  }
-  if(hasOT){
-    html+=cois.map((o,i)=>{
-      const si=Math.max(0,COI_STATUSES.indexOf(o.status));
-      return row('COI\u00a0'+(i+1),'#94a3b8',o.name,COI_STATUSES[si],OBJ_COLORS);
-    }).join('');
-  }
   if(hasDT){
-    if(hasOT) html+=`<div style="height:6px"></div>`;
-    html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#ea580c;padding:4px 0 3px;border-bottom:2px solid #fed7aa;margin-bottom:2px">🔬 DT — Specific Test Objectives</div>`;
+    if(hasOT) html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#ea580c;padding:4px 0 3px;border-bottom:2px solid #fed7aa;margin-bottom:2px">🔬 DT — Specific Test Objectives</div>`;
     html+=dtSTOs.map(sto=>{
       const si=Math.max(0,DT_STO_STATUSES.indexOf(sto.status));
       return row(stoLabels[sto.id]||'STO','#f97316',sto.name,DT_STO_STATUSES[si],OBJ_COLORS_DT);
+    }).join('');
+  }
+  if(hasOT){
+    if(hasDT) html+=`<div style="height:6px"></div>`;
+    if(hasOT&&hasDT) html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ot-blue-dark);padding:4px 0 3px;border-bottom:2px solid var(--ot-blue-border);margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
+    html+=cois.map((o,i)=>{
+      const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+      return row('COI\u00a0'+(i+1),'#94a3b8',o.name,COI_STATUSES[si],OBJ_COLORS);
     }).join('');
   }
   upEl.innerHTML=html;
