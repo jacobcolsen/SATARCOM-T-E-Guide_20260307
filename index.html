@@ -2766,6 +2766,11 @@ function loadDemoPrograms(){
     tp14:done('ATO/IATT tracking complete. ATO valid through Jun 2026.'),
     tp15:done('OPSEC plan complete. Classification guidance confirmed. Classified TEASRs via SIPR.'),
     tp16:done('TRB package fully assembled and distributed to 14 reviewers 20 Dec 2024.'),
+    dt01:done('GTOs defined and linked to FEL performance, gimbal assembly, and neural-optical interface capabilities. Approved by TD.'),
+    dt02:done('STOs decomposed from each GTO. 6 STOs across 3 GTOs with measurable thresholds established.'),
+    dt03:done('MOPs defined for all 6 STOs. Quantitative pass/fail criteria and data sources confirmed.'),
+    dt04:done('14 DT test points designed across 6 STOs. Run parameters, duty cycles, and instrumentation requirements documented.'),
+    dt05:done('DT instrumentation plan complete. FEL power meters, beam coherence sensors, and neural-latency loggers calibrated and validated.'),
   };
 
   // ── PROGRAM 2: POLARIS STRIKE EOA — Post-LTE, final report in progress ──
@@ -2899,7 +2904,7 @@ function loadDemoPrograms(){
   p6.t36=done('12 lessons learned submitted to STARCOM S9 and DEL 10 repository 10 Nov 2025. 3 STARCOM-level recommendations forwarded to S3C for policy update to STARCOM T&E Guide v2.0.');
 
   // ── PROGRAM 7: QUANTUM DEATH BLENDER — Active test, day 41/50, approaching LTE ──
-  const p7pre=['t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','tp01','tp02','tp03','tp04','tp05','tp06','tp07','tp08','tp09','tp10','tp11','tp12','tp13','tp14','tp15','tp16'];
+  const p7pre=['t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','tp01','tp02','tp03','tp04','tp05','tp06','tp07','tp08','tp09','tp10','tp11','tp12','tp13','tp14','tp15','tp16','dt01','dt02','dt03','dt04','dt05'];
   const p7=Object.fromEntries(p7pre.map(id=>[id,done()]));
   p7.t01=done('STARCOM awareness memo signed 4 Jan 2024. Full OTA support. DOT&E interest program.');
   p7.t02=done('Funding agreement executed 18 Feb 2024. $5.9M obligated. Co-funded PEO C2.');
