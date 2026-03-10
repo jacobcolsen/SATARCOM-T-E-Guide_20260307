@@ -388,6 +388,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .tex-del{padding:1px 7px;background:transparent;color:var(--g400);border:1px solid var(--g300);
   border-radius:4px;font-size:.65rem;cursor:pointer;transition:all .15s;}
 .tex-del:hover{background:#fee2e2;border-color:#dc2626;color:#dc2626;}
+.tex-section-hdr{background:linear-gradient(90deg,var(--navy-light),var(--navy-mid));color:#fff;
+  padding:7px 16px;font-size:.77rem;font-weight:700;letter-spacing:.4px;border-radius:6px;
+  margin:14px 0 6px;display:flex;align-items:center;gap:8px;}
+.dt-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.67rem;font-weight:700;white-space:nowrap;}
+.dt-gto{background:#7c3aed;color:#fff;}
+.dt-sto{background:#2563eb;color:#fff;}
+.dt-mop{background:#0891b2;color:#fff;}
 .csb{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.69rem;font-weight:700;
   cursor:pointer;user-select:none;white-space:nowrap;transition:filter .1s;}
 .csb:hover{filter:brightness(.9);}
@@ -663,6 +670,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 <div id="execView" style="display:none;">
   <div class="exec-tab-view">
     <div class="exec-stat-strip" id="texStat"></div>
+    <!-- OT Section -->
+    <div class="tex-section-hdr">🎯 Operational Testing (OT)</div>
     <div class="tex-cols">
       <div class="tex-col">
         <div class="tex-col-hdr">
@@ -676,12 +685,40 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
       </div>
       <div class="tex-col" style="flex:1.5">
         <div class="tex-col-hdr">
-          <span>Test Points</span>
+          <span>OT Test Points</span>
           <button class="tex-add-btn" onclick="addTexTp()">+ Add TP</button>
         </div>
         <table class="tex-tbl">
           <thead><tr><th style="width:52px">#</th><th>Test Point Description</th><th style="width:60px">COI</th><th>Status</th><th style="width:36px"></th></tr></thead>
           <tbody id="texTpBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- DT Section -->
+    <div class="tex-section-hdr">🔬 Developmental Testing (DT)</div>
+    <div class="tex-cols">
+      <div class="tex-col">
+        <div class="tex-col-hdr">
+          <span>DT Objectives</span>
+          <div style="display:flex;gap:4px;">
+            <button class="tex-add-btn" onclick="addDtObj('GTO')">+ GTO</button>
+            <button class="tex-add-btn" onclick="addDtObj('STO')">+ STO</button>
+            <button class="tex-add-btn" onclick="addDtObj('MOP')">+ MOP</button>
+          </div>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th style="width:56px">Type</th><th>Objective Name</th><th>Status</th><th style="width:36px"></th></tr></thead>
+          <tbody id="dtObjBody"></tbody>
+        </table>
+      </div>
+      <div class="tex-col" style="flex:1.5">
+        <div class="tex-col-hdr">
+          <span>DT Test Points</span>
+          <button class="tex-add-btn" onclick="addDtTp()">+ Add TP</button>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th style="width:52px">#</th><th>Test Point Description</th><th style="width:70px">Obj Ref</th><th>Status</th><th style="width:36px"></th></tr></thead>
+          <tbody id="dtTpBody"></tbody>
         </table>
       </div>
     </div>
@@ -1070,7 +1107,7 @@ const TASKS=[
 //  STATE
 // ═══════════════════════════════════════════════════
 const SK='starcom_te_v2';
-let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[]}};
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtObjectives:[],dtTestPoints:[]}};
 
 function loadS(){
   try{
@@ -1900,7 +1937,7 @@ function captureCurrentState(){
     lteDate:S.lteDate?S.lteDate.toISOString():null,
     highlights:S.highlights,hlUpdated:S.hlUpdated,
     tasks:S.tasks,murderBoard:S.murderBoard,
-    testExec:S.testExec||{objectives:[],testPoints:[]}
+    testExec:S.testExec||{objectives:[],testPoints:[],dtObjectives:[],dtTestPoints:[]}
   };
 }
 function saveCurrentAsProgram(){
@@ -1939,7 +1976,7 @@ function loadProgram(id){
   S.hlUpdated=data.hlUpdated||'';
   S.tasks=data.tasks||{};
   S.murderBoard=data.murderBoard||{};
-  S.testExec=data.testExec||{objectives:[],testPoints:[]};
+  S.testExec=data.testExec||{objectives:[],testPoints:[],dtObjectives:[],dtTestPoints:[]};
   document.getElementById('cfgName').value=S.programName;
   document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
   document.getElementById('cfgTRR').value=S.trrDate?fmtI(S.trrDate):'';
@@ -1954,7 +1991,7 @@ function createNewProgram(){
     const cur=list.find(p=>p.name===curName);
     if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
   }
-  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[]}};
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtObjectives:[],dtTestPoints:[]}};
   document.getElementById('cfgName').value='';
   document.getElementById('cfgStart').value='';
   document.getElementById('cfgTRR').value='';
@@ -2116,6 +2153,33 @@ function toggleChildRows(parentId){
    desc:'All TRB documentation assembled: Test Plan, Safety Plan, risk summary, and attachments.',
    getDue:(d)=>add(d.start,-30),lbl:'~30 days before Test Start',
    owner:'TD',type:'Mandatory',ref:'Pg. 120',note:'Final checklist before TRB submission.'},
+  // DT Framework planning tasks
+  {id:'dt01',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] Define General Test Objectives (GTOs)',
+   desc:'Establish high-level developmental test objectives. Each GTO represents a major area of technical investigation (e.g., structural integrity, thermal performance, software convergence). GTOs decompose into STOs and MOPs.',
+   getDue:(d)=>add(d.start,-90),lbl:'~90 days before Test Start',
+   owner:'Test Director / Lead Engineer',type:'Conditional',ref:'DT Framework',
+   note:'Required for DT or combined DT/OT programs.'},
+  {id:'dt02',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] Define Specific Test Objectives (STOs)',
+   desc:'Decompose each GTO into measurable Specific Test Objectives. STOs define the scope and focus of each test series within the DT campaign.',
+   getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
+   owner:'Test Team / TD',type:'Conditional',ref:'DT Framework',note:''},
+  {id:'dt03',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] Define Measures of Performance (MOPs)',
+   desc:'Define quantitative performance thresholds for each STO. MOPs are the data-driven criteria for assessing technical performance during DT execution.',
+   getDue:(d)=>add(d.start,-80),lbl:'~80 days before Test Start',
+   owner:'Test Team',type:'Conditional',ref:'DT Framework',note:''},
+  {id:'dt04',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] DT Test Point Design',
+   desc:'Design specific DT test points to collect data against each MOP. Define test conditions, run parameters, pass/fail criteria, and instrumentation requirements for each DT test point.',
+   getDue:(d)=>add(d.start,-75),lbl:'~75 days before Test Start',
+   owner:'Test Team',type:'Conditional',ref:'DT Framework',note:''},
+  {id:'dt05',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] DT Instrumentation & Data Collection Plan',
+   desc:'Document instrumentation requirements (sensors, recorders, calibration standards), data collection procedures, and analysis tools specific to DT measurements and MOP validation.',
+   getDue:(d)=>add(d.start,-70),lbl:'~70 days before Test Start',
+   owner:'Lead Instrumentation Engineer / TD',type:'Conditional',ref:'DT Framework',note:''},
 ].forEach(t=>TASKS.push(t));
 
 // ═══════════════════════════════════════════════════
@@ -2188,14 +2252,18 @@ function autoSwitchTab(){
 //  TEST EXECUTION BOARD
 // ═══════════════════════════════════════════════════
 function getTE(){
-  if(!S.testExec)S.testExec={objectives:[],testPoints:[]};
+  if(!S.testExec)S.testExec={objectives:[],testPoints:[],dtObjectives:[],dtTestPoints:[]};
   if(!S.testExec.objectives)S.testExec.objectives=[];
   if(!S.testExec.testPoints)S.testExec.testPoints=[];
+  if(!S.testExec.dtObjectives)S.testExec.dtObjectives=[];
+  if(!S.testExec.dtTestPoints)S.testExec.dtTestPoints=[];
   return S.testExec;
 }
 function renderTex(){
   renderTexObjTable();
   renderTexTpTable();
+  renderDtObjTable();
+  renderDtTpTable();
   updateTexHdrSub();
 }
 const COI_STATUSES=['Pending','In Progress','PASS','FAIL','CONDITIONAL'];
@@ -2289,6 +2357,99 @@ function saveTexText(el,type,id){
   }
   saveS();updateTexHdrSub();
 }
+// ── DT Framework functions ──
+const DT_OBJ_STATUSES=['Pending','In Progress','PASS','FAIL','CONDITIONAL'];
+const DT_OBJ_CLS=['csb-pending','csb-inprog','csb-pass','csb-fail','csb-cond'];
+function renderDtObjTable(){
+  const te=getTE();
+  const tbody=document.getElementById('dtObjBody');if(!tbody)return;
+  if(!te.dtObjectives.length){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No DT objectives defined — use + GTO / + STO / + MOP to get started.</td></tr>';
+    return;
+  }
+  const typeCounts={GTO:0,STO:0,MOP:0};
+  tbody.innerHTML=te.dtObjectives.map(o=>{
+    typeCounts[o.type]=(typeCounts[o.type]||0)+1;
+    const lbl=o.type+'-'+typeCounts[o.type];
+    const si=Math.max(0,DT_OBJ_STATUSES.indexOf(o.status));
+    const badgeCls='dt-badge dt-'+o.type.toLowerCase();
+    return`<tr>
+      <td><span class="${badgeCls}">${lbl}</span></td>
+      <td><div class="tex-name" contenteditable="true"
+            onblur="saveDtText(this,'obj-name','${o.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(o.name||'')}</div></td>
+      <td><span class="csb ${DT_OBJ_CLS[si]}" onclick="cycleDtSt('obj','${o.id}')">${DT_OBJ_STATUSES[si]}</span></td>
+      <td><button class="tex-del" onclick="delDt('obj','${o.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function renderDtTpTable(){
+  const te=getTE();
+  const tbody=document.getElementById('dtTpBody');if(!tbody)return;
+  if(!te.dtTestPoints.length){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No DT test points defined — click + Add TP to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=te.dtTestPoints.map((tp,i)=>{
+    const si=Math.max(0,TP_STATUSES.indexOf(tp.status));
+    const num=String(i+1).padStart(3,'0');
+    return`<tr>
+      <td class="tex-lbl">DT-${num}</td>
+      <td><div class="tex-name" contenteditable="true" style="min-width:180px"
+            onblur="saveDtText(this,'tp-name','${tp.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(tp.name||'')}</div></td>
+      <td><div class="tex-name" contenteditable="true" style="min-width:55px"
+            onblur="saveDtText(this,'tp-ref','${tp.id}')"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+          >${escH(tp.objRef||'')}</div></td>
+      <td><span class="tsb ${TP_CLS[si]}" onclick="cycleDtSt('tp','${tp.id}')">${TP_STATUSES[si]}</span></td>
+      <td><button class="tex-del" onclick="delDt('tp','${tp.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function addDtObj(type){
+  const te=getTE();
+  te.dtObjectives.push({id:'dto'+Date.now(),type,name:'',status:'Pending'});
+  saveS();renderDtObjTable();updateTexHdrSub();
+}
+function addDtTp(){
+  const te=getTE();
+  te.dtTestPoints.push({id:'dtp'+Date.now(),name:'',objRef:'',status:'Not Started'});
+  saveS();renderDtTpTable();updateTexHdrSub();
+}
+function cycleDtSt(type,id){
+  const te=getTE();
+  if(type==='obj'){
+    const o=te.dtObjectives.find(x=>x.id===id);if(!o)return;
+    const i=DT_OBJ_STATUSES.indexOf(o.status);
+    o.status=DT_OBJ_STATUSES[(i<0?0:i+1)%DT_OBJ_STATUSES.length];
+  }else{
+    const tp=te.dtTestPoints.find(x=>x.id===id);if(!tp)return;
+    const i=TP_STATUSES.indexOf(tp.status);
+    tp.status=TP_STATUSES[(i<0?0:i+1)%TP_STATUSES.length];
+  }
+  saveS();renderDtObjTable();renderDtTpTable();updateTexHdrSub();
+}
+function delDt(type,id){
+  const te=getTE();
+  if(type==='obj')te.dtObjectives=te.dtObjectives.filter(x=>x.id!==id);
+  else te.dtTestPoints=te.dtTestPoints.filter(x=>x.id!==id);
+  saveS();renderDtObjTable();renderDtTpTable();updateTexHdrSub();
+}
+function saveDtText(el,type,id){
+  const te=getTE();
+  const val=(el.innerText||el.textContent||'').trim();
+  if(type==='obj-name'){
+    const o=te.dtObjectives.find(x=>x.id===id);if(o)o.name=val;
+  }else if(type==='tp-name'){
+    const tp=te.dtTestPoints.find(x=>x.id===id);if(tp)tp.name=val;
+  }else if(type==='tp-ref'){
+    const tp=te.dtTestPoints.find(x=>x.id===id);if(tp)tp.objRef=val;
+  }
+  saveS();updateTexHdrSub();
+}
 function updateTexHdrSub(){
   const te=getTE();
   const tpTotal=te.testPoints.length;
@@ -2299,36 +2460,48 @@ function updateTexHdrSub(){
   const coiTotal=te.objectives.length;
   const coiAssessed=te.objectives.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length;
   const pct=tpTotal?Math.round(tpDone/tpTotal*100):0;
+  const dtTotal=te.dtTestPoints.length;
+  const dtDone=te.dtTestPoints.filter(x=>x.status==='Complete').length;
+  const dtPct=dtTotal?Math.round(dtDone/dtTotal*100):0;
+  const hasAny=tpTotal||coiTotal||dtTotal||te.dtObjectives.length;
 
   // Update tab badge
   const badge=document.getElementById('tabExecBadge');
   if(badge){
-    badge.textContent=tpTotal?tpDone+'/'+tpTotal+' TPs':'0 TPs';
-    badge.classList.toggle('has-data',tpTotal>0);
+    const otBadge=tpTotal?tpDone+'/'+tpTotal+' OT':'';
+    const dtBadge=dtTotal?dtDone+'/'+dtTotal+' DT':'';
+    const parts=[otBadge,dtBadge].filter(Boolean);
+    badge.textContent=parts.length?parts.join(' · '):'0 TPs';
+    badge.classList.toggle('has-data',!!(tpTotal||dtTotal));
   }
 
   // Update stat strip in exec tab
   const el=document.getElementById('texStat');
   if(!el)return;
-  if(!tpTotal&&!coiTotal){
-    el.innerHTML='';return;
-  }
+  if(!hasAny){el.innerHTML='';return;}
   const today=tod();
   const testDay=S.testStart?diff(S.testStart,today)+1:null;
   const windowDays=(S.testStart&&S.lteDate)?diff(S.testStart,S.lteDate)+1:null;
   const daysToLTE=S.lteDate?Math.max(0,diff(today,S.lteDate)):null;
+  const dayDenom=windowDays?'/'+windowDays:'';
   el.innerHTML=`
     ${tpTotal?`
-    <div class="esc c"><div class="esc-n">${tpDone}</div><div class="esc-l">Complete</div></div>
+    <div class="esc c"><div class="esc-n">${tpDone}</div><div class="esc-l">OT Complete</div></div>
     <div class="esc p"><div class="esc-n">${tpInProg}</div><div class="esc-l">In Progress</div></div>
     <div class="esc r"><div class="esc-n">${tpNoGo}</div><div class="esc-l">No-Go</div></div>
-    <div class="esc ns"><div class="esc-n">${tpNS}</div><div class="esc-l">Remaining</div></div>
-    ${testDay!==null?`<div class="esc day"><div class="esc-n">${testDay}${windowDays?'<span style="font-size:.85rem;font-weight:600;color:var(--g500)">/${windowDays}</span>':''}</div><div class="esc-l">Test Day</div></div>`:''}
+    <div class="esc ns"><div class="esc-n">${tpNS}</div><div class="esc-l">Remaining</div></div>`:''}
+    ${dtTotal?`<div class="esc c" style="background:#f3e8ff;border-color:#c4b5fd"><div class="esc-n" style="color:#7c3aed">${dtDone}</div><div class="esc-l">DT Complete</div></div>`:''}
+    ${testDay!==null?`<div class="esc day"><div class="esc-n">${testDay}<span style="font-size:.85rem;font-weight:600;color:var(--g500)">${dayDenom}</span></div><div class="esc-l">Test Day</div></div>`:''}
     ${daysToLTE!==null?`<div class="esc lte"><div class="esc-n">${daysToLTE}</div><div class="esc-l">Days to LTE</div></div>`:''}
-    <div class="exec-bar-card">
-      <div class="exec-bar-lbl"><span>Test Point Completion</span><strong>${tpDone}/${tpTotal} &nbsp;(${pct}%)</strong></div>
+    ${tpTotal?`<div class="exec-bar-card">
+      <div class="exec-bar-lbl"><span>OT Test Points</span><strong>${tpDone}/${tpTotal} (${pct}%)</strong></div>
       <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
       ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
+    </div>`:''}
+    ${dtTotal?`<div class="exec-bar-card" style="border-color:#c4b5fd">
+      <div class="exec-bar-lbl"><span>DT Test Points</span><strong>${dtDone}/${dtTotal} (${dtPct}%)</strong></div>
+      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,#8b5cf6,#7c3aed)"></div></div>
+      ${te.dtObjectives.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtObjectives.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length} of ${te.dtObjectives.length} DT objectives assessed</div>`:''}
     </div>`:''}`;
 }
 function escH(s){
@@ -2634,6 +2807,35 @@ function loadDemoPrograms(){
       {id:'qdb_tp16',name:'Thermal cap workaround — 850-target limit, full mission profile',coiRef:'COI 6',status:'Complete'},
       {id:'qdb_tp17',name:'Operator workload — single operator, 500-target simultaneous engagement',coiRef:'COI 7',status:'In Progress'},
       {id:'qdb_tp18',name:'Operator workload — single operator, 1,000-target mass engagement',coiRef:'COI 7',status:'In Progress'},
+    ],
+    dtObjectives:[
+      {id:'qdb_dto1',type:'GTO',name:'Quantum Processor Computational Performance',status:'PASS'},
+      {id:'qdb_dto2',type:'GTO',name:'Engagement Algorithm Accuracy & Convergence',status:'In Progress'},
+      {id:'qdb_dto3',type:'GTO',name:'Thermal Management Under Sustained Load',status:'CONDITIONAL'},
+      {id:'qdb_dto4',type:'STO',name:'Sustained throughput ≥ 10^18 ops/sec under all load conditions',status:'PASS'},
+      {id:'qdb_dto5',type:'STO',name:'Algorithm convergence time < 50ms per engagement solution',status:'PASS'},
+      {id:'qdb_dto6',type:'STO',name:'Engagement solution accuracy ≥ 99.5% at max track load',status:'In Progress'},
+      {id:'qdb_dto7',type:'STO',name:'Core temperature ≤ 4K during sustained 90%+ processor load',status:'CONDITIONAL'},
+      {id:'qdb_dto8',type:'MOP',name:'Processor throughput (ops/sec) at 25%, 50%, 75%, 100% load',status:'PASS'},
+      {id:'qdb_dto9',type:'MOP',name:'Algorithm latency (ms) from track data receipt to solution output',status:'PASS'},
+      {id:'qdb_dto10',type:'MOP',name:'Engagement solution error rate (%) across 1,000-target scenario',status:'In Progress'},
+      {id:'qdb_dto11',type:'MOP',name:'Quantum coherence stability (%) at 4K under thermal stress profile',status:'CONDITIONAL'},
+    ],
+    dtTestPoints:[
+      {id:'qdb_dtp1',name:'Processor throughput — 25% load baseline, 10-min sustained',objRef:'MOP-1',status:'Complete'},
+      {id:'qdb_dtp2',name:'Processor throughput — 50% load, mixed track density',objRef:'MOP-1',status:'Complete'},
+      {id:'qdb_dtp3',name:'Processor throughput — 75% load, contested EW environment',objRef:'MOP-1',status:'Complete'},
+      {id:'qdb_dtp4',name:'Processor throughput — 100% load, 1,000-target max stress',objRef:'MOP-1',status:'Complete'},
+      {id:'qdb_dtp5',name:'Algorithm latency — single engagement solution, no EW',objRef:'MOP-2',status:'Complete'},
+      {id:'qdb_dtp6',name:'Algorithm latency — 500 simultaneous solutions, EW active',objRef:'MOP-2',status:'Complete'},
+      {id:'qdb_dtp7',name:'Algorithm latency — 1,000 simultaneous solutions, full EW',objRef:'MOP-2',status:'Complete'},
+      {id:'qdb_dtp8',name:'Solution error rate — 200-target scenario, no spoofing',objRef:'MOP-3',status:'Complete'},
+      {id:'qdb_dtp9',name:'Solution error rate — 1,000-target scenario, spoofed IFF 10%',objRef:'MOP-3',status:'In Progress'},
+      {id:'qdb_dtp10',name:'Solution error rate — 1,000-target scenario, spoofed IFF 25%',objRef:'MOP-3',status:'In Progress'},
+      {id:'qdb_dtp11',name:'Thermal stability — 4K baseline check, idle processor',objRef:'MOP-4',status:'Complete'},
+      {id:'qdb_dtp12',name:'Thermal stability — 85% processor load, 15-min profile',objRef:'MOP-4',status:'Complete'},
+      {id:'qdb_dtp13',name:'Thermal stability — 95% load, 30-min sustained (thermal cap triggered)',objRef:'MOP-4',status:'Complete'},
+      {id:'qdb_dtp14',name:'Quantum coherence after thermal event — recovery validation',objRef:'MOP-4',status:'Not Started'},
     ]
   };
 
