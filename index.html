@@ -678,17 +678,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
           <div class="sl-ring-wrap" id="sl-ring-wrap" style="background:conic-gradient(#22c55e 0%,#e2e8f0 0%)">
             <div class="sl-ring-inner">
               <div class="sl-rpct" id="sl-rpct" style="color:#15803d">0%</div>
-              <div class="sl-rsub">Complete</div>
+              <div class="sl-rsub" id="sl-rsub">Complete</div>
             </div>
           </div>
           <!-- stat bubbles -->
-          <div class="sl-bubbles">
-            <div class="sl-bubble sl-b-c"><div class="sl-sn" id="sl-c">0</div><div class="sl-sl">&#10003; Complete</div></div>
-            <div class="sl-bubble sl-b-p"><div class="sl-sn" id="sl-p">0</div><div class="sl-sl">In Progress</div></div>
-            <div class="sl-bubble sl-b-r"><div class="sl-sn" id="sl-r">0</div><div class="sl-sl">At Risk</div></div>
-            <div class="sl-bubble sl-b-ns"><div class="sl-sn" id="sl-ns">0</div><div class="sl-sl">Not Started</div></div>
-            <div class="sl-bubble sl-b-ov"><div class="sl-sn" id="sl-ov">0</div><div class="sl-sl">Overdue</div></div>
-            <div class="sl-bubble sl-b-ar"><div class="sl-sn" id="sl-ar">0</div><div class="sl-sl">Due Soon</div></div>
+          <div class="sl-bubbles" id="sl-bubbles">
+            <div class="sl-bubble sl-b-c"><div class="sl-sn">0</div><div class="sl-sl">&#10003; Complete</div></div>
+            <div class="sl-bubble sl-b-p"><div class="sl-sn">0</div><div class="sl-sl">In Progress</div></div>
+            <div class="sl-bubble sl-b-r"><div class="sl-sn">0</div><div class="sl-sl">At Risk</div></div>
+            <div class="sl-bubble sl-b-ns"><div class="sl-sn">0</div><div class="sl-sl">Not Started</div></div>
+            <div class="sl-bubble sl-b-ov"><div class="sl-sn">0</div><div class="sl-sl">Overdue</div></div>
+            <div class="sl-bubble sl-b-ar"><div class="sl-sn">0</div><div class="sl-sl">Due Soon</div></div>
           </div>
           <!-- prog info + bar -->
           <div class="sl-prog-block">
@@ -1560,12 +1560,20 @@ function buildSlide(){
     if(rk==='atrisk')ar++;
   });
   const ps=getActivePhaseSummary();const pct=ps.total?Math.round(ps.done/ps.total*100):0;
-  document.getElementById('sl-c').textContent=c;
-  document.getElementById('sl-p').textContent=p;
-  document.getElementById('sl-r').textContent=r;
-  document.getElementById('sl-ns').textContent=n;
-  document.getElementById('sl-ov').textContent=ov;
-  document.getElementById('sl-ar').textContent=ar;
+  const today2=tod();
+  const isExec=S.testStart&&today2>=S.testStart&&!(S.lteDate&&today2>S.lteDate);
+  // Default bubble layout (overwritten below in exec mode)
+  document.getElementById('sl-bubbles').innerHTML=`
+    <div class="sl-bubble sl-b-c"><div class="sl-sn">${c}</div><div class="sl-sl">&#10003; Complete</div></div>
+    <div class="sl-bubble sl-b-p"><div class="sl-sn">${p}</div><div class="sl-sl">In Progress</div></div>
+    <div class="sl-bubble sl-b-r"><div class="sl-sn">${r}</div><div class="sl-sl">At Risk</div></div>
+    <div class="sl-bubble sl-b-ns"><div class="sl-sn">${n}</div><div class="sl-sl">Not Started</div></div>
+    <div class="sl-bubble sl-b-ov"><div class="sl-sn">${ov}</div><div class="sl-sl">Overdue</div></div>
+    <div class="sl-bubble sl-b-ar"><div class="sl-sn">${ar}</div><div class="sl-sl">Due Soon</div></div>`;
+  document.getElementById('sl-rsub').textContent='Complete';
+  // Reset exec-mode overrides so non-exec programs always look right
+  const slPB=document.querySelector('.sl-prog-block');
+  if(slPB)slPB.style.display='';
   document.getElementById('sl-pbar').style.width=pct+'%';
   document.getElementById('sl-ppct').textContent=pct+'%';
   document.getElementById('sl-plbl').textContent=ps.phase+' Progress ('+ps.done+'/'+ps.total+')';
@@ -1604,21 +1612,23 @@ function buildSlide(){
     </div>`;
   }).join('');
 
-  // ── Upcoming (next 30 days) ──
-  const upList=TASKS.filter(t=>{
-    if(t.isChild)return false;
-    const ts=getT(t.id);if(ts.status==='complete')return false;
-    const due=getEffDue(t);if(!due)return false;
-    const d=diff(tod(),due);return d>=0&&d<=30;
-  }).sort((a,b)=>getEffDue(a)-getEffDue(b)).slice(0,10);
-  const upEl=document.getElementById('sl-upcoming');
-  upEl.innerHTML=upList.length===0
-    ?'<div class="sl-none">No items due in next 30 days</div>'
-    :upList.map(t=>{
-      const due=getEffDue(t);const d=diff(tod(),due);
-      const dotcls=d<=7?'orange':'blue';
-      return`<div class="sl-item sl-clickable" onclick="navToTask('${t.id}')" title="Go to ${t.name}"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
-    }).join('');
+  // ── Upcoming (next 30 days) — only in non-exec mode ──
+  if(!isExec){
+    const upList=TASKS.filter(t=>{
+      if(t.isChild)return false;
+      const ts=getT(t.id);if(ts.status==='complete')return false;
+      const due=getEffDue(t);if(!due)return false;
+      const d=diff(tod(),due);return d>=0&&d<=30;
+    }).sort((a,b)=>getEffDue(a)-getEffDue(b)).slice(0,10);
+    const upEl=document.getElementById('sl-upcoming');
+    upEl.innerHTML=upList.length===0
+      ?'<div class="sl-none">No items due in next 30 days</div>'
+      :upList.map(t=>{
+        const due=getEffDue(t);const d=diff(tod(),due);
+        const dotcls=d<=7?'orange':'blue';
+        return`<div class="sl-item sl-clickable" onclick="navToTask('${t.id}')" title="Go to ${t.name}"><span class="dot ${dotcls}"></span><span><strong>${fmt(due)}</strong> — ${t.name}</span></div>`;
+      }).join('');
+  }
 
   // ── Risks & Overdue ──
   const rkItems=TASKS.filter(t=>{
@@ -1640,7 +1650,87 @@ function buildSlide(){
   const hlEl=document.getElementById('sl-hl');
   hlEl.textContent=S.highlights||'';
   if(!S.highlights)hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.82rem">No highlights added. Use the Program Highlights panel above the tracker.</span>';
+
+  // ── Test Execution overlay (replaces bubbles + upcoming col) ──
+  if(isExec)applyTestExecSlide(pct,ov,ar);
 }
+
+function applyTestExecSlide(taskPct,ov,ar){
+  const te=S.testExec||{objectives:[],testPoints:[]};
+  const tps=te.testPoints||[];
+  const cois=te.objectives||[];
+  const tpTotal=tps.length;
+  const tpDone=tps.filter(x=>x.status==='Complete').length;
+  const tpInProg=tps.filter(x=>x.status==='In Progress').length;
+  const tpNoGo=tps.filter(x=>x.status==='No-Go').length;
+  const tpNS=tpTotal-tpDone-tpInProg-tpNoGo;
+  const tpPct=tpTotal?Math.round(tpDone/tpTotal*100):0;
+
+  const today=tod();
+  const testDay=S.testStart?diff(S.testStart,today)+1:null;
+  const windowDays=(S.testStart&&S.lteDate)?diff(S.testStart,S.lteDate)+1:null;
+  const daysToLTE=S.lteDate?Math.max(0,diff(today,S.lteDate)):null;
+
+  // ── Ring: show n/n instead of % (the user's preferred format) ──
+  if(tpTotal){
+    const hasNoGo=tpNoGo>0;
+    const ringColor=tpPct===100?'#22c55e':hasNoGo?'#ef4444':'#1d4ed8';
+    const ringTextColor=tpPct===100?'#15803d':hasNoGo?'#dc2626':'#1d4ed8';
+    document.getElementById('sl-ring-wrap').style.background=
+      `conic-gradient(${ringColor} ${tpPct}%, #e2e8f0 ${tpPct}%)`;
+    const rpct=document.getElementById('sl-rpct');
+    // Show "17/20" — the count format the user prefers
+    rpct.style.fontSize='1.05rem';
+    rpct.textContent=tpDone+'/'+tpTotal;
+    rpct.style.color=ringTextColor;
+    document.getElementById('sl-rsub').textContent='Test Points';
+  }
+
+  // ── Hide right progress block — it duplicated the ring ──
+  const slPB=document.querySelector('.sl-prog-block');
+  if(slPB)slPB.style.display='none';
+
+  // ── 5 bubbles: breakdown without repeating the ring count ──
+  document.getElementById('sl-bubbles').innerHTML=`
+    <div class="sl-bubble sl-b-p"><div class="sl-sn">${tpInProg}</div><div class="sl-sl">In Progress</div></div>
+    <div class="sl-bubble sl-b-ov"><div class="sl-sn">${tpNoGo}</div><div class="sl-sl">No-Go</div></div>
+    <div class="sl-bubble sl-b-ns"><div class="sl-sn">${tpNS}</div><div class="sl-sl">Remaining</div></div>
+    ${testDay!==null?`<div class="sl-bubble" style="background:#eff6ff;border:3px solid #1d4ed8">
+      <div class="sl-sn" style="color:#1d4ed8">${testDay}</div>
+      <div class="sl-sl" style="color:#1d4ed8">${windowDays?'of\u00a0'+windowDays+'d':'Test Day'}</div></div>`:''}
+    ${daysToLTE!==null?`<div class="sl-bubble sl-b-ar">
+      <div class="sl-sn">${daysToLTE}</div>
+      <div class="sl-sl">Days to LTE</div></div>`:''}`;
+
+  // ── Replace upcoming column with COI assessment grid ──
+  const upHdr=document.querySelector('.sl-col-hdr.upcoming');
+  if(upHdr)upHdr.innerHTML='&#128202;&nbsp;COI Assessment';
+  const upEl=document.getElementById('sl-upcoming');
+  if(!upEl)return;
+  if(!cois.length){
+    upEl.innerHTML='<div class="sl-none" style="font-style:italic">No COIs defined — add them in the Test Execution Board</div>';
+    return;
+  }
+  const COI_COLORS={
+    'PASS':       {bg:'#dcfce7',color:'#15803d',icon:'✓'},
+    'FAIL':       {bg:'#fee2e2',color:'#dc2626',icon:'✕'},
+    'CONDITIONAL':{bg:'#fff7ed',color:'#c2410c',icon:'△'},
+    'In Progress':{bg:'#dbeafe',color:'#1d4ed8',icon:'●'},
+    'Pending':    {bg:'#f1f5f9',color:'#64748b',icon:'○'},
+  };
+  upEl.innerHTML=cois.map((o,i)=>{
+    const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+    const status=COI_STATUSES[si];
+    const clr=COI_COLORS[status]||COI_COLORS['Pending'];
+    const nm=o.name.length>40?o.name.slice(0,40)+'\u2026':o.name;
+    return`<div style="display:flex;align-items:center;gap:7px;padding:5px 2px;border-bottom:1px solid #f1f5f9">
+      <span style="font-size:.65rem;font-weight:800;color:#94a3b8;white-space:nowrap;min-width:36px">COI\u00a0${i+1}</span>
+      <span style="font-size:.71rem;flex:1;color:#334155;line-height:1.3">${escH(nm)}</span>
+      <span style="padding:2px 8px;border-radius:9px;font-size:.63rem;font-weight:700;white-space:nowrap;background:${clr.bg};color:${clr.color}">${clr.icon}\u00a0${status}</span>
+    </div>`;
+  }).join('');
+}
+
 function navToTask(taskId){
   hideSlide();
   setTimeout(()=>{
