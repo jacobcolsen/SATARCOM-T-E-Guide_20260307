@@ -8,6 +8,7 @@
 :root {
   --navy:#0a1628; --navy-mid:#14274e; --navy-light:#1e3a6e;
   --gold:#f0a500; --gold-light:#fbbf24;
+  --ft-orange:#f97316; --ft-orange-dark:#ea580c; --ft-orange-light:#fff7ed; --ft-orange-border:#fed7aa;
   --g50:#f8fafc; --g100:#f1f5f9; --g200:#e2e8f0; --g300:#cbd5e1;
   --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b;
   --s-none-bg:#f1f5f9;    --s-none-t:#475569;  --s-none-b:#cbd5e1;
@@ -25,8 +26,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--gold);
   position:sticky;top:0;z-index:300;box-shadow:0 4px 20px rgba(0,0,0,.3);}
 .hdr-icon{font-size:1.9rem;}
-.hdr-text h1{font-size:1.1rem;font-weight:700;letter-spacing:.4px;}
-.hdr-text p{font-size:.68rem;color:#93b4d8;margin-top:1px;}
+.hdr-text h1{font-size:.72rem;font-weight:700;letter-spacing:.4px;color:#93b4d8;}
+.hdr-text p{font-size:.62rem;color:#7a9bbf;margin-top:0;}
+.hdr-prog-name{font-size:1.35rem;font-weight:800;color:var(--gold);letter-spacing:.5px;line-height:1.1;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px;}
+.hdr-prog-empty{color:#4a6e99;font-style:italic;font-size:.85rem;font-weight:500;letter-spacing:.2px;}
 .hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .hdr-saved{font-size:.65rem;color:#93b4d8;}
 .hbtn{padding:5px 13px;border-radius:6px;font-size:.74rem;font-weight:600;cursor:pointer;
@@ -392,12 +395,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   padding:7px 16px;font-size:.77rem;font-weight:700;letter-spacing:.4px;border-radius:6px;
   margin:14px 0 6px;display:flex;align-items:center;gap:8px;}
 .dt-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.67rem;font-weight:700;white-space:nowrap;}
-.dt-gto{background:#7c3aed;color:#fff;}
-.dt-sto{background:#2563eb;color:#fff;}
-.dt-mop{background:#0891b2;color:#fff;}
-.dt-sto-sel{font-size:.75rem;border:1px solid var(--g300);border-radius:4px;padding:2px 5px;background:#fff;color:var(--g700);cursor:pointer;max-width:220px;width:100%;}
-.dt-sto-sel:focus{outline:none;border-color:#7c3aed;}
-.dt-gto-cell{background:#f5f3ff!important;color:#6d28d9;font-weight:700;}
+.dt-gto{background:var(--ft-orange-dark);color:#fff;}
+.dt-sto{background:var(--ft-orange);color:#fff;}
+.dt-mop{background:#d97706;color:#fff;}
+.dt-sto-sel{font-size:.75rem;border:1px solid var(--ft-orange-border);border-radius:4px;padding:2px 5px;background:#fff;color:var(--g700);cursor:pointer;max-width:220px;width:100%;}
+.dt-sto-sel:focus{outline:none;border-color:var(--ft-orange);}
+.dt-gto-cell{background:var(--ft-orange-light)!important;color:var(--ft-orange-dark);font-weight:700;}
 .csb{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.69rem;font-weight:700;
   cursor:pointer;user-select:none;white-space:nowrap;transition:filter .1s;}
 .csb:hover{filter:brightness(.9);}
@@ -536,8 +539,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 <div class="hdr">
   <div class="hdr-icon">🛰️</div>
   <div class="hdr-text">
-    <h1>STARCOM T&amp;E Program Tracker</h1>
-    <p id="hdrSub">US Space Force Operational Test Agency · T&amp;E Guide v2.0</p>
+    <div id="hdrProgName" class="hdr-prog-empty">— No Program Selected —</div>
+    <h1>STARCOM T&amp;E Program Tracker · <span id="hdrSub" style="font-weight:400">US Space Force OTA · T&amp;E Guide v2.0</span></h1>
   </div>
   <div class="hdr-right">
     <span class="hdr-saved" id="lastSaved"></span>
@@ -673,6 +676,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 <div id="execView" style="display:none;">
   <div class="exec-tab-view">
     <div class="exec-stat-strip" id="texStat"></div>
+    <!-- DT Section -->
+    <div class="tex-section-hdr" style="background:linear-gradient(90deg,var(--ft-orange-dark),var(--ft-orange))">🔬 Developmental Testing (DT)</div>
+    <div class="tex-cols">
+      <div class="tex-col">
+        <div class="tex-col-hdr">
+          <span>GTOs &amp; STOs</span>
+          <button class="tex-add-btn" onclick="addDtGto()">+ Add GTO</button>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th style="width:54px">GTO #</th><th style="min-width:110px">GTO Name</th><th style="width:60px">STO #</th><th>STO Name</th><th>Status</th><th style="width:64px"></th></tr></thead>
+          <tbody id="dtObjBody"></tbody>
+        </table>
+      </div>
+      <div class="tex-col" style="flex:1.5">
+        <div class="tex-col-hdr">
+          <span>DT Test Points</span>
+          <button class="tex-add-btn" onclick="addDtTp()">+ Add TP</button>
+        </div>
+        <table class="tex-tbl">
+          <thead><tr><th style="width:52px">TP #</th><th>Test Point Description</th><th style="width:54px">STO #</th><th style="min-width:130px">STO Name</th><th>Status</th><th style="width:36px"></th></tr></thead>
+          <tbody id="dtTpBody"></tbody>
+        </table>
+      </div>
+    </div>
     <!-- OT Section -->
     <div class="tex-section-hdr">🎯 Operational Testing (OT)</div>
     <div class="tex-cols">
@@ -694,30 +721,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
         <table class="tex-tbl">
           <thead><tr><th style="width:52px">#</th><th>Test Point Description</th><th style="width:60px">COI</th><th>Status</th><th style="width:36px"></th></tr></thead>
           <tbody id="texTpBody"></tbody>
-        </table>
-      </div>
-    </div>
-    <!-- DT Section -->
-    <div class="tex-section-hdr">🔬 Developmental Testing (DT)</div>
-    <div class="tex-cols">
-      <div class="tex-col">
-        <div class="tex-col-hdr">
-          <span>GTOs &amp; STOs</span>
-          <button class="tex-add-btn" onclick="addDtGto()">+ Add GTO</button>
-        </div>
-        <table class="tex-tbl">
-          <thead><tr><th style="width:54px">GTO #</th><th style="min-width:110px">GTO Name</th><th style="width:60px">STO #</th><th>STO Name</th><th>Status</th><th style="width:64px"></th></tr></thead>
-          <tbody id="dtObjBody"></tbody>
-        </table>
-      </div>
-      <div class="tex-col" style="flex:1.5">
-        <div class="tex-col-hdr">
-          <span>DT Test Points</span>
-          <button class="tex-add-btn" onclick="addDtTp()">+ Add TP</button>
-        </div>
-        <table class="tex-tbl">
-          <thead><tr><th style="width:52px">TP #</th><th>Test Point Description</th><th style="width:54px">STO #</th><th style="min-width:130px">STO Name</th><th>Status</th><th style="width:36px"></th></tr></thead>
-          <tbody id="dtTpBody"></tbody>
         </table>
       </div>
     </div>
@@ -755,11 +758,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 
         <!-- ROW 1: Completion ring + stat bubbles + progress -->
         <div class="sl-toprow">
-          <!-- completion ring (conic-gradient donut) -->
+          <!-- OT completion ring -->
           <div class="sl-ring-wrap" id="sl-ring-wrap" style="background:conic-gradient(#22c55e 0%,#e2e8f0 0%)">
             <div class="sl-ring-inner">
               <div class="sl-rpct" id="sl-rpct" style="color:#15803d">0%</div>
               <div class="sl-rsub" id="sl-rsub">Complete</div>
+            </div>
+          </div>
+          <!-- DT completion ring (exec mode only, hidden by default) -->
+          <div class="sl-ring-wrap" id="sl-ring-wrap-dt" style="background:conic-gradient(#f97316 0%,#e2e8f0 0%);display:none">
+            <div class="sl-ring-inner">
+              <div class="sl-rpct" id="sl-rpct-dt" style="color:#ea580c;font-size:1.05rem">0/0</div>
+              <div class="sl-rsub" id="sl-rsub-dt" style="color:#ea580c">DT TPs</div>
             </div>
           </div>
           <!-- stat bubbles -->
@@ -1249,9 +1259,17 @@ function renderAll(){
   autoSwitchTab();
 }
 function updateHdrSub(){
-  document.getElementById('hdrSub').textContent=
-    (S.programName?S.programName+' · ':'')+
-    'US Space Force Operational Test Agency · T&E Guide v2.0';
+  const nameEl=document.getElementById('hdrProgName');
+  if(nameEl){
+    if(S.programName){
+      nameEl.textContent=S.programName;
+      nameEl.className='hdr-prog-name';
+    }else{
+      nameEl.textContent='— No Program Selected —';
+      nameEl.className='hdr-prog-empty';
+    }
+  }
+  document.getElementById('hdrSub').textContent='US Space Force OTA · T&E Guide v2.0';
 }
 
 function renderPhases(){
@@ -1655,6 +1673,8 @@ function buildSlide(){
   // Reset exec-mode overrides so non-exec programs always look right
   const slPB=document.querySelector('.sl-prog-block');
   if(slPB)slPB.style.display='';
+  const dtRingReset=document.getElementById('sl-ring-wrap-dt');
+  if(dtRingReset)dtRingReset.style.display='none';
   document.getElementById('sl-pbar').style.width=pct+'%';
   document.getElementById('sl-ppct').textContent=pct+'%';
   document.getElementById('sl-plbl').textContent=ps.phase+' Progress ('+ps.done+'/'+ps.total+')';
@@ -1737,22 +1757,26 @@ function buildSlide(){
 }
 
 function applyTestExecSlide(taskPct,ov,ar){
-  const te=S.testExec||{objectives:[],testPoints:[]};
+  const te=S.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]};
   const tps=te.testPoints||[];
   const cois=te.objectives||[];
+  const dtps=te.dtTestPoints||[];
   const tpTotal=tps.length;
   const tpDone=tps.filter(x=>x.status==='Complete').length;
   const tpInProg=tps.filter(x=>x.status==='In Progress').length;
   const tpNoGo=tps.filter(x=>x.status==='No-Go').length;
   const tpNS=tpTotal-tpDone-tpInProg-tpNoGo;
   const tpPct=tpTotal?Math.round(tpDone/tpTotal*100):0;
+  const dtTotal=dtps.length;
+  const dtDone=dtps.filter(x=>x.status==='Complete').length;
+  const dtPct=dtTotal?Math.round(dtDone/dtTotal*100):0;
 
   const today=tod();
   const testDay=S.testStart?diff(S.testStart,today)+1:null;
   const windowDays=(S.testStart&&S.lteDate)?diff(S.testStart,S.lteDate)+1:null;
   const daysToLTE=S.lteDate?Math.max(0,diff(today,S.lteDate)):null;
 
-  // ── Ring: show n/n instead of % (the user's preferred format) ──
+  // ── OT Ring ──
   if(tpTotal){
     const hasNoGo=tpNoGo>0;
     const ringColor=tpPct===100?'#22c55e':hasNoGo?'#ef4444':'#1d4ed8';
@@ -1760,18 +1784,32 @@ function applyTestExecSlide(taskPct,ov,ar){
     document.getElementById('sl-ring-wrap').style.background=
       `conic-gradient(${ringColor} ${tpPct}%, #e2e8f0 ${tpPct}%)`;
     const rpct=document.getElementById('sl-rpct');
-    // Show "17/20" — the count format the user prefers
     rpct.style.fontSize='1.05rem';
     rpct.textContent=tpDone+'/'+tpTotal;
     rpct.style.color=ringTextColor;
-    document.getElementById('sl-rsub').textContent='Test Points';
+    document.getElementById('sl-rsub').textContent='OT TPs';
   }
 
-  // ── Hide right progress block — it duplicated the ring ──
+  // ── DT Ring (flight test orange) ──
+  const dtRing=document.getElementById('sl-ring-wrap-dt');
+  if(dtRing){
+    if(dtTotal){
+      dtRing.style.display='';
+      dtRing.style.background=`conic-gradient(#f97316 ${dtPct}%, #e2e8f0 ${dtPct}%)`;
+      const dtRpct=document.getElementById('sl-rpct-dt');
+      dtRpct.textContent=dtDone+'/'+dtTotal;
+      dtRpct.style.color=dtPct===100?'#15803d':'#ea580c';
+      document.getElementById('sl-rsub-dt').textContent='DT TPs';
+    } else {
+      dtRing.style.display='none';
+    }
+  }
+
+  // ── Hide right progress block — redundant with rings ──
   const slPB=document.querySelector('.sl-prog-block');
   if(slPB)slPB.style.display='none';
 
-  // ── 5 bubbles: breakdown without repeating the ring count ──
+  // ── 5 bubbles: breakdown ──
   document.getElementById('sl-bubbles').innerHTML=`
     <div class="sl-bubble sl-b-p"><div class="sl-sn">${tpInProg}</div><div class="sl-sl">In Progress</div></div>
     <div class="sl-bubble sl-b-ov"><div class="sl-sn">${tpNoGo}</div><div class="sl-sl">No-Go</div></div>
@@ -2072,19 +2110,36 @@ function toggleChildRows(parentId){
 }
 
 [
+  // ── DT Framework planning tasks (appear first in Test Plan expansion) ──
+  {id:'dt01',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] GTOs Defined',
+   desc:'General Test Objectives defined and linked to system capabilities and DT strategies. GTOs decompose into STOs and MOPs.',
+   getDue:(d)=>add(d.start,-90),lbl:'~90 days before Test Start',
+   owner:'Test Director / Lead Engineer',type:'Conditional',ref:'DT Framework',
+   note:'Required for DT or combined DT/OT programs.'},
+  {id:'dt02',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] STOs Defined',
+   desc:'Specific Test Objectives decomposed from each GTO. Each STO defines the measurable scope of a DT test series.',
+   getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
+   owner:'Test Team / TD',type:'Conditional',ref:'DT Framework',note:''},
+  {id:'dt03',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
+   name:'[DT] MOPs Defined',
+   desc:'Measures of Performance defined for each STO. Quantitative thresholds, data sources, and pass/fail criteria identified for DT execution.',
+   getDue:(d)=>add(d.start,-80),lbl:'~80 days before Test Start',
+   owner:'Test Team',type:'Conditional',ref:'DT Framework',note:''},
   {id:'tp01',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'Mission Analysis & COIs',
+   name:'[OT] Mission Analysis & COIs',
    desc:'Critical Operational Issues defined and linked to combat objectives and mission threads.',
    getDue:(d)=>add(d.start,-90),lbl:'~90 days before Test Start',
    owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 76',note:''},
   {id:'tp02',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'MOEs Defined',
+   name:'[OT] MOEs Defined',
    desc:'Measures of Effectiveness mapped to each COI. Pass/fail criteria established.',
    getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
    owner:'Test Team / TD',type:'Mandatory',ref:'Pg. 80',note:''},
   {id:'tp03',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'MOPs Defined',
-   desc:'Measures of Performance supporting each MOE. Data sources and thresholds identified.',
+   name:'[OT] MOPs Defined',
+   desc:'Measures of Performance supporting each OT MOE. Data sources and thresholds identified.',
    getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
    owner:'Test Team',type:'Mandatory',ref:'Pg. 82',note:''},
   {id:'tp04',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
@@ -2152,23 +2207,6 @@ function toggleChildRows(parentId){
    desc:'All TRB documentation assembled: Test Plan, Safety Plan, risk summary, and attachments.',
    getDue:(d)=>add(d.start,-30),lbl:'~30 days before Test Start',
    owner:'TD',type:'Mandatory',ref:'Pg. 120',note:'Final checklist before TRB submission.'},
-  // DT Framework planning tasks
-  {id:'dt01',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'[DT] Define General Test Objectives (GTOs)',
-   desc:'Establish high-level developmental test objectives. Each GTO represents a major area of technical investigation (e.g., structural integrity, thermal performance, software convergence). GTOs decompose into STOs and MOPs.',
-   getDue:(d)=>add(d.start,-90),lbl:'~90 days before Test Start',
-   owner:'Test Director / Lead Engineer',type:'Conditional',ref:'DT Framework',
-   note:'Required for DT or combined DT/OT programs.'},
-  {id:'dt02',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'[DT] Define Specific Test Objectives (STOs)',
-   desc:'Decompose each GTO into measurable Specific Test Objectives. STOs define the scope and focus of each test series within the DT campaign.',
-   getDue:(d)=>add(d.start,-85),lbl:'~85 days before Test Start',
-   owner:'Test Team / TD',type:'Conditional',ref:'DT Framework',note:''},
-  {id:'dt03',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
-   name:'[DT] Define Measures of Performance (MOPs)',
-   desc:'Define quantitative performance thresholds for each STO. MOPs are the data-driven criteria for assessing technical performance during DT execution.',
-   getDue:(d)=>add(d.start,-80),lbl:'~80 days before Test Start',
-   owner:'Test Team',type:'Conditional',ref:'DT Framework',note:''},
   {id:'dt04',phase:'pre',cat:'Test Planning',parent:'t10',isChild:true,
    name:'[DT] DT Test Point Design',
    desc:'Design specific DT test points to collect data against each MOP. Define test conditions, run parameters, pass/fail criteria, and instrumentation requirements for each DT test point.',
@@ -2563,7 +2601,7 @@ function updateTexHdrSub(){
     <div class="esc p"><div class="esc-n">${tpInProg}</div><div class="esc-l">In Progress</div></div>
     <div class="esc r"><div class="esc-n">${tpNoGo}</div><div class="esc-l">No-Go</div></div>
     <div class="esc ns"><div class="esc-n">${tpNS}</div><div class="esc-l">Remaining</div></div>`:''}
-    ${dtTotal?`<div class="esc c" style="background:#f3e8ff;border-color:#c4b5fd"><div class="esc-n" style="color:#7c3aed">${dtDone}</div><div class="esc-l">DT Complete</div></div>`:''}
+    ${dtTotal?`<div class="esc c" style="background:var(--ft-orange-light);border-color:var(--ft-orange-border)"><div class="esc-n" style="color:var(--ft-orange-dark)">${dtDone}</div><div class="esc-l">DT Complete</div></div>`:''}
     ${testDay!==null?`<div class="esc day"><div class="esc-n">${testDay}<span style="font-size:.85rem;font-weight:600;color:var(--g500)">${dayDenom}</span></div><div class="esc-l">Test Day</div></div>`:''}
     ${daysToLTE!==null?`<div class="esc lte"><div class="esc-n">${daysToLTE}</div><div class="esc-l">Days to LTE</div></div>`:''}
     ${tpTotal?`<div class="exec-bar-card">
@@ -2571,9 +2609,9 @@ function updateTexHdrSub(){
       <div class="exec-bar-out"><div class="exec-bar-in" style="width:${pct}%"></div></div>
       ${coiTotal?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${coiAssessed} of ${coiTotal} COIs assessed</div>`:''}
     </div>`:''}
-    ${dtTotal?`<div class="exec-bar-card" style="border-color:#c4b5fd">
+    ${dtTotal?`<div class="exec-bar-card" style="border-color:var(--ft-orange-border)">
       <div class="exec-bar-lbl"><span>DT Test Points</span><strong>${dtDone}/${dtTotal} (${dtPct}%)</strong></div>
-      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,#8b5cf6,#7c3aed)"></div></div>
+      <div class="exec-bar-out"><div class="exec-bar-in" style="width:${dtPct}%;background:linear-gradient(90deg,var(--ft-orange),var(--ft-orange-dark))"></div></div>
       ${te.dtSTOs&&te.dtSTOs.length?`<div style="font-size:.65rem;color:var(--g500);margin-top:4px">${te.dtSTOs.filter(x=>['PASS','FAIL','CONDITIONAL'].includes(x.status)).length} of ${te.dtSTOs.length} STOs assessed</div>`:''}
     </div>`:''}`;
 }
