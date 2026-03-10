@@ -1871,7 +1871,8 @@ function applyTestExecSlide(taskPct,ov,ar){
   if(hasDT){
     if(hasOT) html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#ea580c;padding:4px 0 3px;border-bottom:2px solid #fed7aa;margin-bottom:2px">🔬 DT — Specific Test Objectives</div>`;
     html+=dtSTOs.map(sto=>{
-      const si=Math.max(0,DT_STO_STATUSES.indexOf(sto.status));
+      const st=computeStoStatus(sto.id,dtps);
+      const si=Math.max(0,DT_STO_STATUSES.indexOf(st));
       return row(stoLabels[sto.id]||'STO','#f97316',sto.name,DT_STO_STATUSES[si],OBJ_COLORS_DT);
     }).join('');
   }
@@ -1879,7 +1880,8 @@ function applyTestExecSlide(taskPct,ov,ar){
     if(hasDT) html+=`<div style="height:6px"></div>`;
     if(hasOT&&hasDT) html+=`<div style="font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ot-blue-dark);padding:4px 0 3px;border-bottom:2px solid var(--ot-blue-border);margin-bottom:2px">🎯 OT — Critical Operational Issues</div>`;
     html+=cois.map((o,i)=>{
-      const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+      const st=computeCoiStatus('COI '+(i+1),tps);
+      const si=Math.max(0,COI_STATUSES.indexOf(st));
       return row('COI\u00a0'+(i+1),'#94a3b8',o.name,COI_STATUSES[si],OBJ_COLORS);
     }).join('');
   }
@@ -2345,6 +2347,30 @@ const COI_CLS   =['csb-pending','csb-inprog','csb-pass','csb-fail','csb-cond'];
 const TP_STATUSES=['Not Started','In Progress','Complete','No-Go'];
 const TP_CLS    =['tsb-ns','tsb-inprog','tsb-done','tsb-nogo'];
 
+// ── Status derivation helpers ──
+function deriveStatusFromTPs(tps){
+  if(!tps.length)return'Pending';
+  if(tps.some(tp=>tp.status==='No-Go'))return'FAIL';
+  if(tps.every(tp=>tp.status==='Complete'))return'PASS';
+  if(tps.some(tp=>tp.status==='In Progress'||tp.status==='Complete'))return'In Progress';
+  return'Pending';
+}
+function computeCoiStatus(coiLabel,tps){
+  return deriveStatusFromTPs(tps.filter(tp=>tp.coiRef===coiLabel));
+}
+function computeStoStatus(stoId,dtps){
+  return deriveStatusFromTPs(dtps.filter(dtp=>dtp.stoId===stoId));
+}
+function computeGtoStatus(gtoId,dtSTOs,dtps){
+  const stos=dtSTOs.filter(s=>s.gtoId===gtoId);
+  if(!stos.length)return'Pending';
+  const ss=stos.map(s=>computeStoStatus(s.id,dtps));
+  if(ss.some(s=>s==='FAIL'))return'FAIL';
+  if(ss.every(s=>s==='PASS'))return'PASS';
+  if(ss.some(s=>s==='In Progress'||s==='PASS'))return'In Progress';
+  return'Pending';
+}
+
 function renderTexObjTable(){
   const te=getTE();
   const tbody=document.getElementById('texObjBody');if(!tbody)return;
@@ -2352,15 +2378,18 @@ function renderTexObjTable(){
     tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No COIs defined yet — click + Add COI to get started.</td></tr>';
     return;
   }
+  const tps=te.testPoints||[];
   tbody.innerHTML=te.objectives.map((o,i)=>{
-    const si=Math.max(0,COI_STATUSES.indexOf(o.status));
+    const coiLbl='COI '+(i+1);
+    const st=computeCoiStatus(coiLbl,tps);
+    const si=Math.max(0,COI_STATUSES.indexOf(st));
     return`<tr>
-      <td class="tex-lbl">COI ${i+1}</td>
+      <td class="tex-lbl">${coiLbl}</td>
       <td><div class="tex-name" contenteditable="true"
             onblur="saveTexText(this,'obj-name','${o.id}')"
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
           >${escH(o.name||'')}</div></td>
-      <td><span class="csb ${COI_CLS[si]}" onclick="cycleTexSt('obj','${o.id}')">${COI_STATUSES[si]}</span></td>
+      <td><span class="csb ${COI_CLS[si]}" title="Auto-derived from linked test points">${COI_STATUSES[si]}</span></td>
       <td><button class="tex-del" onclick="delTex('obj','${o.id}')">✕</button></td>
     </tr>`;
   }).join('');
@@ -2452,16 +2481,22 @@ function renderDtObjTable(){
     tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--g400);padding:18px 0;font-size:.78rem;font-style:italic">No GTOs defined yet — click + Add GTO to get started.</td></tr>';
     return;
   }
+  const dtps=te.dtTestPoints||[];
   let rows='';
   te.dtGTOs.forEach((gto,gi)=>{
     const gtoNum=gi+1;
     const stos=te.dtSTOs.filter(s=>s.gtoId===gto.id);
     const rs=Math.max(1,stos.length);
-    const gtoNameCell=`<td rowspan="${rs}" style="vertical-align:top;background:#f5f3ff"><div class="tex-name" contenteditable="true"
+    const gtoSt=computeGtoStatus(gto.id,te.dtSTOs,dtps);
+    const gtoStIdx=Math.max(0,DT_STO_STATUSES.indexOf(gtoSt));
+    const gtoNameCell=`<td rowspan="${rs}" style="vertical-align:top;background:var(--ft-orange-light)"><div class="tex-name" contenteditable="true"
         onblur="saveDtGtoName(this,'${gto.id}')"
         onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
       >${escH(gto.name||'')}</div></td>`;
-    const gtoNumCell=`<td class="tex-lbl dt-gto-cell" rowspan="${rs}" style="vertical-align:middle">GTO #${gtoNum}</td>`;
+    const gtoNumCell=`<td class="tex-lbl dt-gto-cell" rowspan="${rs}" style="vertical-align:top;padding-top:10px">
+      <div>GTO #${gtoNum}</div>
+      <span class="csb ${DT_STO_CLS[gtoStIdx]}" style="margin-top:4px;display:inline-block" title="Auto-derived from STOs">${DT_STO_STATUSES[gtoStIdx]}</span>
+    </td>`;
     if(!stos.length){
       rows+=`<tr>
         ${gtoNumCell}${gtoNameCell}
@@ -2471,7 +2506,8 @@ function renderDtObjTable(){
     } else {
       stos.forEach((sto,si)=>{
         const stoLbl='STO #'+gtoNum+'.'+(si+1);
-        const stIdx=Math.max(0,DT_STO_STATUSES.indexOf(sto.status));
+        const stoSt=computeStoStatus(sto.id,dtps);
+        const stIdx=Math.max(0,DT_STO_STATUSES.indexOf(stoSt));
         const isLast=si===stos.length-1;
         rows+=`<tr>
           ${si===0?gtoNumCell+gtoNameCell:''}
@@ -2480,7 +2516,7 @@ function renderDtObjTable(){
                 onblur="saveDtStoName(this,'${sto.id}')"
                 onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
               >${escH(sto.name||'')}</div></td>
-          <td><span class="csb ${DT_STO_CLS[stIdx]}" onclick="cycleDtStoSt('${sto.id}')">${DT_STO_STATUSES[stIdx]}</span></td>
+          <td><span class="csb ${DT_STO_CLS[stIdx]}" title="Auto-derived from linked test points">${DT_STO_STATUSES[stIdx]}</span></td>
           <td style="white-space:nowrap">
             <button class="tex-del" onclick="delDtSto('${sto.id}')">✕</button>
             ${isLast?` <button class="tex-add-btn" onclick="addDtSto('${gto.id}')">+STO</button> <button class="tex-del" onclick="delDtGto('${gto.id}')">✕GTO</button>`:''}
