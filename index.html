@@ -1454,6 +1454,46 @@ function commitHL(){
 }
 
 // ═══════════════════════════════════════════════════
+//  PHASE-AWARE PROGRESS HELPER
+// ═══════════════════════════════════════════════════
+function getActivePhaseSummary(){
+  const today=tod();
+  const start=S.testStart;
+  const lte=S.lteDate;
+
+  // After LTE → post-test reporting phase
+  if(lte&&today>lte){
+    const grp=TASKS.filter(t=>t.phase==='post'&&!t.isChild);
+    const done=grp.filter(t=>getT(t.id).status==='complete').length;
+    return{phase:'Post-Test Reporting',done,total:grp.length};
+  }
+  // Between test start and LTE (or after start with no LTE) → execution
+  if(start&&today>=start){
+    // Prefer TE board test points if populated (more meaningful than admin task count)
+    const tps=(S.testExec&&S.testExec.testPoints)||[];
+    if(tps.length){
+      const done=tps.filter(x=>x.status==='Complete').length;
+      return{phase:'Test Execution · Test Points',done,total:tps.length};
+    }
+    // Fall back to during-phase admin tasks
+    const grp=TASKS.filter(t=>t.phase==='during'&&!t.isChild);
+    const done=grp.filter(t=>getT(t.id).status==='complete').length;
+    return{phase:'Test Execution',done,total:grp.length};
+  }
+  // Pre-test: pick sub-phase label based on days to start
+  let subPhase='Pre-Test Planning';
+  if(start){
+    const d=diff(today,start);
+    if(d>270) subPhase='Long-Lead Planning';
+    else if(d>90) subPhase='Campaign Planning';
+    else subPhase='Test Planning & Reviews';
+  }
+  const grp=TASKS.filter(t=>t.phase==='pre'&&!t.isChild);
+  const done=grp.filter(t=>getT(t.id).status==='complete').length;
+  return{phase:subPhase,done,total:grp.length};
+}
+
+// ═══════════════════════════════════════════════════
 //  DASHBOARD
 // ═══════════════════════════════════════════════════
 function updateDash(){
@@ -1467,16 +1507,17 @@ function updateDash(){
     if(rk==='overdue')ov++;
     if(rk==='atrisk')ar++;
   });
-  const tot=TASKS.filter(t=>!t.isChild).length;const pct=Math.round(c/tot*100);
   document.getElementById('sC').textContent=c;
   document.getElementById('sP').textContent=p;
   document.getElementById('sR').textContent=r;
   document.getElementById('sN').textContent=n;
   document.getElementById('sOV').textContent=ov;
   document.getElementById('sAR').textContent=ar;
+  const ps=getActivePhaseSummary();
+  const pct=ps.total?Math.round(ps.done/ps.total*100):0;
   document.getElementById('progPct').textContent=pct+'%';
   document.getElementById('progBar').style.width=pct+'%';
-  document.getElementById('progLbl').textContent=(S.programName||'Program')+' Overall Completion';
+  document.getElementById('progLbl').textContent=ps.phase+'\u00a0('+ps.done+'/'+ps.total+' tasks)';
 }
 function updPhCnt(phId){
   const pts=TASKS.filter(t=>t.phase===phId&&!t.isChild);
@@ -1518,7 +1559,7 @@ function buildSlide(){
     if(rk==='overdue')ov++;
     if(rk==='atrisk')ar++;
   });
-  const tot=TASKS.filter(t=>!t.isChild).length;const pct=Math.round(c/tot*100);
+  const ps=getActivePhaseSummary();const pct=ps.total?Math.round(ps.done/ps.total*100):0;
   document.getElementById('sl-c').textContent=c;
   document.getElementById('sl-p').textContent=p;
   document.getElementById('sl-r').textContent=r;
@@ -1527,7 +1568,7 @@ function buildSlide(){
   document.getElementById('sl-ar').textContent=ar;
   document.getElementById('sl-pbar').style.width=pct+'%';
   document.getElementById('sl-ppct').textContent=pct+'%';
-  document.getElementById('sl-plbl').textContent=(S.programName||'Program')+' Overall Completion';
+  document.getElementById('sl-plbl').textContent=ps.phase+' Progress ('+ps.done+'/'+ps.total+')';
 
   // ── Completion ring (conic-gradient donut) ──
   const ring=document.getElementById('sl-ring-wrap');
