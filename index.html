@@ -1991,7 +1991,9 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   // handle navigation from executive view (must run after normal init)
   const navRaw=localStorage.getItem('starcom_te_exec_nav');
-  if(!navRaw){window.location.replace('executive_view.html');return;}
+  const skipRedir=localStorage.getItem('starcom_te_skip_redirect');
+  if(skipRedir){localStorage.removeItem('starcom_te_skip_redirect');}
+  else if(!navRaw){window.location.replace('executive_view.html');return;}
   if(navRaw){
     localStorage.removeItem('starcom_te_exec_nav');
     try{
