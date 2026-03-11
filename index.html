@@ -1991,7 +1991,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   // handle navigation from executive view (must run after normal init)
   const navRaw=localStorage.getItem('starcom_te_exec_nav');
-  if(!navRaw){openExecView();}
+  if(!navRaw){window.location.replace('executive_view.html');return;}
   if(navRaw){
     localStorage.removeItem('starcom_te_exec_nav');
     try{
