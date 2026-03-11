@@ -186,6 +186,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sp{background:var(--s-prog-bg);color:var(--s-prog-t);border-color:var(--s-prog-b);}
 .sd{background:var(--s-done-bg);color:var(--s-done-t);border-color:var(--s-done-b);}
 .sr{background:var(--s-risk-bg);color:var(--s-risk-t);border-color:var(--s-risk-b);}
+.sna{background:#f8fafc;color:#94a3b8;border-color:#e2e8f0;font-style:italic;}
 
 /* ── STATUS DROPDOWN (fixed position, body-level) ── */
 #statusDropdown{
@@ -199,7 +200,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sopt:hover{background:var(--g50);}
 .sdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .dot-n{background:var(--g400);} .dot-p{background:#3b82f6;}
-.dot-d{background:#22c55e;} .dot-r{background:#f59e0b;}
+.dot-d{background:#22c55e;} .dot-r{background:#f59e0b;} .dot-na{background:#cbd5e1;}
 
 /* ── NOTES ── */
 .nc{max-width:150px;}
@@ -734,6 +735,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   <div class="sopt" onclick="pickStatus('progress',event)"><span class="sdot dot-p"></span>🔵 In Progress</div>
   <div class="sopt" onclick="pickStatus('complete',event)"><span class="sdot dot-d"></span>✅ Complete</div>
   <div class="sopt" onclick="pickStatus('risk',event)"><span class="sdot dot-r"></span>⚠️ Risk</div>
+  <div class="sopt" onclick="pickStatus('na',event)"><span class="sdot dot-na"></span>— N/A</div>
 </div>
 
 <!-- ── DASHBOARD SLIDE OVERLAY ── -->
@@ -1181,7 +1183,7 @@ function getEffDue(task){
 // ═══════════════════════════════════════════════════
 function getRisk(task){
   const ts=getT(task.id);
-  if(ts.status==='complete')return'none';
+  if(ts.status==='complete'||ts.status==='na')return'none';
   const due=getEffDue(task);
   if(!due)return'none';
   const t=tod();
@@ -1194,6 +1196,7 @@ function getRowCls(task){
   const ts=getT(task.id);
   const rk=getRisk(task);
   if(ts.status==='complete')return'row-done';
+  if(ts.status==='na')return'row-normal';
   if(rk==='overdue')return'row-overdue';
   if(ts.status==='risk')return'row-risk';
   if(rk==='atrisk')return'row-atrisk';
@@ -1247,6 +1250,7 @@ const SI={
   progress:{lbl:'In Progress',cls:'sp',icon:'🔵'},
   complete:{lbl:'Complete',cls:'sd',icon:'✅'},
   risk:{lbl:'Risk',cls:'sr',icon:'⚠️'},
+  na:{lbl:'N/A',cls:'sna',icon:'—'},
 };
 const TC={'Mandatory':'tm','Recommended':'tr2','Conditional':'tc','DOT&E Oversight':'to'};
 
@@ -1282,7 +1286,7 @@ function renderPhases(){
 
   PHASES.forEach(ph=>{
     const pts=TASKS.filter(t=>t.phase===ph.id&&!t.isChild);
-    const nc=pts.filter(t=>getT(t.id).status==='complete').length;
+    const nc=pts.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     const sec=document.createElement('div');
     sec.className=`ps ${ph.cls}`;sec.id=`phase-${ph.id}`;
     sec.innerHTML=`
@@ -1326,16 +1330,38 @@ function renderPhases(){
   });
 }
 
+function computeParentStatus(taskId){
+  const children=TASKS.filter(t=>t.isChild&&t.parent===taskId);
+  if(!children.length)return null;
+  const statuses=children.map(c=>getT(c.id).status);
+  if(statuses.every(s=>s==='complete'||s==='na'))return'complete';
+  if(statuses.some(s=>s==='risk'))return'risk';
+  if(statuses.some(s=>s==='progress'||s==='complete'))return'progress';
+  return'none';
+}
+
 function mkRow(task){
   const ts=getT(task.id);
-  const rk=getRisk(task);
-  const due=getEffDue(task);
-  const si=SI[ts.status]||SI.none;
-
-  const tr=document.createElement('tr');
   const isChild=!!task.isChild;
   const hasChildren=TASKS.some(t=>t.isChild&&t.parent===task.id);
-  tr.className=`tr ${getRowCls(task)}${isChild?' tr-child':''}`;
+  const effectiveStatus=(hasChildren&&!isChild)?computeParentStatus(task.id)||ts.status:ts.status;
+  const rk=getRisk(task);
+  const due=getEffDue(task);
+  const si=SI[effectiveStatus]||SI.none;
+
+  // row class using effectiveStatus
+  const rowCls=(()=>{
+    if(effectiveStatus==='complete')return'row-done';
+    if(effectiveStatus==='na')return'row-normal';
+    if(rk==='overdue')return'row-overdue';
+    if(effectiveStatus==='risk')return'row-risk';
+    if(rk==='atrisk')return'row-atrisk';
+    if(effectiveStatus==='progress')return'row-prog';
+    return'row-normal';
+  })();
+
+  const tr=document.createElement('tr');
+  tr.className=`tr ${rowCls}${isChild?' tr-child':''}`;
   tr.id=`row-${task.id}`;
   tr.setAttribute('data-id',task.id);
   if(isChild){tr.setAttribute('data-parent',task.parent);}
@@ -1564,7 +1590,7 @@ function getActivePhaseSummary(){
   // After LTE → post-test reporting phase
   if(lte&&today>lte){
     const grp=TASKS.filter(t=>t.phase==='post'&&!t.isChild);
-    const done=grp.filter(t=>getT(t.id).status==='complete').length;
+    const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     return{phase:'Post-Test Reporting',done,total:grp.length};
   }
   // Between test start and LTE (or after start with no LTE) → execution
@@ -1579,7 +1605,7 @@ function getActivePhaseSummary(){
     }
     // Fall back to during-phase admin tasks
     const grp=TASKS.filter(t=>t.phase==='during'&&!t.isChild);
-    const done=grp.filter(t=>getT(t.id).status==='complete').length;
+    const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     return{phase:'Test Execution',done,total:grp.length};
   }
   // Pre-test: pick sub-phase label based on days to start
@@ -1591,7 +1617,7 @@ function getActivePhaseSummary(){
     else subPhase='Test Planning & Reviews';
   }
   const grp=TASKS.filter(t=>t.phase==='pre'&&!t.isChild);
-  const done=grp.filter(t=>getT(t.id).status==='complete').length;
+  const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
   return{phase:subPhase,done,total:grp.length};
 }
 
@@ -1602,7 +1628,7 @@ function updateDash(){
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
   TASKS.filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
-    if(ts.status==='complete')c++;
+    if(ts.status==='complete'||ts.status==='na')c++;
     else if(ts.status==='progress')p++;
     else if(ts.status==='risk')r++;
     else n++;
@@ -1623,7 +1649,7 @@ function updateDash(){
 }
 function updPhCnt(phId){
   const pts=TASKS.filter(t=>t.phase===phId&&!t.isChild);
-  const nc=pts.filter(t=>getT(t.id).status==='complete').length;
+  const nc=pts.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
   const el=document.getElementById(`phcnt-${phId}`);
   if(el)el.textContent=`(${nc}/${pts.length} complete)`;
 }
@@ -1654,7 +1680,7 @@ function buildSlide(){
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
   TASKS.filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
-    if(ts.status==='complete')c++;
+    if(ts.status==='complete'||ts.status==='na')c++;
     else if(ts.status==='progress')p++;
     else if(ts.status==='risk')r++;
     else n++;
@@ -2548,7 +2574,7 @@ function renderDtTpTable(){
     const stos=te.dtSTOs.filter(s=>s.gtoId===gto.id);
     if(stos.length){
       stoOpts+=`<optgroup label="GTO #${gi+1} — ${escH(gto.name||'(unnamed)')}">`+
-        stos.map((sto,si)=>`<option value="${sto.id}">STO #${gi+1}.${si+1} — ${escH(sto.name||'(unnamed)')}</option>`).join('')+
+        stos.map((sto,si)=>`<option value="${sto.id}">${escH(sto.name||'(unnamed)')}</option>`).join('')+
         '</optgroup>';
     }
   });
