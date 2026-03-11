@@ -1189,7 +1189,7 @@ function getRisk(task){
   const t=tod();
   const d=diff(t,due);
   if(d<0)return'overdue';
-  if(d<=14&&ts.status==='none')return'atrisk';
+  if(d<=30&&ts.status==='none')return'atrisk';
   return'none';
 }
 function getRowCls(task){
