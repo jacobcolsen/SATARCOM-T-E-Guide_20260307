@@ -1405,8 +1405,9 @@ function mkRow(task){
     <td class="col-stat">
       <div class="sbadge ${si.cls}" id="sbadge-${task.id}"
            onclick="openDD('${task.id}',event)"
-           title="Click to change status">
-        ${si.icon} ${si.lbl}
+           title="${hasChildren?'Auto-derived from child tasks':'Click to change status'}"
+           style="${hasChildren?'cursor:default;opacity:.85;':''}">
+        ${si.icon} ${si.lbl}${hasChildren?'<span style="font-size:.58rem;opacity:.6;margin-left:3px">auto</span>':''}
       </div>
     </td>
     <td class="col-nt nc">
@@ -1451,6 +1452,8 @@ function updateVis(){
 let openDDid=null;
 function openDD(id,e){
   e.stopPropagation();
+  // parent tasks with children have derived status — not manually editable
+  if(TASKS.some(t=>t.isChild&&t.parent===id))return;
   const dd=document.getElementById('statusDropdown');
 
   // if same badge clicked while open → close
@@ -1485,9 +1488,11 @@ function pickStatus(st,e){
   document.getElementById('statusDropdown').style.display='none';
   openDDid=null;
   refreshRow(id);
+  // if this is a child task, also re-render the parent row so derived status updates
+  const task=TASKS.find(t=>t.id===id);
+  if(task&&task.isChild&&task.parent){refreshRow(task.parent);}
   updateDash();
   renderFlowchart();
-  const task=TASKS.find(t=>t.id===id);
   if(task)updPhCnt(task.phase);
 }
 document.addEventListener('click',()=>{
