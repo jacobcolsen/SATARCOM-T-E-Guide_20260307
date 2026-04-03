@@ -1,0 +1,122 @@
+================================================================================
+PAGE:    📋 Program Portfolio
+PARENT:  STARCOM T&E Program Tracker
+PURPOSE: Executive-level overview of all active programs (shell for Phase 4)
+         Phase 4 will add the Page Properties Report macro that auto-populates
+         this table from individual program pages.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─────────────────────────────────────────────
+SECTION 1 — INFO PANEL
+─────────────────────────────────────────────
+  Type /info
+  Inside:
+    This page provides an at-a-glance view of all active T&E programs.
+    Individual program details live under 📁 Programs.
+    ⚠️ Phase 4 of the migration will activate the live auto-populated table.
+    Until then, the summary table below is maintained manually.
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "Portfolio Summary"
+─────────────────────────────────────────────
+  Heading 2: Portfolio Summary
+
+  Table (4 columns × 2 rows — header + 1 data row):
+  | Total Programs | Active | Complete | Archived |
+  |----------------|--------|----------|----------|
+  | 0              | 0      | 0        | 0        |
+
+  Note (normal text, italic):
+    Update this table manually each week. Automated roll-up added in Phase 4.
+
+─────────────────────────────────────────────
+SECTION 3 — HEADING: "Active Programs"
+─────────────────────────────────────────────
+  Heading 2: Active Programs
+
+  Note panel (yellow /warning):
+    🚧 PHASE 4 PLACEHOLDER — The Page Properties Report macro will go here.
+    It will automatically pull program name, phase, dates, completion status,
+    and program lead from every page under 📁 Programs labeled "te-program".
+    Do not add content to this section manually — it will be replaced in Phase 4.
+
+─────────────────────────────────────────────
+SECTION 4 — HEADING: "Legend"
+─────────────────────────────────────────────
+  Heading 2: Legend
+
+  Table (2 columns):
+  | Badge / Indicator    | Meaning                                       |
+  |----------------------|-----------------------------------------------|
+  | 🟢 COMPLETE          | All key tasks closed, program in closeout     |
+  | 🔵 IN PROGRESS       | Active test execution or post-test analysis   |
+  | 🟡 AT RISK           | One or more tasks due within 30 days          |
+  | 🔴 RISK / OVERDUE    | Open blocker or past-due task                 |
+  | ⚪ NOT STARTED       | Pre-planning phase, no tasks initiated        |
+  | 🟣 DOT&E OVERSIGHT   | Program under DOT&E oversight requirements   |
+
+─────────────────────────────────────────────
+SECTION 5 — QUICK LINKS
+─────────────────────────────────────────────
+  Heading 2: Quick Links
+
+  Bulleted list with page links (Ctrl+K / Cmd+K to link):
+  • 📁 Programs — All individual program tracking pages
+  • 📚 T&E Task Library — Reference for all 40 T&E tasks
+  • 🗓 Lifecycle Timeline — 10-milestone test lifecycle
+  • ⚙️ How to Use This Space — Onboarding guide
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{info}
+This page provides an at-a-glance view of all active T&E programs. Individual program details live under [📁 Programs].
+⚠️ Phase 4 of the migration will activate the live auto-populated table. Until then, the summary table below is maintained manually.
+{info}
+
+h2. Portfolio Summary
+
+|| Total Programs || Active || Complete || Archived ||
+| 0 | 0 | 0 | 0 |
+
+_Update this table manually each week. Automated roll-up added in Phase 4._
+
+h2. Active Programs
+
+{warning:title=🚧 PHASE 4 PLACEHOLDER}
+The Page Properties Report macro will go here. It will automatically pull program name, phase, dates, completion status, and program lead from every page under [📁 Programs] labeled "te-program". Do not add content to this section manually — it will be replaced in Phase 4.
+{warning}
+
+h2. Legend
+
+|| Badge / Indicator || Meaning ||
+| 🟢 COMPLETE | All key tasks closed, program in closeout |
+| 🔵 IN PROGRESS | Active test execution or post-test analysis |
+| 🟡 AT RISK | One or more tasks due within 30 days |
+| 🔴 RISK / OVERDUE | Open blocker or past-due task |
+| ⚪ NOT STARTED | Pre-planning phase, no tasks initiated |
+| 🟣 DOT&E OVERSIGHT | Program under DOT&E oversight requirements |
+
+h2. Quick Links
+
+* [📋 Program Portfolio|📋 Program Portfolio]
+* [📁 Programs|📁 Programs]
+* [📚 T&E Task Library|📚 T&E Task Library]
+* [🗓 Lifecycle Timeline|🗓 Lifecycle Timeline]
+* [⚙️ How to Use This Space|⚙️ How to Use This Space]
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom

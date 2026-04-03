@@ -1,0 +1,79 @@
+================================================================================
+PAGE:    ⚙️ How to Use This Space
+PARENT:  STARCOM T&E Program Tracker
+PURPOSE: Shell page — full onboarding guide added in Phase 8.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─────────────────────────────────────────────
+SECTION 1 — WARNING PANEL (yellow)
+─────────────────────────────────────────────
+  Type /warning
+  Inside:
+    🚧 UNDER CONSTRUCTION — Phase 8 of the migration
+    This page will contain the complete onboarding guide: how to navigate
+    the space, update program pages, create new programs, apply labels,
+    understand status badges, and follow governance rules.
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "Getting Started (Preview)"
+─────────────────────────────────────────────
+  Heading 2: Getting Started (Preview)
+
+  Numbered list:
+  1. Start at 📋 Program Portfolio for an overview of all active programs.
+  2. Click any program name to open its tracking page.
+  3. Individual program pages live under 📁 Programs.
+  4. The 📚 T&E Task Library contains descriptions for all 40 tasks.
+  5. Contact the Space Admin to create a new program or request edit access.
+
+  Normal text (italic):
+    Phase 8 will expand this into a full step-by-step guide with screenshots.
+
+─────────────────────────────────────────────
+SECTION 3 — HEADING: "Space Admin Contact"
+─────────────────────────────────────────────
+  Heading 2: Space Admin Contact
+
+  Normal text:
+    Space Admin: [your name]
+    Organization: [your org / office symbol]
+    Contact: [email or @mention]
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{warning:title=🚧 UNDER CONSTRUCTION — Phase 8 of the migration}
+This page will contain the complete onboarding guide: how to navigate the space, update program pages, create new programs, apply labels, understand status badges, and follow governance rules.
+{warning}
+
+h2. Getting Started (Preview)
+
+# Start at [📋 Program Portfolio] for an overview of all active programs.
+# Click any program name to open its tracking page.
+# Individual program pages live under [📁 Programs].
+# The [📚 T&E Task Library] contains descriptions for all 40 tasks.
+# Contact the Space Admin to create a new program or request edit access.
+
+_Phase 8 will expand this into a full step-by-step guide with screenshots._
+
+h2. Space Admin Contact
+
+Space Admin: [your name]
+Organization: [your org / office symbol]
+Contact: [email or @mention]
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom

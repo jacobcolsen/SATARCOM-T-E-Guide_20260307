@@ -1,0 +1,74 @@
+================================================================================
+PAGE:    🗓 Lifecycle Timeline
+PARENT:  STARCOM T&E Program Tracker
+PURPOSE: Shell page — real content (3 format options) added in Phase 5.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─────────────────────────────────────────────
+SECTION 1 — WARNING PANEL (yellow)
+─────────────────────────────────────────────
+  Type /warning
+  Inside:
+    🚧 UNDER CONSTRUCTION — Phase 5 of the migration
+    This page will contain the 10-milestone T&E lifecycle timeline as a
+    visual flow diagram, Roadmap, or table (format decided in Phase 5).
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "The 10 Milestones (Preview)"
+─────────────────────────────────────────────
+  Heading 2: The 10 Milestones (Preview)
+
+  Numbered list:
+  1.  ITT Charter
+  2.  TCP — Test Concept Paper
+  3.  Test Plan
+  4.  TRB — Technical Review Board
+  5.  SRB — Safety Review Board
+  6.  TRR — Test Readiness Review
+  7.  Test Start
+  8.  LTE — Last Test Event
+  9.  Final Report
+  10. Closeout
+
+  Normal text (italic):
+    Phase 5 will add a full visual timeline with phase groupings, relative
+    timing labels, and links to corresponding tasks in the T&E Task Library.
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{warning:title=🚧 UNDER CONSTRUCTION — Phase 5 of the migration}
+This page will contain the 10-milestone T&E lifecycle timeline as a visual flow diagram, Roadmap, or table (format decided in Phase 5).
+{warning}
+
+h2. The 10 Milestones (Preview)
+
+# ITT Charter
+# TCP — Test Concept Paper
+# Test Plan
+# TRB — Technical Review Board
+# SRB — Safety Review Board
+# TRR — Test Readiness Review
+# Test Start
+# LTE — Last Test Event
+# Final Report
+# Closeout
+
+_Phase 5 will add a full visual timeline with phase groupings, relative timing labels, and links to corresponding tasks in the T&E Task Library._
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom
+te-timeline

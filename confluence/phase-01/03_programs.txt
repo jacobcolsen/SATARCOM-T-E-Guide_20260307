@@ -1,0 +1,108 @@
+================================================================================
+PAGE:    📁 Programs
+PARENT:  STARCOM T&E Program Tracker
+PURPOSE: Container/index page for all individual program tracking pages.
+         Every new program page you create in Phase 3+ goes as a child of
+         this page. This page itself shows a live child-pages listing.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─────────────────────────────────────────────
+SECTION 1 — INFO PANEL
+─────────────────────────────────────────────
+  Type /info
+  Inside:
+    Each child page of this page is one T&E program.
+    Create new programs using the official template (available after Phase 3).
+    All program pages should carry the label: te-program
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "All Programs"
+─────────────────────────────────────────────
+  Heading 2: All Programs
+
+  Type /children display   (inserts the "Children Display" macro)
+  Configure it:
+    Sort by: Title (A–Z)
+    Show excerpts: Yes (if available — shows first line of page as description)
+    Depth: 1
+
+  This macro automatically lists every child page (i.e., every program) as
+  it is created. No manual maintenance needed.
+
+─────────────────────────────────────────────
+SECTION 3 — HEADING: "Create a New Program"
+─────────────────────────────────────────────
+  Heading 2: Create a New Program
+
+  Type /note  (gray note panel)
+  Inside:
+    To add a new program:
+    1. Navigate to this page (📁 Programs).
+    2. Click "Create child page" (or "..." → Create child page).
+    3. Select the template: "T&E Program Tracker — New Program"
+       (available after Phase 3 of the migration).
+    4. Name the page after the program (e.g., "PROGRAM NAME IOT&E").
+    5. Apply labels: te-program, phase-pre (or current phase), status-active
+    6. Notify the Space Admin so they can update the Portfolio summary counts.
+
+─────────────────────────────────────────────
+SECTION 4 — HEADING: "Archived Programs"
+─────────────────────────────────────────────
+  Heading 2: Archived Programs
+
+  Normal text:
+    Completed and archived programs are moved here. To archive a program:
+    Change its label from status-active to status-archived, then move the
+    page under this section by using "..." → Move → select 📁 Programs/Archive.
+
+  Then create a child page placeholder:
+    NOTE: You don't need to create the Archive sub-page now. Leave a note:
+    "An 'Archive' child page will be created here when the first program
+     completes and is archived."
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{info}
+Each child page of this page is one T&E program.
+Create new programs using the official template (available after Phase 3).
+All program pages should carry the label: *te-program*
+{info}
+
+h2. All Programs
+
+{children:sort=title|excerpt=true|depth=1}
+
+h2. Create a New Program
+
+{note}
+To add a new program:
+# Navigate to this page (📁 Programs).
+# Click "Create child page" (or "..." → Create child page).
+# Select the template: "T&E Program Tracker — New Program" (available after Phase 3).
+# Name the page after the program (e.g., "PROGRAM NAME IOT&E").
+# Apply labels: te-program, phase-pre (or current phase), status-active
+# Notify the Space Admin so they can update the Portfolio summary counts.
+{note}
+
+h2. Archived Programs
+
+Completed and archived programs are moved here. To archive a program: change its label from *status-active* to *status-archived*, then move the page under this section using "..." → Move.
+
+An "Archive" child page will be created here when the first program completes.
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom

@@ -1,0 +1,193 @@
+================================================================================
+PAGE:    STARCOM T&E Program Tracker
+PARENT:  (space root, or chosen parent page in your space)
+PURPOSE: Home page and navigation hub for the entire tracker
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS (Confluence Cloud new editor)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After setting the page title, build the page body in this order:
+
+─────────────────────────────────────────────
+SECTION 1 — INFO PANEL (blue)
+─────────────────────────────────────────────
+  Type: /info
+  Select: "Info panel" (or "Note" — pick the blue one)
+  Inside the panel, type:
+
+    STARCOM T&E Program Tracker | US Space Force OTA · T&E Guide v2.0
+    DISTRIBUTION STATEMENT A — Approved for public release; distribution is unlimited.
+    This space tracks Test & Evaluation programs through the full acquisition lifecycle
+    per DoDI 5000.98, DoDM 5000.100, and DAFI 99-103.
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "What This Space Does"
+─────────────────────────────────────────────
+  Type: /heading 2
+  Text: What This Space Does
+
+  Then a paragraph (normal text):
+
+    This Confluence space is the authoritative tracker for STARCOM T&E programs.
+    It mirrors the STARCOM T&E Program Tracker application, organizing 40 mandatory,
+    conditional, and recommended tasks across four test phases:
+
+  Then a bulleted list (type "-" and space to start):
+    • 🔵 Pre-Test — Planning, reviews, and certifications (~18 months to test start)
+    • 🔴 During Test — Execution, deficiency reporting, and status comms
+    • 🟢 Post-Test — Analysis, final reporting, and closeout
+    • 🟣 Ongoing / Periodic — Charter, TEMP, and DR management (continuous)
+
+─────────────────────────────────────────────
+SECTION 3 — HEADING: "Navigate This Space"
+─────────────────────────────────────────────
+  Type: /heading 2
+  Text: Navigate This Space
+
+  Insert a table (type /table, choose 2 columns × 5 rows):
+
+  | Page                    | Purpose                                          |
+  |-------------------------|--------------------------------------------------|
+  | 📋 Program Portfolio    | Executive overview — all programs at a glance    |
+  | 📁 Programs             | Individual program tracking pages                |
+  | 📚 T&E Task Library     | All 40 T&E tasks with descriptions and references|
+  | 🗓 Lifecycle Timeline   | 10-milestone test lifecycle visual               |
+  | ⚙️ How to Use This Space | Onboarding guide for new users                  |
+
+  To link each page title in the table:
+    Type the page title text → select it → press Ctrl+K (Cmd+K on Mac)
+    → search for the page by name → select it.
+
+─────────────────────────────────────────────
+SECTION 4 — HEADING: "Quick Reference"
+─────────────────────────────────────────────
+  Type: /heading 2
+  Text: Quick Reference
+
+  Type /expand
+  Label: Status Badge Color Guide
+  Inside the expand section, type a table (3 columns):
+
+  | Status          | Color  | Meaning                                   |
+  |-----------------|--------|-------------------------------------------|
+  | NOT STARTED     | Gray   | Task has not been initiated               |
+  | IN PROGRESS     | Blue   | Task is actively underway                 |
+  | COMPLETE        | Green  | Task finished and accepted                |
+  | RISK            | Red    | Known blocker or impediment               |
+  | AT RISK         | Yellow | Due within 30 days, not yet started       |
+  | N/A             | Gray   | Task not applicable to this program       |
+
+  After the expand, add another /expand:
+  Label: Risk Indicator Guide
+  Inside:
+    ✕ OVERDUE  — Due date has passed, task is not complete. Add to Risk column.
+    ⚡ AT RISK  — Due within 30 days, not yet started. Add to Risk column.
+    (These are added manually by the Program Lead during weekly updates.)
+
+─────────────────────────────────────────────
+SECTION 5 — HEADING: "Space Governance"
+─────────────────────────────────────────────
+  Type: /heading 2
+  Text: Space Governance
+
+  Type /warning  (yellow panel)
+  Inside the panel type:
+
+    ⚠️ CLASSIFICATION NOTICE: This space is for UNCLASSIFIED information only.
+    Do not enter classified data, controlled technical information (CUI), or
+    export-controlled (ITAR/EAR) content. Classification markings on program
+    pages are visual indicators only — this platform is NOT accredited for
+    classified data at any level.
+
+  Then normal text:
+
+    • Space Admin: [your name / org here]
+    • Program Leads update their program page weekly.
+    • Use the "📁 Programs" page to navigate to individual programs.
+    • New program pages are created from the official template (Phase 3).
+    • Completed programs are archived, not deleted.
+
+─────────────────────────────────────────────
+SECTION 6 — RECENTLY UPDATED (macro)
+─────────────────────────────────────────────
+  Type: /recently updated
+  Configure:
+    Space: [your space key]
+    Max Results: 10
+    Show: Author, Date, Title
+
+  This gives anyone landing on the home page a live feed of recent edits.
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION (Confluence Server / Data Center / legacy editor)
+Paste this into the page editor → Insert menu → Wiki Markup
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{info:title=STARCOM T&E Program Tracker | US Space Force OTA · T&E Guide v2.0}
+DISTRIBUTION STATEMENT A — Approved for public release; distribution is unlimited.
+This space tracks Test & Evaluation programs through the full acquisition lifecycle per DoDI 5000.98, DoDM 5000.100, and DAFI 99-103.
+{info}
+
+h2. What This Space Does
+
+This Confluence space is the authoritative tracker for STARCOM T&E programs. It organizes 40 mandatory, conditional, and recommended tasks across four test phases:
+
+* 🔵 *Pre-Test* — Planning, reviews, and certifications (~18 months to test start)
+* 🔴 *During Test* — Execution, deficiency reporting, and status comms
+* 🟢 *Post-Test* — Analysis, final reporting, and closeout
+* 🟣 *Ongoing / Periodic* — Charter, TEMP, and DR management (continuous)
+
+h2. Navigate This Space
+
+|| Page || Purpose ||
+| [📋 Program Portfolio] | Executive overview — all programs at a glance |
+| [📁 Programs] | Individual program tracking pages |
+| [📚 T&E Task Library] | All 40 T&E tasks with descriptions and references |
+| [🗓 Lifecycle Timeline] | 10-milestone test lifecycle visual |
+| [⚙️ How to Use This Space] | Onboarding guide for new users |
+
+h2. Quick Reference
+
+{expand:title=Status Badge Color Guide}
+|| Status || Color || Meaning ||
+| NOT STARTED | Gray | Task has not been initiated |
+| IN PROGRESS | Blue | Task is actively underway |
+| COMPLETE | Green | Task finished and accepted |
+| RISK | Red | Known blocker or impediment |
+| AT RISK | Yellow | Due within 30 days, not yet started |
+| N/A | Gray | Task not applicable to this program |
+{expand}
+
+{expand:title=Risk Indicator Guide}
+✕ OVERDUE — Due date has passed, task is not complete. Add to Risk column.
+⚡ AT RISK — Due within 30 days, not yet started. Add to Risk column.
+(These are added manually by the Program Lead during weekly updates.)
+{expand}
+
+h2. Space Governance
+
+{warning:title=⚠️ CLASSIFICATION NOTICE}
+This space is for UNCLASSIFIED information only. Do not enter classified data, controlled technical information (CUI), or export-controlled (ITAR/EAR) content. Classification markings on program pages are visual indicators only — this platform is NOT accredited for classified data at any level.
+{warning}
+
+* Space Admin: [your name / org here]
+* Program Leads update their program page weekly.
+* Use the [📁 Programs] page to navigate to individual programs.
+* New program pages are created from the official template (Phase 3).
+* Completed programs are archived, not deleted.
+
+{recently-updated:spaces=@self|max=10|showProfilePic=true}
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom
+te-guide

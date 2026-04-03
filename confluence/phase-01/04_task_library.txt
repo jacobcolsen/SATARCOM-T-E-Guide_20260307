@@ -1,0 +1,68 @@
+================================================================================
+PAGE:    📚 T&E Task Library
+PARENT:  STARCOM T&E Program Tracker
+PURPOSE: Shell page — real content added in Phase 2.
+         In Phase 1 you are only creating the page with a placeholder notice.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL EDITOR INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─────────────────────────────────────────────
+SECTION 1 — WARNING PANEL (yellow)
+─────────────────────────────────────────────
+  Type /warning
+  Inside:
+    🚧 UNDER CONSTRUCTION — Phase 2 of the migration
+    This page will contain all 40 T&E tasks organized by phase, with full
+    descriptions, owners, due date criteria, task types, and DEL 12 references.
+    Content will be added in Phase 2.
+
+─────────────────────────────────────────────
+SECTION 2 — HEADING: "What This Page Will Contain"
+─────────────────────────────────────────────
+  Heading 2: What This Page Will Contain
+
+  Bulleted list:
+  • 🔵 Pre-Test tasks (t01–t24): ~24 tasks across Long-Lead Planning, Campaign
+    Planning, Test Planning, and Final Pre-Test Reviews
+  • 🔴 During Test tasks (t25–t29): Deficiency Reporting and Communication
+  • 🟢 Post-Test tasks (t30–t36): Test Completion Reporting and Closeout
+  • 🟣 Ongoing / Periodic tasks (t37–t40): Charter, TEMP, DR management
+
+  Normal text:
+    Each task entry will include: ID, name, full description, responsible owner,
+    task type (Mandatory / Recommended / Conditional / DOT&E Oversight),
+    due date criteria relative to Test Start / TRR / LTE, and the DEL 12
+    T&E Guide reference page number.
+
+─────────────────────────────────────────────
+DONE — Click Publish
+─────────────────────────────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIKI MARKUP VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{warning:title=🚧 UNDER CONSTRUCTION — Phase 2 of the migration}
+This page will contain all 40 T&E tasks organized by phase, with full descriptions, owners, due date criteria, task types, and DEL 12 references.
+Content will be added in Phase 2.
+{warning}
+
+h2. What This Page Will Contain
+
+* 🔵 *Pre-Test tasks (t01–t24):* ~24 tasks across Long-Lead Planning, Campaign Planning, Test Planning, and Final Pre-Test Reviews
+* 🔴 *During Test tasks (t25–t29):* Deficiency Reporting and Communication
+* 🟢 *Post-Test tasks (t30–t36):* Test Completion Reporting and Closeout
+* 🟣 *Ongoing / Periodic tasks (t37–t40):* Charter, TEMP, DR management
+
+Each task entry will include: ID, name, full description, responsible owner, task type (Mandatory / Recommended / Conditional / DOT&E Oversight), due date criteria relative to Test Start / TRR / LTE, and the DEL 12 T&E Guide reference page number.
+
+================================================================================
+LABELS TO ADD (after publishing)
+================================================================================
+te-tracker
+starcom
+te-tasks

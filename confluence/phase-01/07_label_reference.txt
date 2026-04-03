@@ -1,0 +1,77 @@
+================================================================================
+LABEL REFERENCE — STARCOM T&E Confluence Tracker
+Apply these labels to pages as described. Labels drive filtering in Phase 4.
+================================================================================
+
+HOW TO APPLY A LABEL IN CONFLUENCE
+────────────────────────────────────
+  NEW EDITOR (Cloud):
+    Open the page in view mode → scroll to bottom → click the label/tag icon
+    or the "+" next to the Labels section → type the label → press Enter.
+
+  LEGACY EDITOR (Server/DC):
+    Open the page in view mode → click the pencil icon next to "Labels:"
+    at the bottom of the page → type label → click "Add" → click "Done".
+
+  Multiple labels: apply one at a time, pressing Enter/Add after each.
+
+================================================================================
+STRUCTURAL PAGE LABELS (apply to the 6 pages you create in Phase 1)
+================================================================================
+
+  Page                            Labels to apply
+  ──────────────────────────────  ──────────────────────────────────
+  STARCOM T&E Program Tracker     te-tracker, starcom, te-guide
+  📋 Program Portfolio             te-tracker, starcom
+  📁 Programs                      te-tracker, starcom
+  📚 T&E Task Library              te-tracker, starcom, te-tasks
+  🗓 Lifecycle Timeline            te-tracker, starcom, te-timeline
+  ⚙️ How to Use This Space        te-tracker, starcom
+
+================================================================================
+PROGRAM PAGE LABELS (apply to each program child page under 📁 Programs)
+These labels are applied when a program page is CREATED (Phase 3) and
+updated as the program progresses.
+================================================================================
+
+CATEGORY: IDENTIFIER (required on every program page)
+  te-program              Apply to every program page, always
+
+CATEGORY: CURRENT PHASE (apply one, update when phase changes)
+  phase-pre               Program is in Pre-Test planning
+  phase-during            Program is in active test execution
+  phase-post              Program is in post-test analysis/reporting
+  phase-ongoing           Program has ongoing/periodic tasks only
+
+CATEGORY: STATUS (apply one, update when status changes)
+  status-active           Program is currently active
+  status-complete         All tasks complete, program closed
+  status-archived         Moved to archive (remove status-active)
+  status-on-hold          Program paused (no active activity)
+
+CATEGORY: OVERSIGHT (apply if applicable)
+  dotae-oversight         Program is under DOT&E formal oversight
+  combined-ot-dt          Program has both OT and DT components
+
+================================================================================
+EXAMPLE — Label set for an active, during-test, DOT&E oversight program:
+  te-program, phase-during, status-active, dotae-oversight
+================================================================================
+
+LABEL SEARCH TIPS
+──────────────────
+  To find all active programs:
+    Go to Confluence search → filter by label: te-program AND status-active
+
+  To find all programs in During Test:
+    Filter by label: te-program AND phase-during
+
+  The Page Properties Report macro in Phase 4 will use these labels to
+  auto-filter the Portfolio table.
+
+================================================================================
+DO NOT CREATE LABELS WITH:
+  - Spaces (use hyphens instead: phase-pre not phase pre)
+  - Capital letters (Confluence labels are lowercase by convention)
+  - Special characters (no slashes, underscores are OK but use hyphens)
+================================================================================
