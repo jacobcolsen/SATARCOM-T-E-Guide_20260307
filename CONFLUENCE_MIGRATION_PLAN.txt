@@ -1,0 +1,578 @@
+================================================================================
+STARCOM T&E TRACKER — CONFLUENCE MIGRATION PLAN
+Phase-by-Phase Build & Test Guide
+================================================================================
+
+OVERVIEW
+--------
+This plan migrates the STARCOM T&E Program Tracker from a standalone HTML app
+into Confluence. Each phase is written as a prompt you can hand directly to
+Claude to build that phase, then test it before moving on.
+
+Confluence capabilities used across phases:
+  - Page hierarchy (Space > Parent > Child pages)
+  - Page Properties macro + Page Properties Report macro (portfolio views)
+  - Status macro (colored status badges)
+  - Task List macro (checkboxes)
+  - Panel macro (colored callout boxes)
+  - Table markup (task tables)
+  - HTML macro (custom widgets, progress bars) — requires admin to enable
+  - Page Templates (reusable program page skeleton)
+  - Labels/tags (filtering by program phase)
+  - Confluence Cloud vs Server/DC: note where features differ
+
+NOTE ON HTML MACRO: Phases 4+ benefit greatly from the HTML macro being
+enabled in your Confluence instance. Ask your admin. Without it, those phases
+fall back to native macros only (still functional, less polished).
+
+RECOMMENDED TEST ORDER: Complete and verify each phase before starting the next.
+
+================================================================================
+PHASE 1 — SPACE SETUP & PAGE HIERARCHY
+================================================================================
+WHAT YOU ARE BUILDING:
+  The Confluence space structure that mirrors the app's navigation:
+  executive view (portfolio), individual program pages, and reference pages.
+
+PROMPT TO USE:
+  "I am building a STARCOM T&E Program Tracker in Confluence. Help me set up
+   the page hierarchy. I need:
+
+   1. A root/home page called 'STARCOM T&E Program Tracker' with a brief
+      description of the tool's purpose (tracking 40 mandatory/conditional/
+      recommended T&E tasks for DoD acquisition programs through Pre-Test,
+      During Test, Post-Test, and Ongoing phases).
+
+   2. The following child pages under the root:
+      - '📋 Program Portfolio' (will become the executive view)
+      - '📁 Programs' (parent page; individual programs go here as children)
+      - '📚 T&E Task Library' (reference: all 40 tasks with descriptions)
+      - '🗓 Lifecycle Timeline' (the 10-milestone flowchart, text version)
+      - '⚙️ How to Use This Space' (onboarding guide)
+
+   3. Label conventions I should use:
+      - Labels on program pages: te-program, phase-pre, phase-during,
+        phase-post, phase-ongoing, status-active, status-complete,
+        status-archived
+      - How to apply labels in Confluence and where they appear
+
+   Give me the exact Confluence markup (wiki markup or instructions for the
+   visual editor) to create each page with placeholder content so I can
+   verify the hierarchy is correct before adding real content."
+
+TEST AFTER PHASE 1:
+  - Confirm all 5 pages exist under the root.
+  - Confirm the breadcrumb trail reads:
+    Space > STARCOM T&E Program Tracker > [child page]
+  - Confirm you can navigate between pages.
+  - Add label 'te-program' to a test child page under Programs and verify
+    it appears in the page's label section.
+
+================================================================================
+PHASE 2 — T&E TASK LIBRARY PAGE
+================================================================================
+WHAT YOU ARE BUILDING:
+  A reference page containing all 40 T&E tasks organized by phase, matching
+  the app's task table. Each task shows: name, description, owner, type
+  (Mandatory/Recommended/Conditional/DOT&E Oversight), due date formula,
+  and DEL 12 reference page number. This is the authoritative task catalog
+  the tracker pages will link back to.
+
+PROMPT TO USE:
+  "Build the 'T&E Task Library' page for my Confluence T&E tracker. This page
+   is a static reference — no interactivity needed, just clean readable tables.
+
+   Structure the page with four collapsible sections using the Expand macro,
+   one per phase:
+     🔵 PRE-TEST PHASE (tasks t01–t23, about 20+ tasks)
+     🔴 DURING TEST PHASE (tasks t24–t29)
+     🟢 POST-TEST PHASE (tasks t30–t36)
+     🟣 ONGOING / PERIODIC (tasks t37–t40)
+
+   Within each section, create a table with columns:
+     ID | Task Name | Owner | Type | Due Date Criteria | DEL 12 Ref | Notes
+
+   Here are ALL 40 tasks from the source app. [NOTE TO USER: Before sending
+   this prompt, open index.html in a text editor and copy the full TASKS array.
+   Paste it after this sentence so Claude has the raw data to build the table.]
+
+   Type tags should use Confluence Status macros:
+     Mandatory       → red status badge
+     Recommended     → yellow status badge
+     Conditional     → blue status badge
+     DOT&E Oversight → purple status badge
+
+   Add a Panel macro at the top of the page (blue/info style) explaining:
+   'These tasks are derived from the STARCOM T&E Guide. Due date criteria are
+    relative to Test Start, TRR, or LTE milestones set on each program page.'
+
+   Give me the complete Confluence wiki markup for this page."
+
+TEST AFTER PHASE 2:
+  - Verify all 4 phase sections expand/collapse correctly.
+  - Spot-check 3–4 tasks across phases for accuracy vs. the source app.
+  - Confirm status badge colors match: red=Mandatory, yellow=Recommended,
+    blue=Conditional, purple=DOT&E Oversight.
+  - Confirm the info panel appears at top.
+  - Share the page with a colleague and ask if it is readable without training.
+
+================================================================================
+PHASE 3 — SINGLE PROGRAM PAGE TEMPLATE
+================================================================================
+WHAT YOU ARE BUILDING:
+  A Confluence Page Template that creates a fully structured program tracking
+  page when instantiated. This is the core of the tracker — one page per
+  program. It includes: program metadata, date milestones, a status task table
+  for all 40 tasks, and a highlights/notes section. The status badges are
+  manually updated by editors (no automation yet — that comes in Phase 6).
+
+PROMPT TO USE:
+  "Create a Confluence Page Template called 'T&E Program Tracker — New Program'
+   that I can use to spin up a new program tracking page.
+
+   The template should produce a page with these sections:
+
+   SECTION 1 — Page Properties (required for portfolio view in Phase 4)
+   Use the 'Page Properties' macro with the following key-value rows:
+     Program Name        | [text field — program name]
+     Classification      | [Status macro — default: green UNCLASSIFIED]
+     Test Start Date     | [date]
+     TRR Date            | [date]
+     LTE Date            | [date]
+     Current Phase       | [Status macro — Pre-Test / During Test / Post-Test
+                           / Ongoing / Complete]
+     OT Complete         | [text, e.g. '0/20']
+     DT Complete         | [text, e.g. '0/14']
+     Program Lead        | [user mention field]
+     Last Updated        | [date]
+
+   SECTION 2 — Program Highlights
+   A Panel macro (yellow/warning style) titled '📌 Program Highlights for
+   Leadership' with a placeholder text area for the program update narrative.
+
+   SECTION 3 — Task Tracker Table
+   A table with these columns:
+     ID | Phase | Task Name | Owner | Type | Status | Due Date | Risk | Notes
+
+   Pre-populate ALL 40 tasks (organized by phase — use a horizontal rule or
+   bold header row to separate Pre/During/Post/Ongoing groups).
+
+   Status column: use the Confluence Status macro for each row, defaulting to
+   gray 'NOT STARTED'. Editors will update these manually.
+
+   Risk column: leave blank by default; editors add ✕ OVERDUE or ⚡ AT RISK
+   manually as needed.
+
+   SECTION 4 — OT Test Objectives (collapsible via Expand macro)
+   A sub-table for Critical Operational Issues (COIs) and OT test points.
+   Columns: COI ID | COI Description | # Test Points | Status | Notes
+
+   SECTION 5 — DT Test Objectives (collapsible via Expand macro)
+   Sub-tables for GTOs, STOs, and DT test points.
+   GTO table columns: GTO ID | Description | Status | Notes
+   STO table columns: STO ID | Parent GTO | Description | MOP | Status | Notes
+
+   SECTION 6 — Program Notes / History Log
+   A table for dated notes: Date | Author | Entry
+   (Editors add rows as events occur)
+
+   Make the template work in the Confluence template editor (not just wiki
+   markup). Provide step-by-step instructions for saving it as a template
+   in my space."
+
+TEST AFTER PHASE 3:
+  - Create two test program pages from the template:
+      'TEST PROGRAM ALPHA' and 'TEST PROGRAM BETA'
+  - Save both under the 'Programs' parent page.
+  - On TEST PROGRAM ALPHA: fill in all Page Properties fields, change 3 task
+    statuses to 'IN PROGRESS' (blue), 2 to 'COMPLETE' (green), 1 to 'RISK'
+    (red), and update OT Complete to '2/20'.
+  - Verify Page Properties macro shows correctly on the page.
+  - Verify the task table has all 40 tasks.
+  - Verify expand/collapse works on the OT and DT sections.
+
+================================================================================
+PHASE 4 — PROGRAM PORTFOLIO (EXECUTIVE VIEW)
+================================================================================
+WHAT YOU ARE BUILDING:
+  The 'Program Portfolio' page — a cross-program status board that mirrors
+  the app's executive_view.html. Uses the Page Properties Report macro to
+  auto-pull metadata from every program page into a single table. This is
+  the leadership-facing view.
+
+PROMPT TO USE:
+  "Build the 'Program Portfolio' page for my STARCOM T&E Confluence tracker.
+   This is the executive overview — it should show all programs at a glance.
+
+   PART 1 — Page Properties Report table
+   Add a 'Page Properties Report' macro that:
+     - Searches under the parent page 'Programs'
+     - Displays these columns pulled from each program's Page Properties:
+         Program Name, Classification, Current Phase, Test Start Date,
+         LTE Date, OT Complete, DT Complete, Program Lead, Last Updated
+     - Sorts by LTE Date ascending (soonest LTE at top)
+     - Include ALL labels (no filter) so every program page shows up
+
+   PART 2 — Summary statistics section (above the table)
+   Add a Panel macro (blue/info) with a manual count table:
+     Total Programs | Active | Complete | Archived
+   (These are updated manually by the space owner each sprint/week)
+
+   PART 3 — Legend panel (below the table)
+   Add a Panel macro (gray/note) explaining the status badge color meanings:
+     🟢 Complete  🔵 In Progress  🟡 Recommended/At Risk
+     🔴 Mandatory/Overdue  ⚪ Not Started  🟣 DOT&E Oversight
+
+   PART 4 — Quick links section
+   Add a bulleted list linking to:
+     - T&E Task Library
+     - Lifecycle Timeline
+     - How to Use This Space
+     - The source HTML app (if hosted anywhere)
+
+   Give me the wiki markup or step-by-step visual editor instructions to
+   build this page, including exact Page Properties Report macro settings."
+
+TEST AFTER PHASE 4:
+  - Navigate to Program Portfolio.
+  - Confirm both test program pages (ALPHA and BETA) appear in the table.
+  - Confirm metadata columns populated correctly from Phase 3 Page Properties.
+  - Update TEST PROGRAM BETA's Current Phase to 'During Test' and Last Updated
+    to today; confirm the Portfolio table refreshes to show the change.
+  - Verify the legend panel and quick links are present and clickable.
+
+================================================================================
+PHASE 5 — LIFECYCLE TIMELINE PAGE
+================================================================================
+WHAT YOU ARE BUILDING:
+  A visual representation of the 10-milestone test lifecycle, matching the
+  app's Flowchart tab. In Confluence this becomes a structured reference page
+  with a timeline visual built using either the Roadmap macro (Confluence
+  Cloud), a table-based timeline, or an embedded draw.io diagram.
+
+PROMPT TO USE:
+  "Build the 'Lifecycle Timeline' page for my STARCOM T&E Confluence tracker.
+   This page shows the 10-milestone test lifecycle in order.
+
+   The 10 milestones are:
+     1.  ITT Charter
+     2.  TCP (Test Concept Paper)
+     3.  Test Plan
+     4.  TRB (Test Readiness Briefing)
+     5.  SRB (Safety Review Board)
+     6.  TRR (Test Readiness Review)
+     7.  Test Start
+     8.  LTE (Last Test Event)
+     9.  Final Report
+     10. Closeout
+
+   BUILD THIS THREE WAYS so I can pick whichever looks best in my instance:
+
+   OPTION A — Table timeline
+   A table with columns: # | Milestone | Phase | Typical Timing | Key Tasks Due
+   | T&E Guide Reference. Rows alternate shading by phase color.
+
+   OPTION B — Confluence Roadmap macro (Cloud only)
+   Use the Roadmap macro with each milestone as a bar. Group by phase:
+   Pre-Test (blue), During Test (red), Post-Test (green), Ongoing (purple).
+   Add estimated relative durations based on the app's due-date formulas.
+
+   OPTION C — draw.io / diagrams.net embed
+   Provide the XML for a draw.io flowchart I can paste into the diagrams.net
+   macro. Include 10 rounded-rectangle nodes in left-to-right flow with
+   arrows between them. Color each node by phase. Include milestone name and
+   'T-X months' label on each node.
+
+   Also add a Phase Reference table below the timeline:
+     Phase | Color | Typical Duration | Key Activities
+     Pre-Test | Blue | 12–18 months before Test Start | Planning, reviews
+     During Test | Red | Test Start through LTE | Execution, DR reporting
+     Post-Test | Green | LTE through Closeout | Analysis, final report
+     Ongoing | Purple | Throughout program | Charter, TEMP, DR management
+
+   Give me the full markup/instructions for all three options."
+
+TEST AFTER PHASE 5:
+  - Confirm the page renders cleanly (test in both editor and view mode).
+  - Check that at least one of the three options displays the milestones in
+    correct order with correct phase grouping.
+  - Link the Lifecycle Timeline from the Program Portfolio quick links section
+    (edit that page and update the link).
+  - Share with one stakeholder and ask: 'Can you identify which phase the
+    TRR milestone falls in?'
+
+================================================================================
+PHASE 6 — INTERACTIVE PROGRESS WITH HTML MACRO (Optional / Advanced)
+================================================================================
+WHAT YOU ARE BUILDING:
+  Enhanced program pages with visual progress bars and dynamic risk badges,
+  mirroring the app's scorecard tiles. This requires the HTML macro to be
+  enabled by your Confluence admin. If the HTML macro is not available,
+  skip to Phase 7 and use native Status macros only.
+
+PREREQUISITE CHECK PROMPT:
+  "Does my Confluence instance have the HTML macro enabled? How do I check?
+   And if not, what is the safest way to request it from my admin, and what
+   native Confluence alternatives exist for displaying a visual progress bar
+   (e.g., a colored horizontal bar showing 12/20 tasks complete)?"
+
+BUILD PROMPT (use only if HTML macro is confirmed available):
+  "I have the Confluence HTML macro available. For my STARCOM T&E program
+   tracking pages, create an HTML macro snippet I can embed at the top of each
+   program page that displays:
+
+   1. OT SCORECARD TILE
+      - Large fraction (e.g., '17/20') with label 'OT Tasks Complete'
+      - A horizontal progress bar filled to the correct percentage in blue
+      - Status pills below: '● N active  ✓ N complete  N remaining  N COIs'
+      - If any 'Risk' status tasks exist: red border on the tile + '✕ N risk'
+        pill in red. Otherwise: '✓ clear' pill in green.
+
+   2. DT SCORECARD TILE
+      - Same layout as OT tile but in orange color scheme
+      - Shows DT-specific counts: GTOs assessed, STOs assessed
+
+   3. TIME BLOCK TILE
+      - 'Day X / Y' label (current day in test window vs. total days)
+      - 'N days to LTE' countdown
+      - Color shifts: green if >60 days to LTE, yellow 30–60, red <30
+
+   The HTML snippet should accept JavaScript variables at the top that I
+   manually update: otComplete, otTotal, otActive, otRisk, dtComplete,
+   dtTotal, testDaysCurrent, testDaysTotal, daysToLTE.
+
+   Make the HTML/CSS self-contained and safe for Confluence (no external
+   CDN calls, no fetch/XHR, inline styles only, no cookies/localStorage).
+
+   Also give me instructions for inserting this HTML macro on a program page
+   and where to place it relative to the Page Properties and task table."
+
+TEST AFTER PHASE 6:
+  - Insert the HTML macro on TEST PROGRAM ALPHA.
+  - Set variables: otComplete=5, otTotal=20, otActive=3, otRisk=1,
+    dtComplete=2, dtTotal=14, testDaysCurrent=16, testDaysTotal=67,
+    daysToLTE=51.
+  - Confirm the three tiles render with correct numbers and colors.
+  - Confirm OT tile shows red border (risk=1 > 0).
+  - Test in Confluence view mode (not edit mode) — HTML macros render only
+    in view mode.
+  - Verify no console errors in browser developer tools.
+
+================================================================================
+PHASE 7 — PROGRAM PAGE TEMPLATE REFINEMENT & REAL PROGRAM DATA
+================================================================================
+WHAT YOU ARE BUILDING:
+  Taking one real program from your portfolio and building its full Confluence
+  tracking page — not demo data. Also refining the template based on what
+  you learned in Phases 3–6, and setting up label-based filtered views.
+
+PROMPT TO USE:
+  "I have been building a STARCOM T&E Program Tracker in Confluence through
+   Phases 1–6. Now I need to:
+
+   1. REFINE THE TEMPLATE based on these lessons learned:
+      [NOTE TO USER: Before sending, list any friction points from Phases 3–6.
+       E.g., 'the Page Properties table is too wide', 'status badges are hard
+       to update', 'the OT/DT expand sections need clearer headers'.]
+
+   2. CREATE MY FIRST REAL PROGRAM PAGE
+      Program name: [YOUR REAL PROGRAM NAME]
+      Test Start: [DATE]
+      TRR Date: [DATE]
+      LTE Date: [DATE]
+      Classification: [UNCLASSIFIED or appropriate marking]
+
+      Walk me through:
+      a) Creating the page from the refined template
+      b) Populating all Page Properties fields
+      c) Setting initial task statuses (I'll tell you which tasks are complete,
+         in progress, at risk, or N/A)
+      d) Writing the Program Highlights narrative section
+      e) Adding the OT and DT objective tables with real COIs/GTOs
+
+   3. SET UP LABEL-BASED FILTERED VIEWS
+      Create saved Confluence search links (or a Search macro on the Portfolio
+      page) that filter program pages by label:
+        - 'Active programs': label = te-program AND status-active
+        - 'Programs with risk': label = te-program AND phase-during
+        - 'Near LTE (sort by LTE date)': already handled by Page Properties
+           Report sort, but show me how to add a second sorted view.
+
+   4. SET UP @MENTION NOTIFICATIONS
+      How do I configure Confluence page watches so that when a program page
+      is updated, the Program Lead (stored in Page Properties) gets notified?
+      What is the recommended notification strategy for a 5–10 program
+      portfolio?"
+
+TEST AFTER PHASE 7:
+  - The real program page exists, is fully populated, and appears in the
+    Program Portfolio table.
+  - All Page Properties fields show correct values.
+  - At least 10 tasks have been set to non-default statuses.
+  - Label filters return correct results.
+  - Page watcher / notification is configured for at least one user.
+  - Export the page to PDF (... menu > Export > PDF) and verify it is
+    presentable for leadership.
+
+================================================================================
+PHASE 8 — ONBOARDING GUIDE & SPACE GOVERNANCE
+================================================================================
+WHAT YOU ARE BUILDING:
+  The 'How to Use This Space' page — a guide for other team members, plus
+  space permissions and governance rules so the tracker stays clean.
+
+PROMPT TO USE:
+  "I have built a STARCOM T&E Program Tracker in Confluence. Help me write the
+   'How to Use This Space' onboarding page and establish governance.
+
+   ONBOARDING PAGE should cover:
+   1. What this space is for (1 paragraph)
+   2. How to find your program (link to Portfolio page, label search)
+   3. How to update your program page:
+      a) Updating a task status (click the Status macro, pick new color/text)
+      b) Adding a note to the log table
+      c) Updating Page Properties fields (OT Complete count, Current Phase)
+      d) Writing in the Program Highlights panel
+   4. How to create a new program (use the template, apply labels, notify admin)
+   5. Status badge color guide:
+      NOT STARTED (gray) | IN PROGRESS (blue) | COMPLETE (green) |
+      RISK (red) | N/A (gray, italic) | AT RISK (yellow)
+   6. Risk indicator conventions:
+      ✕ = Overdue (past due date, not complete)
+      ⚡ = At Risk (due within 30 days, not started)
+      Add these manually to the Risk column when applicable.
+   7. Who to contact for space admin access
+   8. How to export a program page to PDF for briefs
+
+   GOVERNANCE RULES to document:
+   - Only space admins create new program pages (to keep the template enforced)
+   - Program Leads are responsible for weekly updates to their page
+   - Page Properties fields must be kept current (they drive the Portfolio view)
+   - Archive (don't delete) completed programs: change label status-active to
+     status-archived and move page to an 'Archive' sub-folder under Programs
+   - Classification: never store actual classified content in Confluence unless
+     your instance is accredited; use these pages for UNCLASSIFIED info only
+
+   Format the page with clear headings, numbered steps, screenshots placeholders
+   (I will add screenshots), and a Panel macro FAQ section at the bottom."
+
+TEST AFTER PHASE 8:
+  - Have a team member who was NOT involved in setup read the onboarding guide
+    and attempt to update a task status on TEST PROGRAM BETA without help.
+  - If they succeed: guide is good.
+  - If they get stuck: note where and prompt Claude to clarify that section.
+  - Archive TEST PROGRAM BETA: change its label to status-archived and confirm
+    it no longer appears in the main Portfolio table (you may need to add a
+    label exclusion filter to the Page Properties Report macro).
+
+================================================================================
+PHASE 9 — WEEKLY MAINTENANCE WORKFLOW & AUTOMATION (Optional)
+================================================================================
+WHAT YOU ARE BUILDING:
+  A repeatable weekly update process for the tracker. Optionally, if your
+  Confluence instance has Confluence Automation (Cloud Premium/Enterprise) or
+  if you use Jira alongside Confluence, lightweight automations to remind
+  Program Leads to update their pages.
+
+PROMPT TO USE:
+  "My STARCOM T&E Confluence tracker is built and populated. Help me establish
+   a sustainable weekly update workflow.
+
+   1. WEEKLY UPDATE CHECKLIST PAGE
+      Create a reusable checklist page (or recurring task macro) for the
+      space admin / tracker maintainer to run each week:
+        □ Check all program pages for last-updated date > 7 days
+        □ Manually update Summary Statistics on Portfolio page
+        □ Review for any new tasks that have crossed their due date
+          (should be flagged ✕ in Risk column)
+        □ Review for tasks due within 30 days not yet started
+          (should be flagged ⚡ in Risk column)
+        □ Check for new programs to onboard
+        □ Archive any newly completed programs
+
+   2. CONFLUENCE AUTOMATION (if available on your plan)
+      Show me how to create a Confluence automation rule that:
+      a) Every Monday at 0800, sends a Confluence notification to all page
+         watchers of pages labeled 'te-program' AND 'status-active' with
+         message: 'Reminder: please update your T&E program tracking page.'
+      b) When a program page is edited, auto-updates 'Last Updated' in the
+         Page Properties to today's date.
+      (If Confluence Automation is not available, show me the Jira automation
+      equivalent that can comment on linked Confluence pages instead.)
+
+   3. QUARTERLY REVIEW PROCESS
+      Outline the steps to do a quarterly review of the entire portfolio:
+      - Exporting all program pages to PDF
+      - Cross-checking task completion counts vs. actual program status
+      - Updating the Lifecycle Timeline page if T&E Guide updates occur
+      - Re-labeling programs as phases change
+
+   Give me all markup and automation rule configurations."
+
+TEST AFTER PHASE 9:
+  - Run through the weekly checklist manually once and confirm all steps work.
+  - If automation was configured: trigger a test run and confirm the
+    notification fires correctly.
+  - Export all program pages as a PDF bundle and confirm the output is
+    presentable for a leadership review package.
+
+================================================================================
+APPENDIX A — FEATURE MAPPING (HTML APP vs. CONFLUENCE)
+================================================================================
+
+HTML APP FEATURE               | CONFLUENCE EQUIVALENT
+-------------------------------|-----------------------------------------------
+Status dropdown (click badge)  | Click Status macro → edit text/color
+Progress bar tiles             | HTML macro (Phase 6) or text: '17/20 (85%)'
+Task filter buttons            | Page labels + filtered Page Properties Report
+Program switching              | Navigate between program child pages
+Save/Load programs             | Native Confluence versioning (page history)
+CSV export                     | Export page > Word, then copy table to Excel
+Executive view matrix          | Page Properties Report macro (Phase 4)
+Demo programs                  | Template instances (TEST PROGRAM ALPHA, etc.)
+Flowchart tab                  | Lifecycle Timeline page (Phase 5)
+Classification banner          | Page Properties 'Classification' field (visual
+                               | only — Confluence is not a classified system)
+Inline notes editing           | Click table cell and type (Confluence native)
+Due date auto-calculation      | Manual entry + reference to DEL 12 criteria
+                               | (no JS formulas available natively)
+At-Risk / Overdue auto-flag    | Manual ✕ and ⚡ in Risk column (maintainer
+                               | runs weekly check from Phase 9 checklist)
+Test Execution (COI/GTO tables)| Expand macro sections in program page
+Highlights auto-save           | Native Confluence page save
+Print / PDF export             | Page menu > Export > PDF
+
+================================================================================
+APPENDIX B — KNOWN LIMITATIONS & WORKAROUNDS
+================================================================================
+
+1. NO AUTOMATIC DUE DATE CALCULATION
+   The HTML app calculates due dates from Test Start/TRR/LTE inputs.
+   Confluence has no formula macros for date arithmetic.
+   WORKAROUND: Provide a separate 'Date Calculator' prompt (ask Claude to
+   calculate all 40 due dates given your 3 milestone dates, then paste the
+   results into the Due Date column of your program page).
+
+2. NO AUTOMATIC STATUS ROLL-UP
+   The HTML app auto-derives 'At Risk' and 'Overdue' from dates.
+   WORKAROUND: Weekly maintainer check (Phase 9 checklist).
+   ALTERNATIVE: If you use Jira, create Jira issues for each task and link
+   them to the Confluence page — Jira can auto-flag overdue issues.
+
+3. HTML MACRO REQUIRES ADMIN ENABLEMENT
+   Not all Confluence instances allow arbitrary HTML execution.
+   WORKAROUND: Use colored Status macros and manual text counts if HTML
+   macro is unavailable.
+
+4. PAGE PROPERTIES REPORT HAS COLUMN LIMITS
+   Very wide tables may not display well on all screen sizes.
+   WORKAROUND: Limit Portfolio columns to the 6 most important fields.
+
+5. MULTI-USER CONCURRENT EDITING
+   Confluence allows only one editor at a time per page (edit lock).
+   WORKAROUND: Program Leads own their own program page; Portfolio page
+   is edited only by the space admin.
+
+================================================================================
+END OF PLAN — STARCOM T&E CONFLUENCE MIGRATION
+================================================================================
