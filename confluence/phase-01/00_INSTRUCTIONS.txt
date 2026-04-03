@@ -1,0 +1,175 @@
+================================================================================
+PHASE 1 — SETUP INSTRUCTIONS
+STARCOM T&E Tracker · Confluence Build
+================================================================================
+
+WHAT YOU ARE BUILDING IN THIS PHASE
+-------------------------------------
+Six pages that form the permanent skeleton of the tracker:
+
+  [ROOT]  STARCOM T&E Program Tracker          ← home page
+    ├── 📋 Program Portfolio                    ← executive overview (Phase 4)
+    ├── 📁 Programs                             ← all program pages live here
+    ├── 📚 T&E Task Library                     ← all 40 tasks (Phase 2)
+    ├── 🗓 Lifecycle Timeline                   ← 10-milestone flow (Phase 5)
+    └── ⚙️ How to Use This Space               ← onboarding guide (Phase 8)
+
+Each file in this folder contains the page content to paste.
+The files are numbered in creation order.
+
+FILES IN THIS FOLDER
+---------------------
+  00_INSTRUCTIONS.txt          ← this file
+  01_root_home_page.txt        ← content for the root/home page
+  02_program_portfolio.txt     ← content for Program Portfolio (shell)
+  03_programs.txt              ← content for Programs parent page (shell)
+  04_task_library.txt          ← content for T&E Task Library (shell)
+  05_lifecycle_timeline.txt    ← content for Lifecycle Timeline (shell)
+  06_how_to_use.txt            ← content for How to Use This Space (shell)
+  07_label_reference.txt       ← label naming convention to bookmark
+
+All pages in this phase are SHELLS — correct structure, minimal content.
+Real content gets added in Phases 2–8.
+
+================================================================================
+STEP-BY-STEP CREATION GUIDE
+================================================================================
+
+BEFORE YOU START
+-----------------
+Decide whether you are adding these pages to an EXISTING Confluence space
+or creating a NEW dedicated space.
+
+  • EXISTING SPACE (recommended if your org has a T&E or Programs space):
+    Create the root page as a top-level child of whatever parent makes sense
+    (e.g., under "Programs & Operations" or directly in the space root).
+
+  • NEW SPACE: Go to Confluence > Spaces > Create space > Blank space.
+    Name it: STARCOM T&E  |  Key: STE  (or whatever your admin allows)
+    The space home page becomes your root page automatically.
+
+WHICH EDITOR DO YOU HAVE?
+---------------------------
+Confluence has two editors. Check which one opens when you create a page:
+
+  • NEW EDITOR (Confluence Cloud, 2019+): Toolbar at top, type "/" for macros.
+    Use the "Visual Editor Instructions" sections in each content file.
+
+  • LEGACY EDITOR (Confluence Server/Data Center, or old Cloud):
+    Has a "Wiki Markup" button in the toolbar (looks like </>).
+    Use the "Wiki Markup" sections in each content file — paste directly.
+
+If unsure: try creating a blank page. If you see a "+" Insert menu at the top
+left and can type "/" to get macros, you have the new editor.
+
+================================================================================
+STEP 1 — CREATE THE ROOT HOME PAGE
+================================================================================
+
+  1. Navigate to where you want the root page to live.
+  2. Click "Create" (top nav) or the "+" button.
+  3. Choose "Blank page" (not a template).
+  4. Set the title to exactly:  STARCOM T&E Program Tracker
+  5. Paste the content from  01_root_home_page.txt  (see Visual or Wiki
+     Markup sections in that file depending on your editor).
+  6. Click "Publish".
+
+STEP 2 — CREATE THE FIVE CHILD PAGES
+=====================================
+
+Create each child page IN ORDER. Each one must be created as a CHILD of the
+root page you just made ("STARCOM T&E Program Tracker").
+
+How to create a child page:
+  • NEW EDITOR: Open the root page → click "..." (more options, top right)
+    → "Create child page". Or hover the page title in the sidebar → "+"
+  • LEGACY EDITOR: Open the root page → click "Create" in top nav →
+    the page is automatically a child of whatever page you have open.
+    If not: after creating, use "..." → Move → select root page as parent.
+
+Create these pages in order (title must match exactly for links to work):
+
+  Page 1 title:  📋 Program Portfolio
+    Content from: 02_program_portfolio.txt
+
+  Page 2 title:  📁 Programs
+    Content from: 03_programs.txt
+
+  Page 3 title:  📚 T&E Task Library
+    Content from: 04_task_library.txt
+
+  Page 4 title:  🗓 Lifecycle Timeline
+    Content from: 05_lifecycle_timeline.txt
+
+  Page 5 title:  ⚙️ How to Use This Space
+    Content from: 06_how_to_use.txt
+
+HOW TO TYPE EMOJI IN PAGE TITLES
+----------------------------------
+  • Mac: press Control+Command+Space to open the emoji picker, search the name.
+  • Or: copy the emoji from the title line in each content file.
+  • Windows: press Win+. (period) to open emoji picker.
+
+STEP 3 — APPLY LABELS TO THE ROOT PAGE
+========================================
+
+Labels live at the bottom of a published Confluence page.
+
+  1. Open the root page ("STARCOM T&E Program Tracker").
+  2. Scroll to the bottom — you will see a "Labels:" section.
+     (New editor: look for a tag icon at bottom of page in view mode)
+  3. Click the edit/pencil icon next to Labels.
+  4. Add these labels one at a time, pressing Enter after each:
+       te-tracker
+       starcom
+       te-guide
+  5. Click "Done" or outside the label field to save.
+
+NOTE: Program-specific labels (te-program, phase-pre, status-active, etc.)
+will be applied to individual PROGRAM pages when you create them in Phase 3,
+not to these structural pages.
+
+STEP 4 — VERIFY THE HIERARCHY
+================================
+
+  1. Open the Confluence space sidebar (left panel).
+  2. You should see:
+       STARCOM T&E Program Tracker
+         ├── 📋 Program Portfolio
+         ├── 📁 Programs
+         ├── 📚 T&E Task Library
+         ├── 🗓 Lifecycle Timeline
+         └── ⚙️ How to Use This Space
+  3. If a page shows at the wrong level, open it → "..." → "Move" →
+     select "STARCOM T&E Program Tracker" as the parent.
+
+================================================================================
+PHASE 1 TEST CHECKLIST
+================================================================================
+
+Run through these checks before starting Phase 2:
+
+  □ Root page "STARCOM T&E Program Tracker" exists and is published.
+  □ All 5 child pages exist as direct children of the root.
+  □ Breadcrumb on each child page reads:
+      [Space name] > STARCOM T&E Program Tracker > [child page title]
+  □ The sidebar shows the correct tree structure.
+  □ Clicking any page title in the sidebar navigates to that page.
+  □ Root page has labels: te-tracker, starcom, te-guide
+  □ All page titles include their emoji prefix.
+  □ You can edit any page and save without errors.
+
+OPTIONAL EXTRA TEST:
+  □ Create a temporary child page under "📁 Programs" titled "TEST ALPHA".
+  □ Add label "te-program" to TEST ALPHA.
+  □ Confirm the label appears at the bottom of the page in view mode.
+  □ Delete TEST ALPHA when done (to keep the space clean).
+
+================================================================================
+READY FOR PHASE 2
+================================================================================
+
+Once all checklist items pass, you are ready for Phase 2: building the
+T&E Task Library page with all 40 tasks.
+
+Phase 2 will add real content to the "📚 T&E Task Library" shell page.
