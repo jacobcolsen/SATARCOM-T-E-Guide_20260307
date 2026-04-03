@@ -10,8 +10,39 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #f0f2f5;
       color: #1a1a2e;
-      padding: 24px;
+      padding: 48px 24px;
     }
+
+    /* ── CLASSIFICATION BANNER ── */
+    .clf-banner{position:fixed;left:0;right:0;z-index:9999;height:24px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.72rem;font-weight:800;letter-spacing:2px;cursor:pointer;
+      transition:background .2s;user-select:none;}
+    .clf-top{top:0;}.clf-bot{bottom:0;}
+    .clf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;}
+    .clf-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+      z-index:10001;background:#fff;border-radius:12px;padding:24px 28px;
+      box-shadow:0 8px 40px rgba(0,0,0,.35);min-width:300px;display:none;}
+    .clf-modal h3{font-size:.9rem;font-weight:700;color:#1e293b;margin-bottom:16px;
+      text-transform:uppercase;letter-spacing:.5px;}
+    .clf-field{margin-bottom:14px;}
+    .clf-field label{display:block;font-size:.68rem;font-weight:700;color:#64748b;
+      text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+    .clf-field input{width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:6px;
+      font-size:.85rem;color:#1e293b;}
+    .clf-field input:focus{outline:none;border-color:#3b82f6;}
+    .clf-swatches{display:flex;gap:10px;flex-wrap:wrap;}
+    .clf-sw{width:36px;height:36px;border-radius:6px;border:3px solid transparent;cursor:pointer;
+      transition:transform .15s,border-color .15s;}
+    .clf-sw:hover{transform:scale(1.1);}
+    .clf-sw.active{border-color:#1e293b;transform:scale(1.05);}
+    .clf-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+    .clf-btns button{padding:7px 18px;border-radius:6px;font-size:.8rem;font-weight:600;
+      cursor:pointer;border:none;}
+    .clf-btn-apply{background:#1e3a6e;color:#fff;}
+    .clf-btn-apply:hover{background:#0a1628;}
+    .clf-btn-cancel{background:#f1f5f9;color:#475569;}
+    .clf-btn-cancel:hover{background:#e2e8f0;}
     h1 {
       text-align: center;
       font-size: 1.7rem;
@@ -157,6 +188,32 @@
   </style>
 </head>
 <body>
+
+<!-- ── CLASSIFICATION BANNERS ── -->
+<div class="clf-banner clf-top" id="clfTop" onclick="openClfModal()" title="Click to set classification">UNCLASSIFIED</div>
+<div class="clf-banner clf-bot" id="clfBot" onclick="openClfModal()" title="Click to set classification">UNCLASSIFIED</div>
+<div class="clf-overlay" id="clfOverlay" onclick="closeClfModal()"></div>
+<div class="clf-modal" id="clfModal">
+  <h3>&#128274; Classification Banner</h3>
+  <div class="clf-field">
+    <label>Classification Label</label>
+    <input type="text" id="clfTextInput" maxlength="80" placeholder="UNCLASSIFIED">
+  </div>
+  <div class="clf-field">
+    <label>Banner Color</label>
+    <div class="clf-swatches">
+      <button class="clf-sw" data-color="green"  style="background:#15803d" title="Green"></button>
+      <button class="clf-sw" data-color="purple" style="background:#7e22ce" title="Purple"></button>
+      <button class="clf-sw" data-color="orange" style="background:#ea580c" title="Orange"></button>
+      <button class="clf-sw" data-color="yellow" style="background:#a16207" title="Yellow"></button>
+      <button class="clf-sw" data-color="red"    style="background:#dc2626" title="Red"></button>
+    </div>
+  </div>
+  <div class="clf-btns">
+    <button class="clf-btn-cancel" onclick="closeClfModal()">Cancel</button>
+    <button class="clf-btn-apply" onclick="saveClfModal()">Apply</button>
+  </div>
+</div>
 
 <h1>📋 STARCOM T&amp;E Guide v2.0 — Due Outs &amp; Timelines</h1>
 <p class="subtitle">All required and recommended actions organized by phase, relative to the desired test start date.<br>Source: STARCOM Test and Evaluation (T&amp;E) Guide, 2nd Edition (US Space Force Operational Test Agency)</p>
@@ -756,5 +813,42 @@
   Summary prepared for planning purposes. Always verify specific timelines with DEL12 Instructions, DAFI 99-103, DAFMAN 63-119, DEL12I 91-220, and DEL12I 99-112.
 </footer>
 
+<script>
+// ── Classification Banner ──
+(function(){
+  const KEY='starcom_clf';
+  const COLORS={green:'#15803d',purple:'#7e22ce',orange:'#ea580c',yellow:'#a16207',red:'#dc2626'};
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||{text:'UNCLASSIFIED',color:'green'};}catch(e){return{text:'UNCLASSIFIED',color:'green'};}}
+  function applyBanners(s){
+    const bg=COLORS[s.color]||COLORS.green;
+    ['clfTop','clfBot'].forEach(function(id){const el=document.getElementById(id);if(el){el.style.background=bg;el.style.color='#fff';el.textContent=s.text||'UNCLASSIFIED';}});
+  }
+  window.openClfModal=function(){
+    const s=load();
+    document.getElementById('clfTextInput').value=s.text||'UNCLASSIFIED';
+    document.querySelectorAll('.clf-sw').forEach(function(b){b.classList.toggle('active',b.dataset.color===s.color);});
+    document.getElementById('clfOverlay').style.display='block';
+    document.getElementById('clfModal').style.display='block';
+  };
+  window.closeClfModal=function(){
+    document.getElementById('clfOverlay').style.display='none';
+    document.getElementById('clfModal').style.display='none';
+  };
+  window.saveClfModal=function(){
+    const text=(document.getElementById('clfTextInput').value.trim())||'UNCLASSIFIED';
+    const active=document.querySelector('.clf-sw.active');
+    const color=active?active.dataset.color:'green';
+    const s={text:text,color:color};
+    localStorage.setItem(KEY,JSON.stringify(s));
+    applyBanners(s);closeClfModal();
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.clf-sw').forEach(function(b){
+      b.addEventListener('click',function(){document.querySelectorAll('.clf-sw').forEach(function(x){x.classList.remove('active');});this.classList.add('active');});
+    });
+    applyBanners(load());
+  });
+})();
+</script>
 </body>
 </html>

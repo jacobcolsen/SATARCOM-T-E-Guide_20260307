@@ -20,12 +20,43 @@
   --row-prog:#f0f7ff; --row-atrisk:#fffbeb;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--g800);font-size:14px;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--g800);font-size:14px;padding-top:24px;padding-bottom:24px;}
 
 /* ── HEADER ── */
 .hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:14px 24px;
   display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--gold);
-  position:sticky;top:0;z-index:300;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+  position:sticky;top:24px;z-index:300;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+
+/* ── CLASSIFICATION BANNER ── */
+.clf-banner{position:fixed;left:0;right:0;z-index:9999;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:800;letter-spacing:2px;cursor:pointer;
+  transition:background .2s;user-select:none;}
+.clf-top{top:0;}.clf-bot{bottom:0;}
+.clf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;}
+.clf-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:10001;background:#fff;border-radius:12px;padding:24px 28px;
+  box-shadow:0 8px 40px rgba(0,0,0,.35);min-width:300px;display:none;}
+.clf-modal h3{font-size:.9rem;font-weight:700;color:#1e293b;margin-bottom:16px;
+  text-transform:uppercase;letter-spacing:.5px;}
+.clf-field{margin-bottom:14px;}
+.clf-field label{display:block;font-size:.68rem;font-weight:700;color:#64748b;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.clf-field input{width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:6px;
+  font-size:.85rem;color:#1e293b;}
+.clf-field input:focus{outline:none;border-color:#3b82f6;}
+.clf-swatches{display:flex;gap:10px;flex-wrap:wrap;}
+.clf-sw{width:36px;height:36px;border-radius:6px;border:3px solid transparent;cursor:pointer;
+  transition:transform .15s,border-color .15s;}
+.clf-sw:hover{transform:scale(1.1);}
+.clf-sw.active{border-color:#1e293b;transform:scale(1.05);}
+.clf-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.clf-btns button{padding:7px 18px;border-radius:6px;font-size:.8rem;font-weight:600;
+  cursor:pointer;border:none;}
+.clf-btn-apply{background:#1e3a6e;color:#fff;}
+.clf-btn-apply:hover{background:#0a1628;}
+.clf-btn-cancel{background:#f1f5f9;color:#475569;}
+.clf-btn-cancel:hover{background:#e2e8f0;}
 .hdr-icon{font-size:1.9rem;}
 .hdr-text h1{font-size:.72rem;font-weight:700;letter-spacing:.4px;color:#93b4d8;}
 .hdr-text p{font-size:.62rem;color:#7a9bbf;margin-top:0;}
@@ -241,11 +272,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 /* ─────────────────────────────────────────────
    DASHBOARD SLIDE OVERLAY
 ───────────────────────────────────────────── */
-#slideOverlay{position:fixed;inset:0;background:#060e1f;z-index:600;
+#slideOverlay{position:fixed;inset:0;background:#060e1f;z-index:10500;
   display:none;align-items:center;justify-content:center;padding:0;}
 #slideOverlay.show{display:flex;}
+.sl-clf{height:20px;display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:800;letter-spacing:2px;color:#fff;flex-shrink:0;}
 .slide-close{position:fixed;top:12px;right:16px;color:rgba(255,255,255,.6);
-  font-size:1.5rem;cursor:pointer;line-height:1;background:none;border:none;z-index:601;}
+  font-size:1.5rem;cursor:pointer;line-height:1;background:none;border:none;z-index:10501;}
 .slide-close:hover{color:#fff;}
 .slide-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 .slide{background:#fff;border-radius:0;overflow:hidden;box-shadow:none;
@@ -574,6 +607,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 </head>
 <body>
 
+<!-- ── CLASSIFICATION BANNERS ── -->
+<div class="clf-banner clf-top" id="clfTop" onclick="openClfModal()" title="Click to set classification">UNCLASSIFIED</div>
+<div class="clf-banner clf-bot" id="clfBot" onclick="openClfModal()" title="Click to set classification">UNCLASSIFIED</div>
+<div class="clf-overlay" id="clfOverlay" onclick="closeClfModal()"></div>
+<div class="clf-modal" id="clfModal">
+  <h3>&#128274; Classification Banner</h3>
+  <div class="clf-field">
+    <label>Classification Label</label>
+    <input type="text" id="clfTextInput" maxlength="80" placeholder="UNCLASSIFIED">
+  </div>
+  <div class="clf-field">
+    <label>Banner Color</label>
+    <div class="clf-swatches">
+      <button class="clf-sw" data-color="green"  style="background:#15803d" title="Green"></button>
+      <button class="clf-sw" data-color="purple" style="background:#7e22ce" title="Purple"></button>
+      <button class="clf-sw" data-color="orange" style="background:#ea580c" title="Orange"></button>
+      <button class="clf-sw" data-color="yellow" style="background:#a16207" title="Yellow"></button>
+      <button class="clf-sw" data-color="red"    style="background:#dc2626" title="Red"></button>
+    </div>
+  </div>
+  <div class="clf-btns">
+    <button class="clf-btn-cancel" onclick="closeClfModal()">Cancel</button>
+    <button class="clf-btn-apply" onclick="saveClfModal()">Apply</button>
+  </div>
+</div>
+
 <!-- ── HEADER ── -->
 <div class="hdr">
   <div class="hdr-icon">🛰️</div>
@@ -781,6 +840,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   <div class="slide-wrap">
     <div class="slide" id="theSlide">
 
+      <div class="sl-clf" id="sl-clf-top">UNCLASSIFIED</div>
+
       <!-- slide header -->
       <div class="sl-hdr">
         <div>
@@ -861,6 +922,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
         <button class="sl-print" onclick="printSlide()">🖨 Print Slide</button>
         <span class="sl-foot-r" id="sl-foot-date"></span>
       </div>
+
+      <div class="sl-clf" id="sl-clf-bot">UNCLASSIFIED</div>
 
     </div><!-- /slide -->
   </div>
@@ -1156,7 +1219,7 @@ const TASKS=[
 //  STATE
 // ═══════════════════════════════════════════════════
 const SK='starcom_te_v2';
-let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]}};
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'}};
 
 function loadS(){
   try{
@@ -1707,6 +1770,14 @@ function hideSlide(){
   document.getElementById('slideOverlay').classList.remove('show');
 }
 function buildSlide(){
+  // ── Classification bars ──
+  const clf=S.classification||{text:'UNCLASSIFIED',color:'green'};
+  const clfBgs={green:'#15803d',purple:'#7e22ce',orange:'#ea580c',yellow:'#a16207',red:'#dc2626'};
+  const clfBg=clfBgs[clf.color]||clfBgs.green;
+  ['sl-clf-top','sl-clf-bot'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el){el.style.background=clfBg;el.textContent=clf.text||'UNCLASSIFIED';}
+  });
   // ── Header ──
   document.getElementById('sl-pname').textContent=S.programName||'Program Name';
   const now=new Date();
@@ -2083,7 +2154,8 @@ function captureCurrentState(){
     lteDate:S.lteDate?S.lteDate.toISOString():null,
     highlights:S.highlights,hlUpdated:S.hlUpdated,
     tasks:S.tasks,murderBoard:S.murderBoard,
-    testExec:S.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]}
+    testExec:S.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},
+    classification:S.classification||{text:'UNCLASSIFIED',color:'green'}
   };
 }
 function saveCurrentAsProgram(){
@@ -2123,6 +2195,8 @@ function loadProgram(id){
   S.tasks=data.tasks||{};
   S.murderBoard=data.murderBoard||{};
   S.testExec=data.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]};
+  S.classification=data.classification||{text:'UNCLASSIFIED',color:'green'};
+  if(window.applyClfBanners)window.applyClfBanners(S.classification);
   document.getElementById('cfgName').value=S.programName;
   document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
   document.getElementById('cfgTRR').value=S.trrDate?fmtI(S.trrDate):'';
@@ -2137,7 +2211,8 @@ function createNewProgram(){
     const cur=list.find(p=>p.name===curName);
     if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
   }
-  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]}};
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'}};
+  if(window.applyClfBanners)window.applyClfBanners(S.classification);
   document.getElementById('cfgName').value='';
   document.getElementById('cfgStart').value='';
   document.getElementById('cfgTRR').value='';
@@ -3382,6 +3457,42 @@ function renderExecView(){
       </tr>`;
     }).join('')}</tbody></table>`;
 }
+</script>
+<script>
+// ── Classification Banner (per-program) ──
+(function(){
+  const COLORS={green:'#15803d',purple:'#7e22ce',orange:'#ea580c',yellow:'#a16207',red:'#dc2626'};
+  function load(){return(typeof S!=='undefined'&&S.classification)||{text:'UNCLASSIFIED',color:'green'};}
+  window.applyClfBanners=function(s){
+    const bg=COLORS[s.color]||COLORS.green;
+    ['clfTop','clfBot'].forEach(function(id){const el=document.getElementById(id);if(el){el.style.background=bg;el.style.color='#fff';el.textContent=s.text||'UNCLASSIFIED';}});
+  };
+  window.openClfModal=function(){
+    const s=load();
+    document.getElementById('clfTextInput').value=s.text||'UNCLASSIFIED';
+    document.querySelectorAll('.clf-sw').forEach(function(b){b.classList.toggle('active',b.dataset.color===s.color);});
+    document.getElementById('clfOverlay').style.display='block';
+    document.getElementById('clfModal').style.display='block';
+  };
+  window.closeClfModal=function(){
+    document.getElementById('clfOverlay').style.display='none';
+    document.getElementById('clfModal').style.display='none';
+  };
+  window.saveClfModal=function(){
+    const text=(document.getElementById('clfTextInput').value.trim())||'UNCLASSIFIED';
+    const active=document.querySelector('.clf-sw.active');
+    const color=active?active.dataset.color:'green';
+    const s={text:text,color:color};
+    if(typeof S!=='undefined'){S.classification=s;saveS();}
+    window.applyClfBanners(s);closeClfModal();
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.clf-sw').forEach(function(b){
+      b.addEventListener('click',function(){document.querySelectorAll('.clf-sw').forEach(function(x){x.classList.remove('active');});this.classList.add('active');});
+    });
+    window.applyClfBanners(load());
+  });
+})();
 </script>
 </body>
 </html>
