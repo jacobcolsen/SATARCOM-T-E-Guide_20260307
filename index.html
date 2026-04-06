@@ -97,14 +97,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .hl-toggle.open{transform:rotate(90deg);}
 .hl-body{padding:0 24px 16px;display:none;}
 .hl-body.open{display:block;}
-.hl-textarea{width:100%;min-height:90px;border:1.5px solid #fde68a;border-radius:8px;
-  padding:10px 14px;font-size:.84rem;font-family:inherit;resize:vertical;
-  background:#fffbeb;color:var(--g800);line-height:1.55;}
-.hl-textarea:focus{outline:none;border-color:var(--gold);background:#fff;}
+.hl-toolbar{display:none;flex-wrap:wrap;gap:2px;padding:5px 8px;
+  background:#fefce8;border:1.5px solid #fde68a;border-bottom:none;
+  border-radius:8px 8px 0 0;align-items:center;}
+.hl-toolbar.visible{display:flex;}
+.hl-tbtn{padding:2px 8px;border:1px solid transparent;border-radius:4px;
+  background:transparent;color:#92400e;font-size:.78rem;font-weight:700;cursor:pointer;
+  line-height:1.6;transition:background .1s;font-family:inherit;}
+.hl-tbtn:hover{background:#fef3c7;border-color:#fde68a;}
+.hl-tbtn.active{background:#fde68a;}
+.hl-sep{width:1px;height:16px;background:#fde68a;margin:0 4px;flex-shrink:0;}
+.hl-editor{width:100%;min-height:90px;border:1.5px solid #fde68a;border-radius:8px;
+  padding:10px 14px;font-size:.84rem;font-family:inherit;
+  background:#fffbeb;color:var(--g800);line-height:1.55;outline:none;
+  overflow-y:auto;cursor:text;}
+.hl-editor:focus{border-color:var(--gold);background:#fff;}
+.hl-editor.tb-open{border-radius:0 0 8px 8px;}
+.hl-editor ul,.hl-editor ol{padding-left:1.5em;margin:.25em 0;}
+.hl-editor li{margin:.15em 0;}
 .hl-meta{font-size:.65rem;color:var(--g400);margin-top:5px;text-align:right;}
-.hl-preview{font-size:.82rem;color:var(--g600);line-height:1.5;white-space:pre-wrap;
+.hl-preview{font-size:.82rem;color:var(--g600);line-height:1.5;
   background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:8px 12px;
   min-height:36px;cursor:pointer;}
+.hl-preview ul,.hl-preview ol{padding-left:1.5em;margin:.25em 0;}
+.hl-preview li{margin:.15em 0;}
 .hl-preview.empty{color:var(--g400);font-style:italic;}
 
 /* ── DASHBOARD ── */
@@ -336,8 +352,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .sl-item .dot.orange{background:#f59e0b;}
 .sl-none{flex:1;font-size:.78rem;color:var(--g400);font-style:italic;
   display:flex;align-items:center;}
-.sl-hl-text{font-size:.86rem;color:var(--g700);line-height:1.8;white-space:pre-wrap;
+.sl-hl-text{font-size:.86rem;color:var(--g700);line-height:1.8;
   overflow:hidden;flex:1;}
+.sl-hl-text ul,.sl-hl-text ol{padding-left:1.4em;margin:.2em 0;}
+.sl-hl-text li{margin:.1em 0;}
 
 /* slide footer */
 .sl-foot{background:var(--g50);border-top:1px solid var(--g200);
@@ -700,9 +718,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
   <div class="hl-body" id="hlBody">
     <div id="hlPreview" class="hl-preview empty" onclick="editHL()">Click to add program highlights for leadership...</div>
-    <textarea class="hl-textarea" id="hlEdit" style="display:none"
-      placeholder="Enter program highlights, key decisions, risks, and updates for leadership...&#10;&#10;Example:&#10;• Test window confirmed for Q2 FY26&#10;• PEO certification memo received 15 Mar&#10;• RMRR staffing in progress — expected submission 20 Mar&#10;• CAT I DR #247 resolved; system re-certified"
-      oninput="autoSaveHL()" onblur="commitHL()"></textarea>
+    <div id="hlEditWrap" style="display:none">
+      <div class="hl-toolbar" id="hlToolbar">
+        <button class="hl-tbtn" onmousedown="return hlCmd('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('strikeThrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+        <span class="hl-sep"></span>
+        <button class="hl-tbtn" onmousedown="return hlCmd('insertUnorderedList')" title="Bullet list">• List</button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('insertOrderedList')" title="Numbered list">1. List</button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('indent')" title="Indent">⇥ In</button>
+        <button class="hl-tbtn" onmousedown="return hlCmd('outdent')" title="Outdent">⇤ Out</button>
+        <span class="hl-sep"></span>
+        <button class="hl-tbtn" onmousedown="return hlCmd('removeFormat')" title="Clear formatting" style="font-weight:400">✕ Clear</button>
+      </div>
+      <div class="hl-editor" id="hlEdit" contenteditable="true" onblur="commitHL()" oninput="autoSaveHL()"></div>
+    </div>
     <div class="hl-meta" id="hlMeta"></div>
   </div>
 </div>
@@ -1649,45 +1680,88 @@ function editNotes(id,el){
 // ═══════════════════════════════════════════════════
 let hlOpen=false;
 let hlTimer=null;
+
 function toggleHL(){
   hlOpen=!hlOpen;
   document.getElementById('hlBody').classList.toggle('open',hlOpen);
   document.getElementById('hlToggle').classList.toggle('open',hlOpen);
 }
+
+// Convert legacy plain-text (with \n) to HTML for the rich editor
+function hlToHtml(v){
+  if(!v)return '';
+  if(/<[a-zA-Z][\s\S]*?>/.test(v))return v; // already HTML
+  return v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+           .replace(/\n/g,'<br>');
+}
+
 function renderHL(){
   const v=S.highlights||'';
   const prev=document.getElementById('hlPreview');
-  prev.textContent=v||'Click to add program highlights for leadership...';
-  prev.classList.toggle('empty',!v);
+  const isEmpty=!v||v==='<br>'||v.replace(/<br\s*\/?>/gi,'').trim()==='';
+  if(isEmpty){
+    prev.textContent='Click to add program highlights for leadership...';
+    prev.classList.add('empty');
+  }else{
+    prev.innerHTML=hlToHtml(v);
+    prev.classList.remove('empty');
+  }
   if(S.hlUpdated){
     document.getElementById('hlMeta').textContent='Last updated: '+S.hlUpdated;
   }
 }
+
 function editHL(){
-  const ta=document.getElementById('hlEdit');
+  const ed=document.getElementById('hlEdit');
   const prev=document.getElementById('hlPreview');
-  ta.value=S.highlights||'';
-  prev.style.display='none';ta.style.display='block';ta.focus();
+  const wrap=document.getElementById('hlEditWrap');
+  const tb=document.getElementById('hlToolbar');
+  ed.innerHTML=hlToHtml(S.highlights||'');
+  prev.style.display='none';
+  wrap.style.display='block';
+  tb.classList.add('visible');
+  ed.classList.add('tb-open');
+  ed.focus();
+  // Place cursor at the very top so new entries go above older ones
+  try{
+    const range=document.createRange();
+    const sel=window.getSelection();
+    range.setStart(ed,0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }catch(e){}
 }
+
+function hlCmd(cmd,val){
+  document.execCommand(cmd,false,val||null);
+  document.getElementById('hlEdit').focus();
+  return false; // prevent mousedown from blurring the editor
+}
+
 function autoSaveHL(){
   clearTimeout(hlTimer);
   hlTimer=setTimeout(function(){
-    const ta=document.getElementById('hlEdit');
-    if(ta.style.display==='none')return;
-    S.highlights=ta.value;
+    const wrap=document.getElementById('hlEditWrap');
+    if(wrap.style.display==='none')return;
+    S.highlights=document.getElementById('hlEdit').innerHTML;
     S.hlUpdated=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
     saveS();
     document.getElementById('hlMeta').textContent='Last updated: '+S.hlUpdated;
   },800);
 }
+
 function commitHL(){
-  const ta=document.getElementById('hlEdit');
-  if(ta.style.display==='none')return;
-  S.highlights=ta.value.trim();
+  const wrap=document.getElementById('hlEditWrap');
+  if(wrap.style.display==='none')return;
+  const ed=document.getElementById('hlEdit');
+  S.highlights=ed.innerHTML;
   S.hlUpdated=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
   saveS();
   renderHL();
-  ta.style.display='none';
+  wrap.style.display='none';
+  document.getElementById('hlToolbar').classList.remove('visible');
+  ed.classList.remove('tb-open');
   document.getElementById('hlPreview').style.display='';
 }
 
@@ -1898,8 +1972,11 @@ function buildSlide(){
 
   // ── Highlights ──
   const hlEl=document.getElementById('sl-hl');
-  hlEl.textContent=S.highlights||'';
-  if(!S.highlights)hlEl.innerHTML='<span style="color:#94a3b8;font-style:italic;font-size:.82rem">No highlights added. Use the Program Highlights panel above the tracker.</span>';
+  const hlVal=S.highlights||'';
+  const hlEmpty=!hlVal||hlVal==='<br>'||hlVal.replace(/<br\s*\/?>/gi,'').trim()==='';
+  hlEl.innerHTML=hlEmpty
+    ?'<span style="color:#94a3b8;font-style:italic;font-size:.82rem">No highlights added. Use the Program Highlights panel above the tracker.</span>'
+    :hlToHtml(hlVal);
 
   // ── Test Execution overlay (replaces bubbles + upcoming col) ──
   if(isExec)applyTestExecSlide(pct,ov,ar);
