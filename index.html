@@ -1671,7 +1671,14 @@ function editHL(){
 }
 function autoSaveHL(){
   clearTimeout(hlTimer);
-  hlTimer=setTimeout(commitHL,800);
+  hlTimer=setTimeout(function(){
+    const ta=document.getElementById('hlEdit');
+    if(ta.style.display==='none')return;
+    S.highlights=ta.value;
+    S.hlUpdated=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    saveS();
+    document.getElementById('hlMeta').textContent='Last updated: '+S.hlUpdated;
+  },800);
 }
 function commitHL(){
   const ta=document.getElementById('hlEdit');
