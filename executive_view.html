@@ -207,6 +207,20 @@ td.sum-prog-cell{background:var(--navy);padding:8px 14px;text-align:left;
 
 <script>
 const PROG_LIST_KEY = 'starcom_te_programs_v1';
+const IS_SERVER = window.location.protocol !== 'file:';
+
+async function fetchFromServer(){
+  if(!IS_SERVER)return;
+  try{
+    const r=await fetch('/api/all');
+    const d=await r.json();
+    if(Array.isArray(d.programs))
+      localStorage.setItem(PROG_LIST_KEY,JSON.stringify(d.programs));
+    if(d.programData&&typeof d.programData==='object')
+      Object.entries(d.programData).forEach(([id,v])=>
+        localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(v)));
+  }catch(e){console.warn('Server fetch failed, using local cache:',e);}
+}
 
 const MILESTONES = [
   { key:'t03', label:'ITT Charter',        phase:'pre',  getDue: d => d.start ? addD(d.start,-365) : null },
@@ -370,7 +384,7 @@ function syncMatrixH(){
   const r1=document.querySelector('.matrix thead tr:first-child');
   if(r1)document.documentElement.style.setProperty('--thead-r1',r1.offsetHeight+'px');
 }
-window.addEventListener('DOMContentLoaded',()=>{buildMatrix();syncMatrixH();});
+window.addEventListener('DOMContentLoaded',async()=>{await fetchFromServer();buildMatrix();syncMatrixH();});
 window.addEventListener('resize',syncMatrixH);
 </script>
 <script>

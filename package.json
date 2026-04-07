@@ -1,0 +1,16 @@
+{
+  "name": "starcom-te-server",
+  "version": "1.0.0",
+  "description": "STARCOM T&E Shared Data Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:win": "npx @yao-pkg/pkg server.js --targets node18-win-x64 --output starcom-server.exe"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^5.11.5"
+  }
+}

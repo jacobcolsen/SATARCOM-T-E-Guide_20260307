@@ -2168,9 +2168,39 @@ function exportCSV(){
 }
 
 // ═══════════════════════════════════════════════════
+//  SERVER SYNC  (no-ops when opened as a local file)
+// ═══════════════════════════════════════════════════
+const IS_SERVER=window.location.protocol!=='file:';
+
+async function fetchFromServer(){
+  if(!IS_SERVER)return;
+  try{
+    const r=await fetch('/api/all');
+    const d=await r.json();
+    if(Array.isArray(d.programs))
+      localStorage.setItem(PROG_LIST_KEY,JSON.stringify(d.programs));
+    if(d.programData&&typeof d.programData==='object')
+      Object.entries(d.programData).forEach(([id,v])=>
+        localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(v)));
+  }catch(e){console.warn('Server fetch failed, using local cache:',e);}
+}
+
+function serverPost(path,body){
+  if(!IS_SERVER)return;
+  fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .catch(e=>console.warn('Server sync failed:',e));
+}
+
+function serverDelete(path){
+  if(!IS_SERVER)return;
+  fetch(path,{method:'DELETE'}).catch(e=>console.warn('Server delete failed:',e));
+}
+
+// ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded',async()=>{
+  await fetchFromServer();
   loadS();
   if(S.testStart)document.getElementById('cfgStart').value=fmtI(S.testStart);
   if(S.trrDate)document.getElementById('cfgTRR').value=fmtI(S.trrDate);
@@ -2223,12 +2253,14 @@ function getProgramList(){
 }
 function saveProgramList(list){
   localStorage.setItem(PROG_LIST_KEY,JSON.stringify(list));
+  serverPost('/api/programs/list',list);
 }
 function getProgramData(id){
   try{return JSON.parse(localStorage.getItem('starcom_te_prog_'+id));}catch(e){return null;}
 }
 function saveProgramData(id,data){
   localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(data));
+  serverPost('/api/programs/data/'+id,data);
 }
 function captureCurrentState(){
   return{
@@ -2318,6 +2350,7 @@ function confirmDelete(){
   const list=getProgramList().filter(p=>p.id!==_delPendingId);
   saveProgramList(list);
   localStorage.removeItem('starcom_te_prog_'+_delPendingId);
+  serverDelete('/api/programs/data/'+_delPendingId);
   _delPendingId=null;_delPendingName=null;
   document.getElementById('delConfirmOverlay').classList.remove('show');
   renderProgramListModal();renderProgramBar();
