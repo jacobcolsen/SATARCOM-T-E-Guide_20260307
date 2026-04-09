@@ -688,12 +688,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
 </div>
 
-<!-- ── FILE SHARE BANNER ── -->
-<div id="fsBanner" style="display:none;align-items:center;gap:10px;padding:7px 24px;
-  background:#fefce8;border-bottom:2px solid #fde68a;font-size:.78rem;color:#854d0e;flex-wrap:wrap;">
-  <span id="fsBannerMsg"></span>
-  <button id="fsBannerBtn" class="hbtn gold" style="padding:3px 12px;font-size:.75rem"></button>
-  <span id="fsBannerHint" style="color:#a16207;font-size:.72rem"></span>
+<!-- ── FILE CONNECT MODAL ── -->
+<div class="overlay" id="fsOverlay">
+  <div class="modal" style="max-width:420px">
+    <div style="font-size:1.6rem;margin-bottom:8px" id="fsModalIcon">📁</div>
+    <h3 id="fsModalTitle" style="font-size:.95rem;font-weight:700;color:var(--g800);margin-bottom:8px"></h3>
+    <p id="fsModalBody" style="font-size:.82rem;color:var(--g600);line-height:1.6;margin-bottom:20px"></p>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="fsDismiss()">Skip — use local data</button>
+      <button class="mbtn primary" id="fsModalBtn"></button>
+    </div>
+  </div>
 </div>
 
 <!-- ── CONFIG ── -->
@@ -2252,32 +2257,42 @@ function _fsLoadIntoStorage(d){
 }
 
 function _fsBannerSet(state,name){
-  const banner=document.getElementById('fsBanner');
-  const msg=document.getElementById('fsBannerMsg');
-  const btn=document.getElementById('fsBannerBtn');
-  const hint=document.getElementById('fsBannerHint');
+  const overlay=document.getElementById('fsOverlay');
+  const title=document.getElementById('fsModalTitle');
+  const body=document.getElementById('fsModalBody');
+  const btn=document.getElementById('fsModalBtn');
+  const icon=document.getElementById('fsModalIcon');
   const ind=document.getElementById('fsIndicator');
   const rlBtn=document.getElementById('fsReloadBtn');
-  if(!banner)return;
+  if(!overlay)return;
+
   if(state==='connected'){
-    banner.style.display='none';
+    overlay.classList.remove('show');
     if(ind){ind.textContent='📁 '+(name||'data.json');ind.style.color='#22c55e';ind.style.display='';}
     if(rlBtn)rlBtn.style.display='';
   }else if(state==='reconnect'){
-    banner.style.display='flex';
-    msg.textContent='📁 '+(name||'data.json')+' found —';
-    btn.textContent='Connect to Shared Data';btn.onclick=fsReconnect;
-    hint.textContent='Click to load the latest shared data before working';
+    icon.textContent='📁';
+    title.textContent='Connect to shared data file';
+    body.textContent='Your shared data file "'+(name||'data.json')+'" was found. Click below to connect and load the latest data from your team\'s shared drive before you start working.';
+    btn.textContent='Connect — '+(name||'data.json');
+    btn.onclick=fsReconnect;
+    overlay.classList.add('show');
     if(ind){ind.textContent='📁 '+(name||'data.json');ind.style.color='#f59e0b';ind.style.display='';}
     if(rlBtn)rlBtn.style.display='none';
   }else if(state==='disconnected'){
-    banner.style.display='flex';
-    msg.textContent='No shared data file connected —';
-    btn.textContent='📁 Connect to Shared Data File';btn.onclick=fsPick;
-    hint.textContent='Select data.json from the shared drive to share data with teammates';
+    icon.textContent='📁';
+    title.textContent='Connect to shared data file';
+    body.textContent='To share program data with your team, connect to the data.json file on your shared drive. Everyone on your team connects to the same file — all saves go there automatically.\n\nIf you\'re working alone or just testing, click Skip.';
+    btn.textContent='Select data.json from shared drive';
+    btn.onclick=fsPick;
+    overlay.classList.add('show');
     if(ind)ind.style.display='none';
     if(rlBtn)rlBtn.style.display='none';
   }
+}
+
+function fsDismiss(){
+  document.getElementById('fsOverlay').classList.remove('show');
 }
 
 // Called on page load — checks for a stored file handle silently
