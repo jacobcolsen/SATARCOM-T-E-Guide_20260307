@@ -660,6 +660,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
   <div class="hdr-right">
     <span class="hdr-saved" id="lastSaved"></span>
+    <span id="fsIndicator" style="font-size:.7rem;cursor:pointer;display:none"
+      title="Click to reload latest data from shared file" onclick="fsReload()"></span>
+    <button id="fsReloadBtn" class="hbtn" onclick="fsReload()"
+      style="display:none;font-size:.72rem;padding:4px 10px" title="Pull latest changes from teammates">🔄 Reload</button>
     <button class="hbtn teal" onclick="showSlide()">📊 Dashboard Slide</button>
     <a class="hbtn teal" href="executive_view.html">&#128202; Executive View</a>
     <button class="hbtn" onclick="loadDemoPrograms()" style="background:rgba(240,165,0,.18);border-color:var(--gold)" title="Load 6 realistic demo programs for presentations">🎯 Load Demo</button>
@@ -682,6 +686,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
     <button class="hbtn gold" onclick="saveCurrentAsProgram()">💾 Save Program</button>
     <button class="hbtn" onclick="openProgramList()">📋 Programs</button>
   </div>
+</div>
+
+<!-- ── FILE SHARE BANNER ── -->
+<div id="fsBanner" style="display:none;align-items:center;gap:10px;padding:7px 24px;
+  background:#fefce8;border-bottom:2px solid #fde68a;font-size:.78rem;color:#854d0e;flex-wrap:wrap;">
+  <span id="fsBannerMsg"></span>
+  <button id="fsBannerBtn" class="hbtn gold" style="padding:3px 12px;font-size:.75rem"></button>
+  <span id="fsBannerHint" style="color:#a16207;font-size:.72rem"></span>
 </div>
 
 <!-- ── CONFIG ── -->
@@ -2168,6 +2180,179 @@ function exportCSV(){
 }
 
 // ═══════════════════════════════════════════════════
+//  DATA FILE MANAGER  (File System Access API)
+//  Lets the app read/write a data.json on a shared
+//  drive directly — no server needed. Chrome/Edge only.
+// ═══════════════════════════════════════════════════
+const FS_SUPPORTED=typeof window.showOpenFilePicker==='function';
+let _fHandle=null;
+let _fConnected=false;
+
+// IndexedDB helpers — persists file handle across page loads
+function _idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('starcom_te_fsdb',1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('h');
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=e=>rej(e.target.error);
+  });
+}
+async function _idbGet(k){
+  try{
+    const db=await _idbOpen();
+    return new Promise(res=>{
+      const r=db.transaction('h','readonly').objectStore('h').get(k);
+      r.onsuccess=()=>res(r.result||null);
+      r.onerror=()=>res(null);
+    });
+  }catch(e){return null;}
+}
+async function _idbSet(k,v){
+  try{
+    const db=await _idbOpen();
+    return new Promise(res=>{
+      const tx=db.transaction('h','readwrite');
+      tx.objectStore('h').put(v,k);
+      tx.oncomplete=res;tx.onerror=res;
+    });
+  }catch(e){}
+}
+
+// Read the full data.json
+async function fileReadAll(){
+  if(!_fHandle)return null;
+  try{
+    const file=await _fHandle.getFile();
+    const text=await file.text();
+    const p=JSON.parse(text||'{}');
+    return(p&&typeof p==='object')?p:null;
+  }catch(e){console.warn('File read error:',e);return null;}
+}
+
+// Read-merge-write: avoids clobbering a teammate's recent save
+async function fileWrite(merge){
+  if(!_fHandle||!_fConnected)return;
+  try{
+    const cur=await fileReadAll()||{programs:[],programData:{}};
+    if(!cur.programData)cur.programData={};
+    const updated=merge(cur);
+    const w=await _fHandle.createWritable();
+    await w.write(JSON.stringify(updated,null,2));
+    await w.close();
+  }catch(e){console.warn('File write error:',e);}
+}
+
+function _fsLoadIntoStorage(d){
+  if(!d)return;
+  if(Array.isArray(d.programs))
+    localStorage.setItem(PROG_LIST_KEY,JSON.stringify(d.programs));
+  if(d.programData&&typeof d.programData==='object')
+    Object.entries(d.programData).forEach(([id,v])=>
+      localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(v)));
+}
+
+function _fsBannerSet(state,name){
+  const banner=document.getElementById('fsBanner');
+  const msg=document.getElementById('fsBannerMsg');
+  const btn=document.getElementById('fsBannerBtn');
+  const hint=document.getElementById('fsBannerHint');
+  const ind=document.getElementById('fsIndicator');
+  const rlBtn=document.getElementById('fsReloadBtn');
+  if(!banner)return;
+  if(state==='connected'){
+    banner.style.display='none';
+    if(ind){ind.textContent='📁 '+(name||'data.json');ind.style.color='#22c55e';ind.style.display='';}
+    if(rlBtn)rlBtn.style.display='';
+  }else if(state==='reconnect'){
+    banner.style.display='flex';
+    msg.textContent='📁 '+(name||'data.json')+' found —';
+    btn.textContent='Connect to Shared Data';btn.onclick=fsReconnect;
+    hint.textContent='Click to load the latest shared data before working';
+    if(ind){ind.textContent='📁 '+(name||'data.json');ind.style.color='#f59e0b';ind.style.display='';}
+    if(rlBtn)rlBtn.style.display='none';
+  }else if(state==='disconnected'){
+    banner.style.display='flex';
+    msg.textContent='No shared data file connected —';
+    btn.textContent='📁 Connect to Shared Data File';btn.onclick=fsPick;
+    hint.textContent='Select data.json from the shared drive to share data with teammates';
+    if(ind)ind.style.display='none';
+    if(rlBtn)rlBtn.style.display='none';
+  }
+}
+
+// Called on page load — checks for a stored file handle silently
+async function fsInit(){
+  if(!FS_SUPPORTED||IS_SERVER)return;
+  const stored=await _idbGet('handle');
+  if(!stored){_fsBannerSet('disconnected');return;}
+  _fHandle=stored;
+  const perm=await stored.queryPermission({mode:'readwrite'});
+  if(perm==='granted'){
+    _fConnected=true;
+    const data=await fileReadAll();
+    _fsLoadIntoStorage(data);
+    _fsBannerSet('connected',stored.name);
+  }else{
+    _fsBannerSet('reconnect',stored.name);
+  }
+}
+
+// Reconnect using the stored handle (needs user gesture for requestPermission)
+async function fsReconnect(){
+  if(!_fHandle){await fsPick();return;}
+  try{
+    const perm=await _fHandle.requestPermission({mode:'readwrite'});
+    if(perm==='granted'){
+      _fConnected=true;
+      const data=await fileReadAll();
+      _fsLoadIntoStorage(data);
+      _fsBannerSet('connected',_fHandle.name);
+      renderProgramBar();
+    }
+  }catch(e){console.warn('Permission request failed:',e);}
+}
+
+// Pick a new data file from disk
+async function fsPick(){
+  if(!FS_SUPPORTED)return;
+  try{
+    const [h]=await window.showOpenFilePicker({
+      id:'starcom-data',
+      types:[{description:'STARCOM Data',accept:{'application/json':['.json']}}],
+      multiple:false
+    });
+    _fHandle=h;_fConnected=true;
+    await _idbSet('handle',h);
+    const data=await fileReadAll();
+    _fsLoadIntoStorage(data);
+    _fsBannerSet('connected',h.name);
+    renderProgramBar();
+    if(S.programName){
+      const prog=getProgramList().find(p=>p.name===S.programName);
+      if(prog)loadProgram(prog.id);
+    }
+  }catch(e){if(e.name!=='AbortError')console.warn('File pick error:',e);}
+}
+
+// Pull latest from file (teammates' changes)
+async function fsReload(){
+  if(!_fConnected&&!IS_SERVER){await fsReconnect();return;}
+  if(IS_SERVER){await fetchFromServer();}
+  else{
+    const data=await fileReadAll();
+    if(!data)return;
+    _fsLoadIntoStorage(data);
+  }
+  renderProgramBar();
+  if(S.programName){
+    const prog=getProgramList().find(p=>p.name===S.programName);
+    if(prog)loadProgram(prog.id);
+  }
+  document.getElementById('lastSaved').textContent='Reloaded ✓';
+  setTimeout(()=>{const el=document.getElementById('lastSaved');if(el&&el.textContent==='Reloaded ✓')el.textContent='';},2500);
+}
+
+// ═══════════════════════════════════════════════════
 //  SERVER SYNC  (no-ops when opened as a local file)
 // ═══════════════════════════════════════════════════
 const IS_SERVER=window.location.protocol!=='file:';
@@ -2200,7 +2385,8 @@ function serverDelete(path){
 //  INIT
 // ═══════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded',async()=>{
-  await fetchFromServer();
+  await fetchFromServer(); // server mode: fetch shared data from Node server
+  await fsInit();          // file mode: reconnect to shared data.json if stored
   loadS();
   if(S.testStart)document.getElementById('cfgStart').value=fmtI(S.testStart);
   if(S.trrDate)document.getElementById('cfgTRR').value=fmtI(S.trrDate);
@@ -2254,6 +2440,7 @@ function getProgramList(){
 function saveProgramList(list){
   localStorage.setItem(PROG_LIST_KEY,JSON.stringify(list));
   serverPost('/api/programs/list',list);
+  fileWrite(d=>{d.programs=list;return d;});
 }
 function getProgramData(id){
   try{return JSON.parse(localStorage.getItem('starcom_te_prog_'+id));}catch(e){return null;}
@@ -2261,6 +2448,7 @@ function getProgramData(id){
 function saveProgramData(id,data){
   localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(data));
   serverPost('/api/programs/data/'+id,data);
+  fileWrite(d=>{if(!d.programData)d.programData={};d.programData[id]=data;return d;});
 }
 function captureCurrentState(){
   return{
@@ -2347,10 +2535,12 @@ function deleteProgram(id){
 }
 function confirmDelete(){
   if(!_delPendingId)return;
-  const list=getProgramList().filter(p=>p.id!==_delPendingId);
+  const delId=_delPendingId;
+  const list=getProgramList().filter(p=>p.id!==delId);
   saveProgramList(list);
-  localStorage.removeItem('starcom_te_prog_'+_delPendingId);
-  serverDelete('/api/programs/data/'+_delPendingId);
+  localStorage.removeItem('starcom_te_prog_'+delId);
+  serverDelete('/api/programs/data/'+delId);
+  fileWrite(d=>{if(d.programData)delete d.programData[delId];return d;});
   _delPendingId=null;_delPendingName=null;
   document.getElementById('delConfirmOverlay').classList.remove('show');
   renderProgramListModal();renderProgramBar();

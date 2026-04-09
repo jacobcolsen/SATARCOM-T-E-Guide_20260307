@@ -222,6 +222,33 @@ async function fetchFromServer(){
   }catch(e){console.warn('Server fetch failed, using local cache:',e);}
 }
 
+// File System Access API — read shared data.json (exec view is read-only)
+const FS_SUPPORTED_EV=typeof window.showOpenFilePicker==='function';
+async function fsInitExecView(){
+  if(!FS_SUPPORTED_EV||IS_SERVER)return;
+  try{
+    const db=await new Promise((res,rej)=>{
+      const r=indexedDB.open('starcom_te_fsdb',1);
+      r.onupgradeneeded=e=>e.target.result.createObjectStore('h');
+      r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);
+    });
+    const handle=await new Promise(res=>{
+      const r=db.transaction('h','readonly').objectStore('h').get('handle');
+      r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null);
+    });
+    if(!handle)return;
+    const perm=await handle.queryPermission({mode:'read'});
+    if(perm!=='granted')return;
+    const file=await handle.getFile();
+    const d=JSON.parse(await file.text());
+    if(Array.isArray(d.programs))
+      localStorage.setItem(PROG_LIST_KEY,JSON.stringify(d.programs));
+    if(d.programData&&typeof d.programData==='object')
+      Object.entries(d.programData).forEach(([id,v])=>
+        localStorage.setItem('starcom_te_prog_'+id,JSON.stringify(v)));
+  }catch(e){console.warn('Exec view file read error:',e);}
+}
+
 const MILESTONES = [
   { key:'t03', label:'ITT Charter',        phase:'pre',  getDue: d => d.start ? addD(d.start,-365) : null },
   { key:'t06', label:'Test Campaign Plan', phase:'pre',  getDue: d => d.start ? addD(d.start,-270) : null },
@@ -384,7 +411,7 @@ function syncMatrixH(){
   const r1=document.querySelector('.matrix thead tr:first-child');
   if(r1)document.documentElement.style.setProperty('--thead-r1',r1.offsetHeight+'px');
 }
-window.addEventListener('DOMContentLoaded',async()=>{await fetchFromServer();buildMatrix();syncMatrixH();});
+window.addEventListener('DOMContentLoaded',async()=>{await fetchFromServer();await fsInitExecView();buildMatrix();syncMatrixH();});
 window.addEventListener('resize',syncMatrixH);
 </script>
 <script>
