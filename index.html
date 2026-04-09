@@ -2254,6 +2254,9 @@ async function fileWrite(merge){
     const w=await _fHandle.createWritable();
     await w.write(JSON.stringify(updated,null,2));
     await w.close();
+    const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const ind=document.getElementById('fsIndicator');
+    if(ind)ind.textContent='📁 '+(_fHandle.name||'data.json')+' · saved '+ts;
   }catch(e){console.warn('File write error:',e);}
 }
 
