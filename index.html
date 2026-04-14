@@ -2770,16 +2770,25 @@ function deleteTask(id){
   const act=getActiveTasks();
   const task=act.find(t=>t.id===id);
   if(!task)return;
+  const parentId=task.isChild?task.parent:null;
   if(task.isCustom){
-    // Permanently remove custom task
-    S.customTasks=(S.customTasks||[]).filter(t=>t.id!==id);
+    // Permanently remove custom task and any of its custom children
+    S.customTasks=(S.customTasks||[]).filter(t=>t.id!==id&&t.parent!==id);
   } else {
-    // Hide built-in task for this program only (restore by creating a new program)
+    // Hide built-in task for this program only
     if(!S.hiddenTasks)S.hiddenTasks=[];
     if(!S.hiddenTasks.includes(id))S.hiddenTasks.push(id);
+    // Also hide any built-in children of this task
+    TASKS.filter(t=>t.isChild&&t.parent===id).forEach(c=>{
+      if(!S.hiddenTasks.includes(c.id))S.hiddenTasks.push(c.id);
+    });
   }
+  // Remove from DOM: the task row and any child rows
   const row=document.getElementById(`row-${id}`);
   if(row)row.remove();
+  document.querySelectorAll(`[data-parent="${id}"]`).forEach(r=>r.remove());
+  // If this was a child, refresh the parent row so its expand toggle updates
+  if(parentId)refreshRow(parentId);
   updPhCnt(task.phase);updateDash();renderFlowchart();saveS();
 }
 function renderProgramBar(){
