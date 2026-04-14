@@ -294,6 +294,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   cursor:pointer;border:none;background:transparent;color:#94a3b8;line-height:1.4;
   transition:color .15s,background .15s;vertical-align:middle;}
 .del-task-btn:hover{color:#dc2626;background:#fee2e2;}
+.add-sub-btn{padding:2px 6px;border-radius:4px;font-size:.6rem;font-weight:700;
+  cursor:pointer;border:1.5px solid #7c3aed;background:transparent;color:#7c3aed;
+  vertical-align:middle;margin-left:5px;transition:background .15s,color .15s;
+  white-space:nowrap;}
+.add-sub-btn:hover{background:#7c3aed;color:#fff;}
 .custom-badge{font-size:.6rem;background:#fef3c7;color:#92400e;border-radius:3px;
   padding:0 4px;margin-left:4px;font-weight:700;vertical-align:middle;border:1px solid #fde68a;}
 /* Add Task Modal form fields */
@@ -1024,13 +1029,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 <!-- ── ADD TASK MODAL ── -->
 <div class="overlay" id="addTaskOverlay" onclick="if(event.target===this)closeAddTaskModal()">
   <div class="modal" style="max-width:500px;width:95%;max-height:90vh;overflow-y:auto">
-    <h3>+ Add Planning Item</h3>
+    <h3 id="atm-title">+ Add Planning Item</h3>
+    <div id="atm-parent-ctx" style="display:none;margin-bottom:10px;padding:7px 10px;
+      background:#f5f3ff;border-radius:6px;border:1px solid #ddd6fe;font-size:.77rem;color:#5b21b6;">
+      <strong>Sub-item of:</strong> <span id="atm-parent-name"></span>
+    </div>
     <div class="atm-field">
       <label>Task Name *</label>
       <input type="text" id="atm-name" placeholder="e.g. Special Safety Review" />
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="atm-field">
+      <div class="atm-field" id="atm-phase-wrap">
         <label>Phase</label>
         <select id="atm-phase">
           <option value="pre">Pre-Test</option>
@@ -1644,6 +1653,8 @@ function mkRow(task){
       <span class="tname">${task.name}</span>
       ${hasChildren?`<button class="child-toggle" id="ctoggle-${task.id}" onclick="toggleChildRows('${task.id}')">${childStates[task.id]?'&#9662; Hide':'&#9656; Expand'}</button>`:''}
       <button class="exbtn" onclick="toggleExp('${task.id}')" title="Show/hide details"><span class="exarrow">▶</span></button>
+      ${!isChild?`<button class="add-sub-btn" onclick="event.stopPropagation();openAddSubModal('${task.id}')" title="Add a sub-item under this task">+ Sub</button>`:''}
+
       <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>&#128204; Note:</strong> ${task.note}</span>`:''}</div>
     </td>
     <td class="col-own"><span class="own">${task.owner}</span></td>
@@ -2681,12 +2692,36 @@ function cancelDelete(){
 //  CUSTOM TASK MANAGEMENT — Add / Delete
 // ═══════════════════════════════════════════════════
 let _addTaskPhase='pre';
+let _addTaskParentId=null; // null = top-level item, string = sub-item of this id
 function openAddTaskModal(phase){
   _addTaskPhase=phase||'pre';
+  _addTaskParentId=null;
+  document.getElementById('atm-title').textContent='+ Add Planning Item';
+  document.getElementById('atm-parent-ctx').style.display='none';
+  document.getElementById('atm-phase-wrap').style.display='';
   document.getElementById('atm-name').value='';
   document.getElementById('atm-phase').value=_addTaskPhase;
   document.getElementById('atm-type').value='Mandatory';
   document.getElementById('atm-cat').value='';
+  document.getElementById('atm-owner').value='';
+  document.getElementById('atm-ref').value='';
+  document.getElementById('atm-lbl').value='';
+  document.getElementById('atm-desc').value='';
+  document.getElementById('addTaskOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('atm-name').focus(),60);
+}
+function openAddSubModal(parentId){
+  const parent=getActiveTasks().find(t=>t.id===parentId);
+  if(!parent)return;
+  _addTaskParentId=parentId;
+  _addTaskPhase=parent.phase;
+  document.getElementById('atm-title').textContent='+ Add Sub-Item';
+  document.getElementById('atm-parent-name').textContent=parent.name;
+  document.getElementById('atm-parent-ctx').style.display='';
+  document.getElementById('atm-phase-wrap').style.display='none'; // phase inherited from parent
+  document.getElementById('atm-name').value='';
+  document.getElementById('atm-type').value=parent.type||'Mandatory';
+  document.getElementById('atm-cat').value=parent.cat||'';
   document.getElementById('atm-owner').value='';
   document.getElementById('atm-ref').value='';
   document.getElementById('atm-lbl').value='';
@@ -2702,11 +2737,10 @@ function submitAddTask(){
   if(!name){document.getElementById('atm-name').focus();return;}
   const id='custom_'+Date.now();
   const rawType=document.getElementById('atm-type').value;
-  // fix HTML entity in select value
   const type=rawType.replace(/&amp;/g,'&');
   const newTask={
     id,
-    phase:document.getElementById('atm-phase').value,
+    phase:_addTaskPhase,
     cat:document.getElementById('atm-cat').value.trim()||'Custom',
     name,
     desc:document.getElementById('atm-desc').value.trim(),
@@ -2718,10 +2752,19 @@ function submitAddTask(){
     note:'',
     isCustom:true
   };
+  if(_addTaskParentId){
+    newTask.isChild=true;
+    newTask.parent=_addTaskParentId;
+  }
   if(!S.customTasks)S.customTasks=[];
   S.customTasks.push(newTask);
   closeAddTaskModal();
-  renderPhases();updateDash();renderFlowchart();saveS();
+  // Re-render and auto-expand parent if this was a sub-item
+  renderPhases();
+  if(_addTaskParentId&&!childStates[_addTaskParentId]){
+    toggleChildRows(_addTaskParentId);
+  }
+  updateDash();renderFlowchart();saveS();
 }
 function deleteTask(id){
   const act=getActiveTasks();
