@@ -285,6 +285,27 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .mbtn.danger{background:#dc2626;color:#fff;border-color:#dc2626;}
 .mbtn.primary{background:var(--navy-light);color:#fff;border-color:var(--navy-light);}
 
+/* ── ADD / DELETE TASK UI ── */
+.add-task-btn{padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600;
+  cursor:pointer;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.15);
+  color:#fff;white-space:nowrap;transition:background .15s;}
+.add-task-btn:hover{background:rgba(255,255,255,.28);}
+.del-task-btn{padding:1px 5px;border-radius:4px;font-size:.72rem;font-weight:700;
+  cursor:pointer;border:none;background:transparent;color:#94a3b8;line-height:1.4;
+  transition:color .15s,background .15s;vertical-align:middle;}
+.del-task-btn:hover{color:#dc2626;background:#fee2e2;}
+.custom-badge{font-size:.6rem;background:#fef3c7;color:#92400e;border-radius:3px;
+  padding:0 4px;margin-left:4px;font-weight:700;vertical-align:middle;border:1px solid #fde68a;}
+/* Add Task Modal form fields */
+.atm-field{margin-bottom:11px;}
+.atm-field label{display:block;font-size:.73rem;font-weight:600;color:#475569;margin-bottom:3px;}
+.atm-field input,.atm-field select,.atm-field textarea{
+  width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:6px;
+  padding:6px 9px;font-size:.8rem;color:#1e293b;font-family:inherit;
+  outline:none;transition:border-color .15s;}
+.atm-field input:focus,.atm-field select:focus,.atm-field textarea:focus{border-color:var(--navy-light);}
+.atm-field textarea{resize:vertical;min-height:56px;}
+
 /* ─────────────────────────────────────────────
    DASHBOARD SLIDE OVERLAY
 ───────────────────────────────────────────── */
@@ -1000,6 +1021,63 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
   </div>
 </div>
 
+<!-- ── ADD TASK MODAL ── -->
+<div class="overlay" id="addTaskOverlay" onclick="if(event.target===this)closeAddTaskModal()">
+  <div class="modal" style="max-width:500px;width:95%;max-height:90vh;overflow-y:auto">
+    <h3>+ Add Planning Item</h3>
+    <div class="atm-field">
+      <label>Task Name *</label>
+      <input type="text" id="atm-name" placeholder="e.g. Special Safety Review" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="atm-field">
+        <label>Phase</label>
+        <select id="atm-phase">
+          <option value="pre">Pre-Test</option>
+          <option value="during">During Test</option>
+          <option value="post">Post-Test</option>
+          <option value="ongoing">Ongoing</option>
+        </select>
+      </div>
+      <div class="atm-field">
+        <label>Type</label>
+        <select id="atm-type">
+          <option value="Mandatory">Mandatory</option>
+          <option value="Recommended">Recommended</option>
+          <option value="Conditional">Conditional</option>
+          <option value="DOT&amp;E Oversight">DOT&amp;E Oversight</option>
+        </select>
+      </div>
+    </div>
+    <div class="atm-field">
+      <label>Category (optional)</label>
+      <input type="text" id="atm-cat" placeholder="e.g. Test Planning" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="atm-field">
+        <label>Owner (optional)</label>
+        <input type="text" id="atm-owner" placeholder="e.g. Test Director" />
+      </div>
+      <div class="atm-field">
+        <label>Reference (optional)</label>
+        <input type="text" id="atm-ref" placeholder="e.g. Pg. 120" />
+      </div>
+    </div>
+    <div class="atm-field">
+      <label>Due Date Label (optional)</label>
+      <input type="text" id="atm-lbl" placeholder="e.g. ~30 days before test start" />
+    </div>
+    <div class="atm-field">
+      <label>Description (optional)</label>
+      <textarea id="atm-desc" placeholder="Describe the task..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="closeAddTaskModal()">Cancel</button>
+      <button class="mbtn primary" onclick="submitAddTask()">Add Item</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── DELETE CONFIRM MODAL ── -->
 <div class="overlay" id="delConfirmOverlay" onclick="if(event.target===this)cancelDelete()">
   <div class="modal">
@@ -1266,7 +1344,7 @@ const TASKS=[
 //  STATE
 // ═══════════════════════════════════════════════════
 const SK='starcom_te_v2';
-let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'}};
+let S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'},customTasks:[],hiddenTasks:[]};
 
 function loadS(){
   try{
@@ -1412,6 +1490,13 @@ const SI={
 };
 const TC={'Mandatory':'tm','Recommended':'tr2','Conditional':'tc','DOT&E Oversight':'to'};
 
+// Returns the active task list for the current program:
+// all built-in TASKS minus hidden ones, plus any program-specific custom tasks.
+function getActiveTasks(){
+  const hidden=S.hiddenTasks||[];
+  return TASKS.filter(t=>!hidden.includes(t.id)).concat(S.customTasks||[]);
+}
+
 function renderAll(){
   renderPhases();
   renderHL();
@@ -1443,7 +1528,7 @@ function renderPhases(){
   mc.appendChild(banner);
 
   PHASES.forEach(ph=>{
-    const pts=TASKS.filter(t=>t.phase===ph.id&&!t.isChild);
+    const pts=getActiveTasks().filter(t=>t.phase===ph.id&&!t.isChild);
     const nc=pts.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     const sec=document.createElement('div');
     sec.className=`ps ${ph.cls}`;sec.id=`phase-${ph.id}`;
@@ -1454,7 +1539,10 @@ function renderPhases(){
           <span class="ph-title">${ph.lbl}</span>
           <span class="ph-count" id="phcnt-${ph.id}">(${nc}/${pts.length} complete)</span>
         </div>
-        <span class="ph-chev" id="phchev-${ph.id}">▾</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="add-task-btn" onclick="event.stopPropagation();openAddTaskModal('${ph.id}')">+ Add Item</button>
+          <span class="ph-chev" id="phchev-${ph.id}">▾</span>
+        </div>
       </div>
       <div class="ph-body" id="phbody-${ph.id}">
         <table class="tt">
@@ -1477,7 +1565,7 @@ function renderPhases(){
       tbody.appendChild(mkRow(task));
       // inject child rows after parent
       if(!task.isChild){
-        const children=TASKS.filter(t=>t.isChild&&t.parent===task.id);
+        const children=getActiveTasks().filter(t=>t.isChild&&t.parent===task.id);
         children.forEach(child=>{
           const cr=mkRow(child);
           if(!childStates[task.id])cr.style.display='none';
@@ -1489,7 +1577,7 @@ function renderPhases(){
 }
 
 function computeParentStatus(taskId){
-  const children=TASKS.filter(t=>t.isChild&&t.parent===taskId);
+  const children=getActiveTasks().filter(t=>t.isChild&&t.parent===taskId);
   if(!children.length)return null;
   const statuses=children.map(c=>getT(c.id).status);
   if(statuses.every(s=>s==='complete'||s==='na'))return'complete';
@@ -1501,7 +1589,7 @@ function computeParentStatus(taskId){
 function mkRow(task){
   const ts=getT(task.id);
   const isChild=!!task.isChild;
-  const hasChildren=TASKS.some(t=>t.isChild&&t.parent===task.id);
+  const hasChildren=getActiveTasks().some(t=>t.isChild&&t.parent===task.id);
   const effectiveStatus=(hasChildren&&!isChild)?computeParentStatus(task.id)||ts.status:ts.status;
   const rk=getRisk(task);
   const due=getEffDue(task);
@@ -1571,12 +1659,16 @@ function mkRow(task){
     <td class="col-nt nc">
       <div class="nt${nv?'':' emp'}" onclick="editNotes('${task.id}',this)">${nd}</div>
     </td>
-    <td class="col-ref"><span class="reft">${task.ref}</span></td>`;
+    <td class="col-ref" style="white-space:nowrap">
+      <span class="reft">${task.ref}</span>
+      ${task.isCustom?'<span class="custom-badge">custom</span>':''}
+      <button class="del-task-btn" onclick="deleteTask('${task.id}')" title="${task.isCustom?'Remove this custom item':'Hide this item for this program'}">&#10005;</button>
+    </td>`;
   return tr;
 }
 
 function refreshRow(id){
-  const task=TASKS.find(t=>t.id===id);
+  const task=getActiveTasks().find(t=>t.id===id);
   if(!task)return;
   const old=document.getElementById(`row-${id}`);
   if(!old)return;
@@ -1598,7 +1690,7 @@ function toggleExp(id){
   if(r)r.classList.toggle('expanded');
 }
 function updateVis(){
-  TASKS.forEach(t=>{
+  getActiveTasks().forEach(t=>{
     const r=document.getElementById(`row-${t.id}`);
     if(r)r.classList.toggle('hidden',!matches(t));
   });
@@ -1611,7 +1703,7 @@ let openDDid=null;
 function openDD(id,e){
   e.stopPropagation();
   // parent tasks with children have derived status — not manually editable
-  if(TASKS.some(t=>t.isChild&&t.parent===id))return;
+  if(getActiveTasks().some(t=>t.isChild&&t.parent===id))return;
   const dd=document.getElementById('statusDropdown');
 
   // if same badge clicked while open → close
@@ -1647,7 +1739,7 @@ function pickStatus(st,e){
   openDDid=null;
   refreshRow(id);
   // if this is a child task, also re-render the parent row so derived status updates
-  const task=TASKS.find(t=>t.id===id);
+  const task=getActiveTasks().find(t=>t.id===id);
   if(task&&task.isChild&&task.parent){refreshRow(task.parent);}
   updateDash();
   renderFlowchart();
@@ -1664,7 +1756,7 @@ document.addEventListener('scroll',()=>{
 //  INLINE DATE EDIT
 // ═══════════════════════════════════════════════════
 function editDate(id,el){
-  const task=TASKS.find(t=>t.id===id);if(!task)return;
+  const task=getActiveTasks().find(t=>t.id===id);if(!task)return;
   const cur=getEffDue(task);
   const inp=document.createElement('input');
   inp.type='date';inp.className='d-edit';inp.value=cur?fmtI(cur):'';
@@ -1802,7 +1894,7 @@ function getActivePhaseSummary(){
 
   // After LTE → post-test reporting phase
   if(lte&&today>lte){
-    const grp=TASKS.filter(t=>t.phase==='post'&&!t.isChild);
+    const grp=getActiveTasks().filter(t=>t.phase==='post'&&!t.isChild);
     const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     return{phase:'Post-Test Reporting',done,total:grp.length};
   }
@@ -1817,7 +1909,7 @@ function getActivePhaseSummary(){
       return{phase:'Test Execution · Test Points',done,total:allTps.length};
     }
     // Fall back to during-phase admin tasks
-    const grp=TASKS.filter(t=>t.phase==='during'&&!t.isChild);
+    const grp=getActiveTasks().filter(t=>t.phase==='during'&&!t.isChild);
     const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
     return{phase:'Test Execution',done,total:grp.length};
   }
@@ -1829,7 +1921,7 @@ function getActivePhaseSummary(){
     else if(d>90) subPhase='Campaign Planning';
     else subPhase='Test Planning & Reviews';
   }
-  const grp=TASKS.filter(t=>t.phase==='pre'&&!t.isChild);
+  const grp=getActiveTasks().filter(t=>t.phase==='pre'&&!t.isChild);
   const done=grp.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
   return{phase:subPhase,done,total:grp.length};
 }
@@ -1839,7 +1931,7 @@ function getActivePhaseSummary(){
 // ═══════════════════════════════════════════════════
 function updateDash(){
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
-  TASKS.filter(t=>!t.isChild).forEach(t=>{
+  getActiveTasks().filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
     if(ts.status==='complete'||ts.status==='na')c++;
     else if(ts.status==='progress')p++;
@@ -1861,7 +1953,7 @@ function updateDash(){
   document.getElementById('progLbl').textContent=ps.phase+'\u00a0('+ps.done+'/'+ps.total+' tasks)';
 }
 function updPhCnt(phId){
-  const pts=TASKS.filter(t=>t.phase===phId&&!t.isChild);
+  const pts=getActiveTasks().filter(t=>t.phase===phId&&!t.isChild);
   const nc=pts.filter(t=>['complete','na'].includes(getT(t.id).status)).length;
   const el=document.getElementById(`phcnt-${phId}`);
   if(el)el.textContent=`(${nc}/${pts.length} complete)`;
@@ -1899,7 +1991,7 @@ function buildSlide(){
 
   // ── Stats ──
   let c=0,p=0,r=0,n=0,ov=0,ar=0;
-  TASKS.filter(t=>!t.isChild).forEach(t=>{
+  getActiveTasks().filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);
     if(ts.status==='complete'||ts.status==='na')c++;
     else if(ts.status==='progress')p++;
@@ -1965,7 +2057,7 @@ function buildSlide(){
 
   // ── Upcoming (next 30 days) — only in non-exec mode ──
   if(!isExec){
-    const upList=TASKS.filter(t=>{
+    const upList=getActiveTasks().filter(t=>{
       if(t.isChild)return false;
       const ts=getT(t.id);if(ts.status==='complete')return false;
       const due=getEffDue(t);if(!due)return false;
@@ -1982,7 +2074,7 @@ function buildSlide(){
   }
 
   // ── Risks & Overdue ──
-  const rkItems=TASKS.filter(t=>{
+  const rkItems=getActiveTasks().filter(t=>{
     if(t.isChild)return false;
     const ts=getT(t.id);const rk=getRisk(t);
     return(ts.status==='risk'||rk==='overdue')&&ts.status!=='complete';
@@ -2180,7 +2272,7 @@ function resetAll(){S.tasks={};saveS();hideModal();renderAll();}
 // ═══════════════════════════════════════════════════
 function exportCSV(){
   const rows=[['Phase','Category','Task','Owner','Type','Due Date','Status','Risk','Notes','Ref']];
-  TASKS.filter(t=>!t.isChild).forEach(t=>{
+  getActiveTasks().filter(t=>!t.isChild).forEach(t=>{
     const ts=getT(t.id);const rk=getRisk(t);const due=getEffDue(t);
     rows.push([t.phase,t.cat,`"${t.name.replace(/"/g,'""')}"`,`"${t.owner.replace(/"/g,'""')}"`,
       t.type,due?fmt(due):t.lbl,SI[ts.status]?.lbl||ts.status,
@@ -2487,7 +2579,8 @@ function captureCurrentState(){
     highlights:S.highlights,hlUpdated:S.hlUpdated,
     tasks:S.tasks,murderBoard:S.murderBoard,
     testExec:S.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},
-    classification:S.classification||{text:'UNCLASSIFIED',color:'green'}
+    classification:S.classification||{text:'UNCLASSIFIED',color:'green'},
+    customTasks:S.customTasks||[],hiddenTasks:S.hiddenTasks||[]
   };
 }
 function saveCurrentAsProgram(){
@@ -2532,6 +2625,8 @@ function loadProgram(id){
   S.murderBoard=data.murderBoard||{};
   S.testExec=data.testExec||{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]};
   S.classification=data.classification||{text:'UNCLASSIFIED',color:'green'};
+  S.customTasks=data.customTasks||[];
+  S.hiddenTasks=data.hiddenTasks||[];
   if(window.applyClfBanners)window.applyClfBanners(S.classification);
   document.getElementById('cfgName').value=S.programName;
   document.getElementById('cfgStart').value=S.testStart?fmtI(S.testStart):'';
@@ -2547,7 +2642,7 @@ function createNewProgram(){
     const cur=list.find(p=>p.name===curName);
     if(cur){cur.updatedAt=new Date().toISOString();saveProgramList(list);saveProgramData(cur.id,captureCurrentState());}
   }
-  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'}};
+  S={programName:'',testStart:null,trrDate:null,lteDate:null,highlights:'',hlUpdated:'',tasks:{},murderBoard:{},testExec:{objectives:[],testPoints:[],dtGTOs:[],dtSTOs:[],dtTestPoints:[]},classification:{text:'UNCLASSIFIED',color:'green'},customTasks:[],hiddenTasks:[]};
   if(window.applyClfBanners)window.applyClfBanners(S.classification);
   document.getElementById('cfgName').value='';
   document.getElementById('cfgStart').value='';
@@ -2580,6 +2675,69 @@ function confirmDelete(){
 function cancelDelete(){
   _delPendingId=null;
   document.getElementById('delConfirmOverlay').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════
+//  CUSTOM TASK MANAGEMENT — Add / Delete
+// ═══════════════════════════════════════════════════
+let _addTaskPhase='pre';
+function openAddTaskModal(phase){
+  _addTaskPhase=phase||'pre';
+  document.getElementById('atm-name').value='';
+  document.getElementById('atm-phase').value=_addTaskPhase;
+  document.getElementById('atm-type').value='Mandatory';
+  document.getElementById('atm-cat').value='';
+  document.getElementById('atm-owner').value='';
+  document.getElementById('atm-ref').value='';
+  document.getElementById('atm-lbl').value='';
+  document.getElementById('atm-desc').value='';
+  document.getElementById('addTaskOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('atm-name').focus(),60);
+}
+function closeAddTaskModal(){
+  document.getElementById('addTaskOverlay').classList.remove('show');
+}
+function submitAddTask(){
+  const name=document.getElementById('atm-name').value.trim();
+  if(!name){document.getElementById('atm-name').focus();return;}
+  const id='custom_'+Date.now();
+  const rawType=document.getElementById('atm-type').value;
+  // fix HTML entity in select value
+  const type=rawType.replace(/&amp;/g,'&');
+  const newTask={
+    id,
+    phase:document.getElementById('atm-phase').value,
+    cat:document.getElementById('atm-cat').value.trim()||'Custom',
+    name,
+    desc:document.getElementById('atm-desc').value.trim(),
+    getDue:()=>null,
+    lbl:document.getElementById('atm-lbl').value.trim(),
+    owner:document.getElementById('atm-owner').value.trim(),
+    type,
+    ref:document.getElementById('atm-ref').value.trim(),
+    note:'',
+    isCustom:true
+  };
+  if(!S.customTasks)S.customTasks=[];
+  S.customTasks.push(newTask);
+  closeAddTaskModal();
+  renderPhases();updateDash();renderFlowchart();saveS();
+}
+function deleteTask(id){
+  const act=getActiveTasks();
+  const task=act.find(t=>t.id===id);
+  if(!task)return;
+  if(task.isCustom){
+    // Permanently remove custom task
+    S.customTasks=(S.customTasks||[]).filter(t=>t.id!==id);
+  } else {
+    // Hide built-in task for this program only (restore by creating a new program)
+    if(!S.hiddenTasks)S.hiddenTasks=[];
+    if(!S.hiddenTasks.includes(id))S.hiddenTasks.push(id);
+  }
+  const row=document.getElementById(`row-${id}`);
+  if(row)row.remove();
+  updPhCnt(task.phase);updateDash();renderFlowchart();saveS();
 }
 function renderProgramBar(){
   const sel=document.getElementById('progSelect');if(!sel)return;
