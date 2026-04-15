@@ -133,6 +133,37 @@ td.sum-prog-cell{background:var(--navy);padding:8px 14px;text-align:left;
 .no-progs p{font-size:.88rem;color:var(--g500);line-height:1.7;}
 .no-progs a{color:var(--navy-light);font-weight:600;}
 
+/* ── DARK MODE ── */
+body.dark{background:#0d1117;color:#e2e8f0;}
+body.dark .meta-bar{background:#161f2c;border-color:#1e3a5f;}
+body.dark .meta-lbl{color:#94a3b8;}
+body.dark .legend-item{color:#94a3b8;}
+body.dark .asof{color:#64748b;}
+body.dark .clf-modal{background:#161f2c;color:#e2e8f0;}
+body.dark .clf-modal h3{color:#e2e8f0;}
+body.dark .clf-field label{color:#94a3b8;}
+body.dark .clf-field input{background:#1e293b;border-color:#334155;color:#e2e8f0;}
+body.dark .clf-btn-cancel{background:#1e293b;color:#94a3b8;}
+body.dark .clf-btn-cancel:hover{background:#253348;}
+body.dark .clf-btn-apply{background:#1e3a6e;}
+body.dark td.prog-cell{background:#1e293b;border-color:#334155;border-right-color:#253348;}
+body.dark .prog-name{color:#93b4d8;}
+body.dark .prog-meta{color:#64748b;}
+body.dark .no-progs{background:#161f2c;}
+body.dark .no-progs h2{color:#94a3b8;}
+body.dark .no-progs p{color:#64748b;}
+body.dark .no-progs a{color:#93b4d8;}
+body.dark td.sc{filter:brightness(.82) saturate(.9);}
+body.dark .matrix thead .mh-cell{background:#0a1628;}
+body.dark .matrix thead .mh-prog{background:#0d2244;}
+body.dark tr.sum-row td{background:#0f1c2e;}
+body.dark td.sum-prog-cell{background:#0a1628;}
+body.dark .matrix-wrap{box-shadow:0 2px 12px rgba(0,0,0,.4);}
+#darkToggle{background:transparent;border:1px solid rgba(255,255,255,.3);
+  border-radius:6px;color:#fff;cursor:pointer;font-size:1rem;
+  padding:4px 10px;line-height:1;transition:background .2s;}
+#darkToggle:hover{background:rgba(255,255,255,.15);}
+
 /* Print */
 @media print{
   .hdr .hbtn{display:none;}
@@ -178,6 +209,7 @@ td.sum-prog-cell{background:var(--navy);padding:8px 14px;text-align:left;
     <p>Cross-program milestone health at a glance · US Space Force Operational Test Agency</p>
   </div>
   <div class="hdr-right">
+    <button id="darkToggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
     <button class="hbtn" onclick="buildMatrix()">&#8635; Refresh</button>
     <button class="hbtn" onclick="window.print()">&#128424; Print</button>
     <a class="hbtn gold" href="index.html" onclick="localStorage.setItem('starcom_te_skip_redirect','1')">&#8592; Back to Tracker</a>
@@ -411,7 +443,11 @@ function syncMatrixH(){
   const r1=document.querySelector('.matrix thead tr:first-child');
   if(r1)document.documentElement.style.setProperty('--thead-r1',r1.offsetHeight+'px');
 }
-window.addEventListener('DOMContentLoaded',async()=>{await fetchFromServer();await fsInitExecView();buildMatrix();syncMatrixH();});
+function isDarkMode(){ return localStorage.getItem('starcom_dark')==='1'; }
+function applyDarkMode(on){ document.body.classList.toggle('dark',on); const btn=document.getElementById('darkToggle'); if(btn)btn.textContent=on?'☀️':'🌙'; }
+function toggleDarkMode(){ const on=!isDarkMode(); localStorage.setItem('starcom_dark',on?'1':'0'); applyDarkMode(on); }
+
+window.addEventListener('DOMContentLoaded',async()=>{applyDarkMode(isDarkMode());await fetchFromServer();await fsInitExecView();buildMatrix();syncMatrixH();});
 window.addEventListener('resize',syncMatrixH);
 </script>
 <script>
