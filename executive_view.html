@@ -153,7 +153,6 @@ body.dark .no-progs{background:#161f2c;}
 body.dark .no-progs h2{color:#94a3b8;}
 body.dark .no-progs p{color:#64748b;}
 body.dark .no-progs a{color:#93b4d8;}
-body.dark td.sc{filter:brightness(.82) saturate(.9);}
 body.dark .matrix thead .mh-cell{background:#0a1628;}
 body.dark .matrix thead .mh-prog{background:#0d2244;}
 body.dark tr.sum-row td{background:#0f1c2e;}
@@ -301,6 +300,13 @@ const CS = {
   red:    { bg:'#fee2e2', border:'#dc2626', text:'#dc2626', lbl:'Overdue' },
   gray:   { bg:'#f1f5f9', border:'#cbd5e1', text:'#64748b', lbl:'Not Started' },
 };
+const CS_DARK = {
+  green:  { bg:'#14532d', border:'#22c55e', text:'#86efac', lbl:'Complete' },
+  blue:   { bg:'#1e3a5f', border:'#3b82f6', text:'#93c5fd', lbl:'In Progress' },
+  yellow: { bg:'#451a03', border:'#f59e0b', text:'#fcd34d', lbl:'At Risk' },
+  red:    { bg:'#450a0a', border:'#ef4444', text:'#fca5a5', lbl:'Overdue' },
+  gray:   { bg:'#1e293b', border:'#475569', text:'#94a3b8', lbl:'Not Started' },
+};
 
 function addD(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
 function fmtD(d){
@@ -332,6 +338,9 @@ function buildMatrix(){
   document.getElementById('asof').textContent =
     'As of: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
+  const dark = isDarkMode();
+  const C = dark ? CS_DARK : CS;
+
   const list = getProgramList();
   const wrap = document.getElementById('matrixWrap');
   const noEl = document.getElementById('noProgs');
@@ -361,7 +370,7 @@ function buildMatrix(){
     const cells = MILESTONES.map(m => {
       const ts = tasks[m.key] || {status:'none'};
       const color = getColor(m.key, ts, dates);
-      const c = CS[color];
+      const c = C[color];
       let due = ts.customDate ? new Date(ts.customDate) : null;
       if(!due){ try{ due = m.getDue(dates); }catch(e){} }
       return `<td class="sc sc-link" style="background:${c.bg};border-color:${c.border}" onclick="navToTracker('${prog.id}','${m.key}')" title="Open ${m.label} in ${prog.name}">
@@ -404,13 +413,13 @@ function buildMatrix(){
     // Dominant color for background
     const dom = counts.red ? 'red' : counts.yellow ? 'yellow' :
                 (counts.green===list.length) ? 'green' : counts.blue ? 'blue' : 'gray';
-    const dc = CS[dom];
+    const dc = C[dom];
 
     const pills = [
-      counts.red    ? `<span class="pill" style="background:#fee2e2;color:#dc2626">${counts.red} OVR</span>` : '',
-      counts.yellow ? `<span class="pill" style="background:#fef9c3;color:#92400e">${counts.yellow} RISK</span>` : '',
-      counts.blue   ? `<span class="pill" style="background:#dbeafe;color:#1d4ed8">${counts.blue} WIP</span>` : '',
-      counts.green  ? `<span class="pill" style="background:#dcfce7;color:#15803d">${counts.green} DONE</span>` : '',
+      counts.red    ? `<span class="pill" style="background:${C.red.bg};color:${C.red.text}">${counts.red} OVR</span>` : '',
+      counts.yellow ? `<span class="pill" style="background:${C.yellow.bg};color:${C.yellow.text}">${counts.yellow} RISK</span>` : '',
+      counts.blue   ? `<span class="pill" style="background:${C.blue.bg};color:${C.blue.text}">${counts.blue} WIP</span>` : '',
+      counts.green  ? `<span class="pill" style="background:${C.green.bg};color:${C.green.text}">${counts.green} DONE</span>` : '',
     ].filter(Boolean).join('');
 
     return `<td style="background:${dc.bg};border:2px solid ${dc.border};padding:6px;text-align:center;vertical-align:middle">
@@ -445,7 +454,7 @@ function syncMatrixH(){
 }
 function isDarkMode(){ return localStorage.getItem('starcom_dark')==='1'; }
 function applyDarkMode(on){ document.body.classList.toggle('dark',on); const btn=document.getElementById('darkToggle'); if(btn)btn.textContent=on?'☀️':'🌙'; }
-function toggleDarkMode(){ const on=!isDarkMode(); localStorage.setItem('starcom_dark',on?'1':'0'); applyDarkMode(on); }
+function toggleDarkMode(){ const on=!isDarkMode(); localStorage.setItem('starcom_dark',on?'1':'0'); applyDarkMode(on); buildMatrix(); }
 
 window.addEventListener('DOMContentLoaded',async()=>{applyDarkMode(isDarkMode());await fetchFromServer();await fsInitExecView();buildMatrix();syncMatrixH();});
 window.addEventListener('resize',syncMatrixH);
