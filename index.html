@@ -791,6 +791,30 @@ body.dark .sl-b-ar{background:#422006!important;border-color:#d97706!important;}
 .exec-table tr:hover td{background:var(--g50);}
 .exec-status-badge{display:inline-block;padding:3px 10px;border-radius:12px;
   font-size:.72rem;font-weight:700;white-space:nowrap;}
+
+/* ── T&E GUIDE PANEL ── */
+.guide-panel{position:fixed;top:0;right:0;height:100vh;width:48%;max-width:820px;min-width:320px;
+  background:var(--bg);border-left:2px solid var(--navy);
+  box-shadow:-6px 0 32px rgba(0,0,0,.18);display:flex;flex-direction:column;
+  transform:translateX(105%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:4000;}
+.guide-panel.open{transform:translateX(0);}
+.guide-panel-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--navy);flex-shrink:0;}
+.guide-panel-title{color:#fff;font-size:.82rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.guide-panel-newtab{color:#fbbf24;font-size:1rem;text-decoration:none;padding:2px 6px;border-radius:4px;}
+.guide-panel-newtab:hover{background:rgba(255,255,255,.15);}
+.guide-panel-close{background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:2px 6px;border-radius:4px;}
+.guide-panel-close:hover{background:rgba(255,255,255,.15);}
+.guide-panel-frame{flex:1;border:none;width:100%;}
+.guide-panel-backdrop{position:fixed;inset:0;z-index:3999;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .28s;}
+.guide-panel-backdrop.open{opacity:1;pointer-events:auto;}
+.reft.guide-link{cursor:pointer;color:var(--navy);text-decoration:underline dotted;border-radius:3px;padding:1px 3px;}
+.reft.guide-link:hover{background:var(--navy);color:#fff;text-decoration:none;}
+body.dark .reft.guide-link{color:#93c5fd;}
+body.dark .reft.guide-link:hover{background:#1e3a5f;color:#fff;}
+.guide-icon-btn{background:none;border:none;cursor:pointer;font-size:.82rem;opacity:.55;padding:1px 4px;border-radius:3px;vertical-align:middle;}
+.guide-icon-btn:hover{opacity:1;background:rgba(0,0,0,.08);}
+body.dark .guide-icon-btn:hover{background:rgba(255,255,255,.1);}
+@media(max-width:768px){.guide-panel{width:100%;max-width:100%;border-left:none;}}
 </style>
 </head>
 <body>
@@ -837,6 +861,7 @@ body.dark .sl-b-ar{background:#422006!important;border-color:#d97706!important;}
     <button class="hbtn teal" onclick="showSlide()">📊 Dashboard Slide</button>
     <a class="hbtn teal" href="executive_view.html">&#128202; Executive View</a>
     <button class="hbtn" onclick="loadDemoPrograms()" style="background:rgba(240,165,0,.18);border-color:var(--gold)" title="Load 6 realistic demo programs for presentations">🎯 Load Demo</button>
+    <button class="hbtn" onclick="openGuidePanel(1,'Introduction')" title="Open the T&amp;E Guide">📖 Guide</button>
     <button id="darkToggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
     <button class="hbtn" onclick="showResetModal()">🗑 Reset</button>
     <button class="hbtn" onclick="window.print()">🖨 Print</button>
@@ -997,7 +1022,7 @@ body.dark .sl-b-ar{background:#422006!important;border-color:#d97706!important;}
     <div class="tex-cols">
       <div class="tex-col">
         <div class="tex-col-hdr">
-          <span>GTOs &amp; STOs</span>
+          <span>GTOs &amp; STOs <button class="guide-icon-btn" onclick="openGuidePanel(76,'General &amp; Specific Test Objectives')" title="Open T&amp;E Guide — GTOs &amp; STOs">📖</button></span>
           <button class="tex-add-btn" onclick="addDtGto()">+ Add GTO</button>
         </div>
         <table class="tex-tbl">
@@ -1021,7 +1046,7 @@ body.dark .sl-b-ar{background:#422006!important;border-color:#d97706!important;}
     <div class="tex-cols">
       <div class="tex-col">
         <div class="tex-col-hdr">
-          <span>Critical Operational Issues (COIs)</span>
+          <span>Critical Operational Issues (COIs) <button class="guide-icon-btn" onclick="openGuidePanel(77,'Critical Operational Issues')" title="Open T&amp;E Guide — COIs">📖</button></span>
           <button class="tex-add-btn" onclick="addTexObj()">+ Add COI</button>
         </div>
         <table class="tex-tbl">
@@ -1560,6 +1585,27 @@ function fmt(d){if(!d)return null;return d.toLocaleDateString('en-US',{month:'sh
 function fmtI(d){if(!d)return '';const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dy}`;}
 function parseD(s){if(!s)return null;const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 function getDates(){return{start:S.testStart,trr:S.trrDate,lte:S.lteDate};}
+
+// ═══════════════════════════════════════════════════
+//  T&E GUIDE PANEL
+// ═══════════════════════════════════════════════════
+const PDF_PATH=encodeURI('STARCOM TE Guide V2.0.pdf');
+function parseRefPage(ref){const m=(ref||'').match(/(\d+)/);return m?parseInt(m[1],10):null;}
+function openGuidePanel(page,label){
+  const src=PDF_PATH+'#page='+page;
+  document.getElementById('guidePanelFrame').src=src;
+  document.getElementById('guidePanelNewTab').href=src;
+  document.getElementById('guidePanelTitle').textContent='T&E Guide — '+label;
+  document.getElementById('guidePanel').classList.add('open');
+  document.getElementById('guidePanelBackdrop').classList.add('open');
+}
+function closeGuidePanel(){
+  document.getElementById('guidePanel').classList.remove('open');
+  document.getElementById('guidePanelBackdrop').classList.remove('open');
+  setTimeout(()=>{document.getElementById('guidePanelFrame').src='';},300);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGuidePanel();});
+
 function getEffDue(task){
   const ts=getT(task.id);
   if(ts.customDate)return new Date(ts.customDate);
@@ -1887,7 +1933,7 @@ function mkRow(task){
       <div class="nt${nv?'':' emp'}" onclick="editNotes('${task.id}',this)">${nd}</div>
     </td>
     <td class="col-ref" style="white-space:nowrap">
-      <span class="reft">${task.ref}</span>
+      ${(()=>{const p=parseRefPage(task.ref);const n=(task.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');return p?`<span class="reft guide-link" onclick="openGuidePanel(${p},'${n}')" title="Open T&amp;E Guide at ${task.ref}">📖 ${task.ref}</span>`:`<span class="reft">${task.ref||'—'}</span>`;})()}
       ${task.isCustom?'<span class="custom-badge">custom</span>':''}
       <button class="del-task-btn" onclick="deleteTask('${task.id}')" title="${task.isCustom?'Remove this custom item':'Hide this item for this program'}">&#10005;</button>
     </td>`;
@@ -4265,5 +4311,17 @@ function renderExecView(){
 <footer style="text-align:center;padding:18px 24px 36px;font-size:.68rem;color:#94a3b8;letter-spacing:.3px;">
   Developed by Maj &ldquo;MOAB&rdquo; Olsen &nbsp;&middot;&nbsp; STARCOM T&amp;E &nbsp;&middot;&nbsp; Built with <a href="https://claude.ai" target="_blank" style="color:#94a3b8;text-decoration:none;border-bottom:1px dotted #94a3b8;">Claude</a> by Anthropic
 </footer>
+
+<!-- ── T&E GUIDE PANEL ── -->
+<div id="guidePanel" class="guide-panel">
+  <div class="guide-panel-hdr">
+    <span id="guidePanelTitle" class="guide-panel-title">T&amp;E Guide</span>
+    <a id="guidePanelNewTab" href="#" target="_blank" class="guide-panel-newtab" title="Open in new tab">&#8599;</a>
+    <button class="guide-panel-close" onclick="closeGuidePanel()" title="Close">&#10005;</button>
+  </div>
+  <iframe id="guidePanelFrame" class="guide-panel-frame" src="" allowfullscreen></iframe>
+</div>
+<div id="guidePanelBackdrop" class="guide-panel-backdrop" onclick="closeGuidePanel()"></div>
+
 </body>
 </html>
