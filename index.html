@@ -455,6 +455,8 @@ body.dark .atm-or{color:#64748b;}
   padding:1px 4px;border-radius:3px;background:#fff;border:1px solid var(--g200);color:var(--g600);}
 .gt-marker-today .gt-marker-lbl{color:#dc2626;border-color:#fecaca;}
 
+.gt-phase-wrap{margin-bottom:16px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.gt-phase-wrap .gt-phase-row .ph-row{border-radius:10px 10px 0 0;}
 .gt-phase-row{cursor:pointer;}
 .gt-phase-row .ph-row{padding:8px 14px;}
 .gt-phase-body.collapsed{display:none;}
@@ -622,6 +624,7 @@ body.dark .gt-zoom-btn{background:#1e293b;border-color:#334155;color:#e2e8f0;}
 body.dark .gt-zoom-btn:hover{background:#253348;border-color:#475569;}
 body.dark .gt-zoom-fit{color:#93c5fd;border-color:#1d4ed8;}
 body.dark .gantt-disclaimer{background:#451a03;border-color:#78350f;color:#fcd34d;}
+body.dark .gt-phase-wrap{box-shadow:0 2px 8px rgba(0,0,0,.4);}
 body.dark .gt-scroll{background:#161f2c;border-color:#334155;}
 body.dark .gt-axis-row{background:#161f2c;border-color:#334155;}
 body.dark .gt-axis-spacer{background:#161f2c;border-color:#334155;}
@@ -2932,7 +2935,7 @@ function buildGantt(){
         ${phUndated.map(r=>`<div class="gt-undated-item" onclick="navToTask('${r.task.id}')">${r.task.name}</div>`).join('')}
       </div>`:'';
     phasesHtml+=`
-      <div class="ps ${ph.cls}">
+      <div class="gt-phase-wrap ${ph.cls}">
         <div class="gt-phase-row" onclick="toggleGanttPhase('${ph.id}')">
           <div class="ph-row">
             <div class="ph-left">
