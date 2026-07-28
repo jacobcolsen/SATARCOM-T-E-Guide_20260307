@@ -432,6 +432,12 @@ body.dark .atm-or{color:#64748b;}
 .gt-sw-planned{background:rgba(255,255,255,.15);border:1.5px solid #93b4d8;}
 .gt-sw-actual{border-radius:3px;}
 .gt-sw-overrun{background:repeating-linear-gradient(45deg,#dc2626,#dc2626 3px,#fca5a5 3px,#fca5a5 6px);}
+.gantt-toolbar{display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:8px 18px;background:var(--g50);border-bottom:1px solid var(--g200);}
+.gt-zoom-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--g300);background:#fff;
+  color:var(--g700);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.gt-zoom-btn:hover{background:var(--g100);border-color:var(--g400);}
+.gt-zoom-fit{color:var(--navy);border-color:var(--navy-light);}
 .gantt-body{flex:1;overflow:hidden;padding:14px 18px;background:var(--g50);}
 
 .gt-scroll{overflow:auto;max-height:100%;height:100%;border:1px solid var(--g200);border-radius:8px;background:#fff;}
@@ -609,6 +615,10 @@ body.dark .sl-pipe-hdr{color:#64748b;}
 body.dark .sl-pipe-phase-lbl{background:#1e3a6e;}
 body.dark .gantt-panel{background:#0f1c2e;}
 body.dark .gantt-body{background:#0d1117;}
+body.dark .gantt-toolbar{background:#0d1117;border-color:#334155;}
+body.dark .gt-zoom-btn{background:#1e293b;border-color:#334155;color:#e2e8f0;}
+body.dark .gt-zoom-btn:hover{background:#253348;border-color:#475569;}
+body.dark .gt-zoom-fit{color:#93c5fd;border-color:#1d4ed8;}
 body.dark .gt-scroll{background:#161f2c;border-color:#334155;}
 body.dark .gt-axis-row{background:#161f2c;border-color:#334155;}
 body.dark .gt-axis-spacer{background:#161f2c;border-color:#334155;}
@@ -1295,6 +1305,11 @@ body.dark .guide-icon-btn:hover{background:rgba(255,255,255,.1);}
           <span><i class="gt-sw gt-sw-actual" style="background:#dc2626"></i>Overdue</span>
           <span><i class="gt-sw gt-sw-overrun"></i>Ran past plan</span>
         </div>
+      </div>
+      <div class="gantt-toolbar">
+        <button class="gt-zoom-btn" onclick="gtZoomOut()" title="Zoom out">－</button>
+        <button class="gt-zoom-btn gt-zoom-fit" onclick="gtZoomFit()" title="Fit the whole program in view">⤢ Fit Whole Program</button>
+        <button class="gt-zoom-btn" onclick="gtZoomIn()" title="Zoom in">＋</button>
       </div>
       <div class="gantt-body" id="ganttBody"></div>
     </div>
@@ -2740,14 +2755,27 @@ function printSlide(){
 // ═══════════════════════════════════════════════════
 //  GANTT CHART (planned vs. actual)
 // ═══════════════════════════════════════════════════
-const GT_PX_PER_DAY=7;
+let gtPxPerDay=null;      // null = auto-fit-to-width; otherwise a manual zoom override
+let gtLastPxPerDay=7;     // last scale actually rendered, so zoom +/- has a starting point
 const GT_LABEL_W=230;
 let gtPhaseCollapsed={};
 
 function showGantt(){
   document.getElementById('ganttOverlay').classList.add('show');
+  gtPxPerDay=null;
   buildGantt();
-  scrollGanttToToday();
+}
+function gtZoomIn(){
+  gtPxPerDay=Math.min((gtPxPerDay!=null?gtPxPerDay:gtLastPxPerDay)*1.4,40);
+  buildGantt();scrollGanttToToday();
+}
+function gtZoomOut(){
+  gtPxPerDay=Math.max((gtPxPerDay!=null?gtPxPerDay:gtLastPxPerDay)/1.4,0.3);
+  buildGantt();scrollGanttToToday();
+}
+function gtZoomFit(){
+  gtPxPerDay=null;
+  buildGantt();
 }
 function scrollGanttToToday(){
   const scrollEl=document.querySelector('#ganttBody .gt-scroll');
@@ -2855,8 +2883,12 @@ function buildGantt(){
   const rangeStart=add(new Date(Math.min(...allDates.map(d=>d.getTime()))),-4);
   const rangeEnd=add(new Date(Math.max(...allDates.map(d=>d.getTime()))),4);
   const totalDays=Math.max(diff(rangeStart,rangeEnd),30);
-  const totalW=totalDays*GT_PX_PER_DAY;
-  const toX=d=>diff(rangeStart,d)*GT_PX_PER_DAY;
+  const availPx=Math.max(bodyEl.clientWidth-32-GT_LABEL_W,200);
+  const fitPxPerDay=availPx/totalDays;
+  const pxPerDay=gtPxPerDay!=null?gtPxPerDay:fitPxPerDay;
+  gtLastPxPerDay=pxPerDay;
+  const totalW=totalDays*pxPerDay;
+  const toX=d=>diff(rangeStart,d)*pxPerDay;
 
   // month gridlines
   let gridHtml='';
