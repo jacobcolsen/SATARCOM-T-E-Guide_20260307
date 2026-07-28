@@ -2745,8 +2745,16 @@ const GT_LABEL_W=230;
 let gtPhaseCollapsed={};
 
 function showGantt(){
-  buildGantt();
   document.getElementById('ganttOverlay').classList.add('show');
+  buildGantt();
+  scrollGanttToToday();
+}
+function scrollGanttToToday(){
+  const scrollEl=document.querySelector('#ganttBody .gt-scroll');
+  const todayMarker=scrollEl&&scrollEl.querySelector('.gt-marker-today');
+  if(!scrollEl||!todayMarker)return;
+  const todayX=parseFloat(todayMarker.style.left)||0;
+  scrollEl.scrollLeft=Math.max(0,todayX-scrollEl.clientWidth/2);
 }
 function hideGantt(){
   document.getElementById('ganttOverlay').classList.remove('show');
