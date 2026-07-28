@@ -216,7 +216,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--
 .tname{font-weight:600;color:var(--g800);}
 .tdesc{font-size:.71rem;color:var(--g500);margin-top:3px;
   max-height:0;overflow:hidden;transition:max-height .3s ease;line-height:1.45;}
-.tr.expanded .tdesc{max-height:130px;}
+.tr.expanded .tdesc{max-height:160px;}
+.tdur-row{margin-top:5px;}
 .exbtn{background:none;border:none;cursor:pointer;padding:0;
   color:var(--g400);font-size:.72rem;margin-left:4px;transition:color .15s;}
 .exbtn:hover{color:var(--navy-light);}
@@ -1795,11 +1796,14 @@ function getEffDue(task){
 // ═══════════════════════════════════════════════════
 //  GANTT — planned vs. actual date windows
 // ═══════════════════════════════════════════════════
+function getTaskDuration(task){
+  const ts=getT(task.id);
+  return ts.durationDays!=null?ts.durationDays:(task.dur!=null?task.dur:(PHASE_DUR_DEFAULT[task.phase]||14));
+}
 function getPlannedWindow(task){
   const due=getEffDue(task);
   if(!due)return null;
-  const ts=getT(task.id);
-  const dur=ts.durationDays!=null?ts.durationDays:(task.dur!=null?task.dur:(PHASE_DUR_DEFAULT[task.phase]||14));
+  const dur=getTaskDuration(task);
   return{start:add(due,-dur),end:due,dur};
 }
 function getActualWindow(task){
@@ -2120,7 +2124,9 @@ function mkRow(task){
       <button class="exbtn" onclick="toggleExp('${task.id}')" title="Show/hide details"><span class="exarrow">▶</span></button>
       ${depthAllowsSubtask(depth)?`<button class="add-sub-btn" onclick="event.stopPropagation();openAddSubModal('${task.id}')" title="Add a sub-item under this task">+ Sub</button>`:''}
 
-      <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>&#128204; Note:</strong> ${task.note}</span>`:''}</div>
+      <div class="tdesc">${task.desc}${task.note?`<br><span style="color:#92400e;margin-top:3px;display:block"><strong>&#128204; Note:</strong> ${task.note}</span>`:''}
+        <div class="tdur-row">Planned duration: <span class="gt-dur-badge" onclick="event.stopPropagation();editTaskDuration('${task.id}',this)" title="Click to edit recommended lead time">${getTaskDuration(task)}d</span></div>
+      </div>
     </td>
     <td class="col-own"><span class="own">${task.owner}</span></td>
     <td class="col-type"><span class="ttag ${TC[task.type]||'tm'}">${task.type}</span></td>
@@ -2151,6 +2157,8 @@ function refreshRow(id){
   const nr=mkRow(task);
   // preserve display state for child rows
   if(task.isChild&&old.style.display==='none')nr.style.display='none';
+  // preserve expanded details panel across a refresh (e.g. after editing duration inline)
+  if(old.classList.contains('expanded'))nr.classList.add('expanded');
   old.parentNode.replaceChild(nr,old);
   updateVis();
 }
@@ -2290,6 +2298,24 @@ function editNotes(id,el){
   }
   ta.addEventListener('blur',commit);
   ta.addEventListener('keydown',e=>{if(e.key==='Escape'){ta.remove();el.style.display='';}});
+}
+function editTaskDuration(id,el){
+  const cur=el.textContent.replace('d','');
+  const inp=document.createElement('input');
+  inp.type='number';inp.min='0';inp.className='gt-dur-edit';inp.value=cur;
+  el.style.display='none';
+  el.parentNode.insertBefore(inp,el);
+  inp.focus();inp.select();
+  function commit(){
+    const n=Math.max(0,parseInt(inp.value,10)||0);
+    setT(id,{durationDays:n});
+    inp.remove();refreshRow(id);
+  }
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();commit();}
+    if(e.key==='Escape'){inp.remove();el.style.display='';}
+  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -2836,8 +2862,7 @@ function editGanttDuration(id,el){
 }
 function gtRowHtml(r,toX,totalW){
   const t=r.task;
-  const ts=getT(t.id);
-  const dur=ts.durationDays!=null?ts.durationDays:(t.dur!=null?t.dur:(PHASE_DUR_DEFAULT[t.phase]||14));
+  const dur=getTaskDuration(t);
   const pStart=toX(r.planned.start),pEnd=toX(r.planned.end);
   const pColor=PHASE_COLOR[t.phase]||'#64748b';
   let actualHtml='';
