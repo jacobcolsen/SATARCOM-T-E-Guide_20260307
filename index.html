@@ -2674,7 +2674,7 @@ function fsDismiss(){
 
 // Called on page load — checks for a stored file handle silently
 async function fsInit(){
-  if(!FS_SUPPORTED||IS_SERVER)return;
+  if(!FS_SUPPORTED)return;
   const stored=await _idbGet('handle');
   if(!stored){_fsBannerSet('disconnected');return;}
   _fHandle=stored;
@@ -2728,9 +2728,10 @@ async function fsPick(){
 
 // Pull latest from file (teammates' changes)
 async function fsReload(){
-  if(!_fConnected&&!IS_SERVER){await fsReconnect();return;}
-  if(IS_SERVER){await fetchFromServer();}
-  else{
+  if(!_fConnected){
+    if(IS_SERVER){await fetchFromServer();}
+    else{await fsReconnect();return;}
+  }else{
     const data=await fileReadAll();
     if(!data)return;
     _fsLoadIntoStorage(data);
